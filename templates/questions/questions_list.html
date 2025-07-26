@@ -1,29 +1,86 @@
 <h1>All Questions</h1>
-<a href="{% url 'question_create' %}">Add Question</a>
+
+{% if request.user.is_authenticated %}
+	<a href="{% url 'question_create' %}">Add Question</a>
+{% endif %}
+
 <ul>
 	{% for question in questions %}
 		<li>
 			<h2>{{ question.title }}</h2>
 			<p>{{ question.body }}</p>
-			<a href="{% url 'question_update' question.pk %}">Edit</a>
-			<a href="{% url 'question_delete' question.pk %}">Delete</a>
+			{% if question.author.pk == request.user.pk %}
+				<a href="{% url 'question_update' question.pk %}">Edit</a>
+				<a href="{% url 'question_delete' question.pk %}">Delete</a>
+			{% endif %}
 		</li>
 	{% empty %}
 		<li>No questions found.</li>
 	{% endfor %}
 </ul>
 
-
 {% if is_paginated %}
 	<div>
+		{# First page link #}
+		{% if not page_obj.has_previous %}
+			<span>First</span>
+		{% else %}
+			<a href="?page=1">First</a>
+		{% endif %}
+
+		{# Previous page link #}
 		{% if page_obj.has_previous %}
 			<a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+		{% else %}
+			<span>Previous</span>
 		{% endif %}
 
-		Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+		<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
+		{# Next page link #}
 		{% if page_obj.has_next %}
 			<a href="?page={{ page_obj.next_page_number }}">Next</a>
+		{% else %}
+			<span>Next</span>
+		{% endif %}
+
+		{# Last page link #}
+		{% if not page_obj.has_next %}
+			<span>Last</span>
+		{% else %}
+			<a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
 		{% endif %}
 	</div>
+
+
+	<form id="pageJumpForm" method="get" action="">
+		<label for="page_number">Go to page:</label>
+		<input
+				type="number"
+				id="page_number"
+				name="page"
+				value="{{ page_obj.number }}"
+				required
+				style="width: 4em;"
+		>
+		<button type="submit">Go</button>
+	</form>
+
+	<script>
+		document.getElementById('pageJumpForm').addEventListener('submit', function(e) {
+			const input = document.getElementById('page_number');
+			const maxPage = {{ page_obj.paginator.num_pages }};
+			let val = parseInt(input.value, 10);
+
+			// Clamp value at submission only
+			if (val > maxPage) {
+				input.value = maxPage;
+			}
+			if (val < 1 || isNaN(val)) {
+				input.value = 1;
+			}
+			// The form submits after value correction
+		});
+	</script>
+
 {% endif %}

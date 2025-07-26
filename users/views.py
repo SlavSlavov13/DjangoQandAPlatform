@@ -5,6 +5,7 @@ from django.contrib.auth.views import LogoutView, LoginView
 from django.db import transaction
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils.functional import SimpleLazyObject
 from django.views import View
 from django.views.generic import CreateView
 
@@ -12,6 +13,12 @@ from users.forms import UserRegistrationForm, UserEditForm, UserProfileEditForm
 from users.models import UserProfile
 
 UserModel = get_user_model()
+
+def unwrap_user(user):
+	if isinstance(user, SimpleLazyObject):
+		return user._wrapped
+	return user
+
 
 class UserCreationView(CreateView):
 	model = UserModel
@@ -30,6 +37,11 @@ class UserCreationView(CreateView):
 			login(self.request, user)
 
 		return response
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			return redirect('questions_list')
+		return super().dispatch(request, *args, **kwargs)
 
 
 class EditProfileView(LoginRequiredMixin, View):
@@ -59,13 +71,14 @@ class EditProfileView(LoginRequiredMixin, View):
 				with transaction.atomic():
 					user_form.save()
 					profile_form.save()
-				return redirect('profile_detail')
+				return redirect('edit_profile')
 
 		elif 'change_password' in request.POST:
 			if password_form.is_valid():
 				user = password_form.save()
+				user = unwrap_user(user)
 				update_session_auth_hash(request, user)
-				return redirect('password_change_done')
+				return redirect('edit_profile')
 
 		return render(request, self.template_name, {
 			'user_form': user_form,
@@ -80,8 +93,14 @@ class ProfileLogoutView(LogoutView):
 	def get_success_url(self):
 		return reverse_lazy('questions_list')
 
+
 class ProfileLoginView(LoginView):
 	template_name = 'users/login.html'
 
 	def get_success_url(self):
 		return reverse_lazy('questions_list')
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			return redirect('questions_list')
+		return super().dispatch(request, *args, **kwargs)
