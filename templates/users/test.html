@@ -1,0 +1,43 @@
+{# templates/test_form.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test Form</title>
+	{# Professional: Add simple style for clarity (optional) #}
+	<style>
+		body { font-family: Arial, sans-serif; margin: 2em; }
+		.form-field { margin-bottom: 1em; }
+		label { font-weight: bold; }
+	</style>
+</head>
+<body>
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	{# Loop through each field and show it with label, errors, and widget #}
+	{% for field in form %}
+		<div class="form-field">
+			<label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+			{{ field }}
+			{% if field.help_text %}
+				<small style="color:gray;">{{ field.help_text }}</small>
+			{% endif %}
+			{% for error in field.errors %}
+				<div style="color:red;">{{ error }}</div>
+			{% endfor %}
+		</div>
+	{% endfor %}
+
+	{# Non-field errors (e.g., validation issues not tied to one field) #}
+	{% if form.non_field_errors %}
+		<div style="color:red;">
+			{% for error in form.non_field_errors %}
+				{{ error }}<br>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+	<button type="submit">Submit</button>
+</form>
+</body>
+</html>

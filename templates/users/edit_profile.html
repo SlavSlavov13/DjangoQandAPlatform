@@ -1,0 +1,21 @@
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<h2>User Info</h2>
+	{{ user_form.as_p }}
+
+	<h2>Profile Info</h2>
+	{{ profile_form.as_p }}
+
+	<button type="submit" name="update_profile">Save Profile</button>
+</form>
+
+<hr>
+
+<form method="post">
+	{% csrf_token %}
+	<h2>Change Password</h2>
+	{{ password_form.as_p }}
+
+	<button type="submit" name="change_password">Change Password</button>
+</form>
+{% include 'users/logout.html' %}

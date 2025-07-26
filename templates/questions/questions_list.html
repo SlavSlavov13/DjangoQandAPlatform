@@ -1,0 +1,29 @@
+<h1>All Questions</h1>
+<a href="{% url 'question_create' %}">Add Question</a>
+<ul>
+	{% for question in questions %}
+		<li>
+			<h2>{{ question.title }}</h2>
+			<p>{{ question.body }}</p>
+			<a href="{% url 'question_update' question.pk %}">Edit</a>
+			<a href="{% url 'question_delete' question.pk %}">Delete</a>
+		</li>
+	{% empty %}
+		<li>No questions found.</li>
+	{% endfor %}
+</ul>
+
+
+{% if is_paginated %}
+	<div>
+		{% if page_obj.has_previous %}
+			<a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+		{% endif %}
+
+		Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+		{% if page_obj.has_next %}
+			<a href="?page={{ page_obj.next_page_number }}">Next</a>
+		{% endif %}
+	</div>
+{% endif %}
