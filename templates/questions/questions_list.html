@@ -49,24 +49,6 @@
 			let currentSearch = "";
 			let currentPage = 1;
 
-			// Helper: Render a single question item HTML (matches template style)
-			function renderQuestionItem(q) {
-				const userId = {{ request.user.pk|default:'null' }};
-				const authorId = q.author_pk;
-
-				return `
-          <li class="question-item">
-            <h2 class="question-title"><a href="/questions/${q.id}/">${escapeHtml(q.title)}</a></h2>
-            <p class="question-body">${escapeHtml(truncate(q.body, 500))}</p>
-            ${authorId === userId ? `
-              <div class="question-actions">
-                <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
-                <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
-              </div>` : ''}
-          </li>
-        `;
-			}
-
 			// Escape HTML in strings to prevent XSS
 			function escapeHtml(text) {
 				const map = {
@@ -85,7 +67,25 @@
 				return text.substring(0, maxLength) + '...';
 			}
 
-			// Render pagination links for given page and page count
+			// Render a single question item HTML (matches your template style)
+			function renderQuestionItem(q) {
+				const userId = {{ request.user.pk|default:'null' }};
+				const authorId = q.author_pk;
+
+				return `
+        <li class="question-item">
+          <h2 class="question-title"><a href="/questions/${q.id}/">${escapeHtml(q.title)}</a></h2>
+          <p class="question-body">${escapeHtml(truncate(q.body, 500))}</p>
+          ${authorId === userId ? `
+            <div class="question-actions">
+              <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
+              <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
+            </div>` : ''}
+        </li>
+      `;
+			}
+
+			// Render pagination links and page jump form
 			function renderPagination(page, totalPages) {
 				if (totalPages <= 1) {
 					paginationContainer.style.display = 'none';
@@ -132,38 +132,38 @@
 
 				// Page jump form
 				html += `
-          <form id="pageJumpForm" method="get" class="page-jump-form" aria-label="Jump to page form" onsubmit="return false;">
-            <label for="page_number" class="page-jump-label">Go to page:</label>
-            <input
-              type="number"
-              id="page_number"
-              name="page"
-              min="1"
-              max="${totalPages}"
-              value="${page}"
-              required
-              class="page-jump-input"
-              aria-describedby="pageJumpHelp"
-            >
-            <button type="submit" class="btn btn-go">Go</button>
-            <small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and ${totalPages}</small>
-          </form>
-        `;
+        <form id="pageJumpForm" method="get" class="page-jump-form" aria-label="Jump to page form" onsubmit="return false;">
+          <label for="page_number" class="page-jump-label">Go to page:</label>
+          <input
+            type="number"
+            id="page_number"
+            name="page"
+            min="1"
+            max="${totalPages}"
+            value="${page}"
+            required
+            class="page-jump-input"
+            aria-describedby="pageJumpHelp"
+          >
+          <button type="submit" class="btn btn-go">Go</button>
+          <small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and ${totalPages}</small>
+        </form>
+      `;
 
 				paginationContainer.innerHTML = html;
 
-				// Event delegation for page links
+				// Add click event listeners for pagination links
 				paginationContainer.querySelectorAll('a[data-page]').forEach(link => {
 					link.addEventListener('click', e => {
 						e.preventDefault();
 						const selectedPage = parseInt(link.getAttribute('data-page'));
-						if (selectedPage && selectedPage !== currentPage && selectedPage >=1 && selectedPage <= totalPages) {
+						if (selectedPage && selectedPage !== currentPage && selectedPage >= 1 && selectedPage <= totalPages) {
 							fetchQuestions(currentSearch, selectedPage);
 						}
 					});
 				});
 
-				// Page jump form logic
+				// Page jump form handler
 				const pageJumpForm = document.getElementById('pageJumpForm');
 				const pageNumberInput = document.getElementById('page_number');
 
@@ -202,10 +202,9 @@
 					}
 					const data = await response.json();
 
-					// Check data structure (pagination and results)
 					const results = data.results || [];
 					const count = data.count || 0;
-					const pageSize = data.page_size || 10;  // fallback page size
+					const pageSize = data.page_size || 10; // fallback page size
 
 					if (results.length === 0) {
 						questionList.innerHTML = `<li class="no-questions">No questions found.</li>`;
@@ -215,7 +214,6 @@
 
 					questionList.innerHTML = results.map(renderQuestionItem).join('');
 					const totalPages = Math.ceil(count / pageSize);
-
 					renderPagination(page, totalPages);
 
 				} catch (error) {
@@ -225,22 +223,33 @@
 				}
 			}
 
-			// Handle search form submission
+			// Debounce function to limit how often a function is called
+			function debounce(func, wait) {
+				let timeout;
+				return function(...args) {
+					clearTimeout(timeout);
+					timeout = setTimeout(() => func.apply(this, args), wait);
+				};
+			}
+
+			// Live search on input with debounce
+			searchInput.addEventListener('input', debounce(() => {
+				const searchVal = searchInput.value.trim();
+				fetchQuestions(searchVal, 1);
+			}, 300));
+
+			// Optional form submit handler (Enter key press)
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
 				const searchVal = searchInput.value.trim();
 				fetchQuestions(searchVal, 1);
 			});
 
-			searchInput.addEventListener('input', () => {
-				if (searchInput.value.trim() === '') {
-					fetchQuestions("", 1);
-				}
-			});
-
+			// Initial load: fetch all questions on page load
 			document.addEventListener('DOMContentLoaded', () => {
 				fetchQuestions("", 1);
 			});
 		})();
 	</script>
+
 {% endblock %}
