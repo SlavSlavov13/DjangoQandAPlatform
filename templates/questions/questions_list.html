@@ -3,25 +3,25 @@
 {% block content %}
 	<div class="questions-container" id="questions-container" data-user-id="{{ request.user.pk|default:'null' }}">
 		<!-- Search Bar -->
-		<form id="rest-search-form" autocomplete="off">
+		<form id="rest-search-form" autocomplete="off" class="top-bar-search site-search-form">
 			<input
 					type="text"
 					id="rest-search-input"
 					name="search"
 					placeholder="Search questions..."
 					aria-label="Search questions"
+					class="site-search-input"
 			/>
-			<button type="submit">Search</button>
+			<button type="submit" class="site-search-btn">Search</button>
 		</form>
+
 
 		<!-- Questions List Container (to be populated by JS) -->
 		<ul class="questions-list" id="question-list-container">
 
 		</ul>
 
-		<!-- Pagination -->
 		<nav class="pagination" aria-label="Questions pagination" id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}>
-			<!-- Pagination links will be rendered here by JS -->
 		</nav>
 	</div>
 
@@ -46,14 +46,18 @@
 			}
 
 			function renderQuestionItem(q) {
+				const container_a = document.createElement('a');
+				container_a.href = `/questions/${q.id}/details/`
+				container_a.className = 'list_question_link'
 				const li = document.createElement('li');
+				container_a.append(li)
 				li.className = 'question-item';
 
 				const h2 = document.createElement('h2');
 				h2.className = 'question-title';
 
 				const a = document.createElement('a');
-				a.href = `/questions/${q.id}/update/`;
+				a.href = `/questions/${q.id}/details/`;
 				a.textContent = q.title;
 				h2.appendChild(a);
 				li.appendChild(h2);
@@ -63,47 +67,7 @@
 				p.textContent = truncate(q.body, 500);
 				li.appendChild(p);
 
-				// Add Comment / Add Answer buttons for authenticated users
-				if (userId !== null) {
-					const divActions2 = document.createElement('div');
-					divActions2.className = 'question-actions';
-
-					const commentLink = document.createElement('a');
-					commentLink.className = 'btn btn-comment';
-					commentLink.href = `/questions/${q.id}/add_comment/`;
-					commentLink.textContent = 'Add Comment';
-
-					const answerLink = document.createElement('a');
-					answerLink.className = 'btn btn-answer';
-					answerLink.href = `/questions/${q.id}/add_answer/`;
-					answerLink.textContent = 'Add Answer';
-
-					divActions2.appendChild(commentLink);
-					divActions2.appendChild(answerLink);
-					li.appendChild(divActions2);
-				}
-
-				// Edit/Delete for author
-				if (q.author_pk === userId) {
-					const divActions = document.createElement('div');
-					divActions.className = 'question-actions';
-
-					const editLink = document.createElement('a');
-					editLink.className = 'btn btn-edit';
-					editLink.href = `/questions/${q.id}/update/`;
-					editLink.textContent = 'Edit';
-
-					const deleteLink = document.createElement('a');
-					deleteLink.className = 'btn btn-delete';
-					deleteLink.href = `/questions/${q.id}/delete/`;
-					deleteLink.textContent = 'Delete';
-
-					divActions.appendChild(editLink);
-					divActions.appendChild(deleteLink);
-					li.appendChild(divActions);
-				}
-
-				return li;
+				return container_a;
 			}
 
 			function renderPagination(page, totalPages) {

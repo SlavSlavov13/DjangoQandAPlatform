@@ -9,17 +9,16 @@
 <body>
 <header>
 	<nav class="top-bar">
-		<div class="container">
+		<div class="container" id="top-bar-container">
 			<a href="{% url 'questions_list' %}" class="top-bar-logo" aria-label="Home">
 				<strong>Q&A Platform</strong>
 			</a>
 
 			<ul class="top-bar-links">
-				<li><a href="{% url 'questions_list' %}">Questions</a></li>
 				{% if request.user.is_authenticated %}
-					<li><a href="{% url 'question_create' %}" class="btn ask-question">Ask Question</a></li>
-					<li><a href="{% url 'edit_profile' %}">Profile</a></li>
-					<li><a href="{% url 'logout' %}">Log Out</a></li>
+					<li><a href="{% url 'question_create' %}">Ask Question</a></li>
+					<li><a href="{% url 'profile-details' user.pk %}">Profile</a></li>
+					{% include 'users/logout.html' %}
 				{% else %}
 					<li><a href="{% url 'login' %}">Log In</a></li>
 					<li><a href="{% url 'register' %}">Sign Up</a></li>

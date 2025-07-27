@@ -9,4 +9,4 @@ class Answer(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return f'Answer by {self.author.user.username} on {self.question}'
+		return f'Answer by {self.author.username} on {self.question}'

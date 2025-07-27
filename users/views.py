@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.functional import SimpleLazyObject
 from django.views import View
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 
 from users.forms import UserRegistrationForm, UserEditForm, UserProfileEditForm
 from users.models import UserProfile
@@ -71,14 +71,14 @@ class EditProfileView(LoginRequiredMixin, View):
 				with transaction.atomic():
 					user_form.save()
 					profile_form.save()
-				return redirect('edit_profile')
+				return redirect('profile-details', user.id)
 
 		elif 'change_password' in request.POST:
 			if password_form.is_valid():
 				user = password_form.save()
 				user = unwrap_user(user)
 				update_session_auth_hash(request, user)
-				return redirect('edit_profile')
+				return redirect('profile-details', user.id)
 
 		return render(request, self.template_name, {
 			'user_form': user_form,
@@ -104,3 +104,8 @@ class ProfileLoginView(LoginView):
 		if request.user.is_authenticated:
 			return redirect('questions_list')
 		return super().dispatch(request, *args, **kwargs)
+
+class ProfileDetailView(DetailView):
+	model = UserModel
+	template_name = 'users/user_details.html'
+	context_object_name = 'user_obj'

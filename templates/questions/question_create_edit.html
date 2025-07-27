@@ -3,8 +3,10 @@
 {% block content %}
 	<main class="form-demo-container">
 		<article class="form-demo-article">
-			<h2>Sign Up</h2>
-			<form method="post" enctype="multipart/form-data" class="site-form">
+			<h2>
+				{% if form.instance.pk %}Edit{% else %}Create{% endif %} Question
+			</h2>
+			<form method="post" class="site-form">
 				{% csrf_token %}
 				{% for field in form %}
 					<div class="form-field{% if field.errors %} has-error{% endif %}">
@@ -25,7 +27,8 @@
 						{% endfor %}
 					</div>
 				{% endif %}
-				<button type="submit" class="btn btn-answer">Sign Up</button>
+				<button type="submit" class="btn btn-edit">Save</button>
+				<a href="{% url 'questions_list' %}" class="btn btn-answer">Back to list</a>
 			</form>
 		</article>
 	</main>

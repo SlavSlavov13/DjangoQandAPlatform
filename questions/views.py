@@ -1,9 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+from answers.models import Answer
+from comments.models import Comment
 from questions.forms import QuestionCreateForm, QuestionEditForm
 from questions.models import Question
 
@@ -45,7 +49,7 @@ class QuestionListView(ListView):
 class QuestionCreateView(LoginRequiredMixin, CreateView):
 	model = Question
 	form_class = QuestionCreateForm
-	template_name = "questions/question_form.html"
+	template_name = "questions/question_create_edit.html"
 	success_url = reverse_lazy("questions_list")
 
 	def form_valid(self, form):
@@ -55,7 +59,7 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
 class QuestionUpdateView(LoginRequiredMixin, UpdateView):
 	model = Question
 	form_class = QuestionEditForm
-	template_name = "questions/question_form.html"
+	template_name = "questions/question_create_edit.html"
 	success_url = reverse_lazy("questions_list")
 
 	def get_object(self, queryset=None):
@@ -74,3 +78,27 @@ class QuestionDeleteView(LoginRequiredMixin, DeleteView):
 		if obj.author != self.request.user:
 			raise PermissionDenied("You do not have permission to delete this question.")
 		return obj
+
+class QuestionDetailView(DetailView):
+	model = Question
+	template_name = "questions/question_details.html"
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		question = self.object
+
+		# Get content type for Question model
+		question_ct = ContentType.objects.get(app_label='questions', model='question')
+
+		# Filter comments directly referring to this question (not answers)
+		comments_on_question = Comment.objects.filter(
+			content_type=question_ct,
+			object_id=question.id
+		).order_by('created_at')
+
+		# Also get answers as before
+		answers = Answer.objects.filter(question=question).order_by('created_at')
+
+		context['comments'] = comments_on_question
+		context['answers'] = answers
+		return context

@@ -1,0 +1,82 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+	<main class="questions-container">
+		<article class="question-detail">
+			<h1 class="question-title">{{ question.title }}</h1>
+			<p class="question-meta">
+				Asked by <strong>{{ question.author.username }}</strong>
+				on {{ question.created_at|date:"F j, Y, g:i a" }}
+			</p>
+			<div class="question-body">
+				{{ question.body|linebreaks }}
+			</div>
+			{% if question.tags.all %}
+				<div class="question-tags">
+					<strong>Tags:</strong>
+					{% for tag in question.tags.all %}
+						<span class="tag">{{ tag.name }}</span>
+					{% endfor %}
+				</div>
+			{% endif %}
+
+			<div class="question-actions">
+				{% if user.is_authenticated and user == question.author %}
+					<a href="{% url 'question_update' question.pk %}" class="btn btn-edit">Edit</a>
+					<a href="{% url 'question_delete' question.pk %}" class="btn btn-delete">Delete</a>
+				{% endif %}
+				<a href="{% url 'create-answer' question.pk %}" class="btn btn-comment">Add Comment</a>
+				<a href="{% url 'create-answer' question.pk %}" class="btn btn-answer">Add Answer</a>
+			</div>
+
+			<!-- Toggle Buttons -->
+			<div class="toggle-buttons" style="margin-top:1.5rem;">
+				<button class="btn btn-comment" id="show-comments-btn" onclick="showSection('comments')">Comments</button>
+				<button class="btn btn-answer" id="show-answers-btn" onclick="showSection('answers')">Answers</button>
+			</div>
+			<!-- Answers Section -->
+			<div id="answers-section" style="margin-top:1rem;">
+				{% if answers %}
+					<ul>
+						{% for answer in answers %}
+							<li>
+								<div class="answer-body">{{ answer.content }}</div>
+								<div class="answer-meta">
+									by <strong>{{ answer.author.username }}</strong> on {{ answer.created_at|date:"F j, Y, g:i a" }}
+								</div>
+								<br>
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p class="no-answers">No answers yet.</p>
+				{% endif %}
+			</div>
+			<!-- Comments Section -->
+			<div id="comments-section" style="margin-top:1rem; display:none;">
+				{% if comments %}
+					<ul>
+						{% for comment in comments %}
+							<li>
+								<div class="comment-body">{{ comment.body|linebreaks }}</div>
+								<div class="comment-meta">
+									by <strong>{{ comment.author.username }}</strong> on {{ comment.created_at|date:"F j, Y, g:i a" }}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p class="no-comments">No comments yet.</p>
+				{% endif %}
+			</div>
+		</article>
+	</main>
+
+	<!-- Simple JavaScript Toggle (add at the end, before </body>) -->
+	<script>
+		function showSection(section) {
+			document.getElementById('answers-section').style.display = (section === 'answers') ? 'block' : 'none';
+			document.getElementById('comments-section').style.display = (section === 'comments') ? 'block' : 'none';
+		}
+	</script>
+{% endblock %}

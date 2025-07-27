@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+	<main class="questions-container">
+		<article class="user-detail">
+			<div class="profile-header">
+				{% if user_obj.profile.avatar %}
+					<img src="{{ user_obj.profile.avatar.url }}" alt="{{ user_obj.username }}'s avatar" class="avatar-img">
+				{% else %}
+					<span class="avatar-img avatar-placeholder">
+			          {{ user_obj.username|first|upper }}
+			        </span>
+				{% endif %}
+				<div>
+					<h2>{{ user_obj.username }}</h2>
+					<div class="user-joined">Joined on {{ user_obj.date_joined|date:"F j, Y" }}</div>
+				</div>
+				{% if user.is_authenticated and user == user_obj %}
+					<a href="{% url 'edit_profile' %}" class="btn btn-edit" style="margin-left:auto;">Edit Profile</a>
+				{% endif %}
+			</div>
+
+			<div class="profile-section">
+				<h3>Bio</h3>
+				<div class="user-bio">
+					{% if user_obj.profile.bio %}
+						{{ user_obj.profile.bio|linebreaks }}
+					{% else %}
+						<span class="bio-placeholder">No bio yet.</span>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="profile-section">
+				<h3>Badges</h3>
+				{% if user_obj.profile.badges.all %}
+					<div class="user-badges">
+						{% for badge in user_obj.profile.badges.all %}
+							<span class="badge">{{ badge.name }}</span>
+						{% endfor %}
+					</div>
+				{% else %}
+					<span class="badges-placeholder">No badges yet.</span>
+				{% endif %}
+			</div>
+		</article>
+	</main>
+{% endblock %}

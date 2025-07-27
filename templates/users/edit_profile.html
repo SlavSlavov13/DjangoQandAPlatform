@@ -1,21 +1,27 @@
-<form method="post" enctype="multipart/form-data">
-	{% csrf_token %}
-	<h2>User Info</h2>
-	{{ user_form.as_p }}
+{% extends "core/base.html" %}
 
-	<h2>Profile Info</h2>
-	{{ profile_form.as_p }}
+{% block content %}
+	<main class="profile-edit-container">
+		<article class="profile-edit-article">
+			<form method="post" enctype="multipart/form-data" class="profile-form">
+				{% csrf_token %}
+				<h2>User Info</h2>
+				{{ user_form.as_p }}
 
-	<button type="submit" name="update_profile">Save Profile</button>
-</form>
+				<h2>Profile Info</h2>
+				{{ profile_form.as_p }}
 
-<hr>
+				<button type="submit" name="update_profile" class="btn btn-edit">Save Profile</button>
+			</form>
 
-<form method="post">
-	{% csrf_token %}
-	<h2>Change Password</h2>
-	{{ password_form.as_p }}
+			<hr class="profile-edit-divider">
 
-	<button type="submit" name="change_password">Change Password</button>
-</form>
-{% include 'users/logout.html' %}
+			<form method="post" class="password-form">
+				{% csrf_token %}
+				<h2>Change Password</h2>
+				{{ password_form.as_p }}
+				<button type="submit" name="change_password" class="btn btn-edit">Change Password</button>
+			</form>
+		</article>
+	</main>
+{% endblock %}
