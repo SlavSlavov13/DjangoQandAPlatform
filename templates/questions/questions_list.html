@@ -1,86 +1,92 @@
-<h1>All Questions</h1>
+{% extends 'core/base.html' %}
+{% block main %}
+	<div class="questions-container">
 
-{% if request.user.is_authenticated %}
-	<a href="{% url 'question_create' %}">Add Question</a>
-{% endif %}
+		<ul class="questions-list" id="questions-list">
+			{% for question in questions %}
+				<li class="question-item">
+					<h2 class="question-title">{{ question.title }}</h2>
+					<p class="question-body">{{ question.body }}</p>
+					{% if question.tags.all %}
+						<div><strong>Tags:</strong> {{ question.tags.all|join:', ' }}</div>
+					{% endif %}
+					{% if question.author.pk == request.user.pk %}
+						<div class="question-actions">
+							<a class="btn btn-edit" href="{% url 'question_update' question.pk %}">Edit</a>
+							<a class="btn btn-delete" href="{% url 'question_delete' question.pk %}">Delete</a>
+						</div>
+					{% endif %}
+				</li>
+			{% empty %}
+				<li class="no-questions">No questions found.</li>
+			{% endfor %}
+		</ul>
 
-<ul>
-	{% for question in questions %}
-		<li>
-			<h2>{{ question.title }}</h2>
-			<p>{{ question.body }}</p>
-			{% if question.author.pk == request.user.pk %}
-				<a href="{% url 'question_update' question.pk %}">Edit</a>
-				<a href="{% url 'question_delete' question.pk %}">Delete</a>
-			{% endif %}
-		</li>
-	{% empty %}
-		<li>No questions found.</li>
-	{% endfor %}
-</ul>
 
-{% if is_paginated %}
-	<div>
-		{# First page link #}
-		{% if not page_obj.has_previous %}
-			<span>First</span>
-		{% else %}
-			<a href="?page=1">First</a>
+		{% if is_paginated %}
+			<nav class="pagination" aria-label="Questions pagination">
+
+				<ul class="pagination-links">
+					{% if not page_obj.has_previous %}
+						<li class="disabled">First</li>
+					{% else %}
+						<li><a href="?page=1" aria-label="First page">First</a></li>
+					{% endif %}
+
+					{% if page_obj.has_previous %}
+						<li><a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous page">Previous</a></li>
+					{% else %}
+						<li class="disabled">Previous</li>
+					{% endif %}
+
+					<li class="current-page" aria-current="page">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+
+					{% if page_obj.has_next %}
+						<li><a href="?page={{ page_obj.next_page_number }}" aria-label="Next page">Next</a></li>
+					{% else %}
+						<li class="disabled">Next</li>
+					{% endif %}
+
+					{% if not page_obj.has_next %}
+						<li class="disabled">Last</li>
+					{% else %}
+						<li><a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last page">Last</a></li>
+					{% endif %}
+				</ul>
+
+				<form id="pageJumpForm" method="get" action="" class="page-jump-form" aria-label="Jump to page form">
+					<label for="page_number" class="page-jump-label">Go to page:</label>
+					<input
+							type="number"
+							id="page_number"
+							name="page"
+							value="{{ page_obj.number }}"
+							required
+							class="page-jump-input"
+							aria-describedby="pageJumpHelp"
+					>
+					<button type="submit" class="btn btn-go">Go</button>
+					<small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and {{ page_obj.paginator.num_pages }}</small>
+				</form>
+
+			</nav>
+
+			<script>
+				document.getElementById('pageJumpForm').addEventListener('submit', function(e) {
+					const input = document.getElementById('page_number');
+					const maxPage = {{ page_obj.paginator.num_pages }};
+					let val = parseInt(input.value, 10);
+
+					if (val > maxPage) {
+						input.value = maxPage;
+					}
+					if (val < 1 || isNaN(val)) {
+						input.value = 1;
+					}
+				});
+			</script>
+
 		{% endif %}
 
-		{# Previous page link #}
-		{% if page_obj.has_previous %}
-			<a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-		{% else %}
-			<span>Previous</span>
-		{% endif %}
-
-		<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
-		{# Next page link #}
-		{% if page_obj.has_next %}
-			<a href="?page={{ page_obj.next_page_number }}">Next</a>
-		{% else %}
-			<span>Next</span>
-		{% endif %}
-
-		{# Last page link #}
-		{% if not page_obj.has_next %}
-			<span>Last</span>
-		{% else %}
-			<a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-		{% endif %}
 	</div>
-
-
-	<form id="pageJumpForm" method="get" action="">
-		<label for="page_number">Go to page:</label>
-		<input
-				type="number"
-				id="page_number"
-				name="page"
-				value="{{ page_obj.number }}"
-				required
-				style="width: 4em;"
-		>
-		<button type="submit">Go</button>
-	</form>
-
-	<script>
-		document.getElementById('pageJumpForm').addEventListener('submit', function(e) {
-			const input = document.getElementById('page_number');
-			const maxPage = {{ page_obj.paginator.num_pages }};
-			let val = parseInt(input.value, 10);
-
-			// Clamp value at submission only
-			if (val > maxPage) {
-				input.value = maxPage;
-			}
-			if (val < 1 || isNaN(val)) {
-				input.value = 1;
-			}
-			// The form submits after value correction
-		});
-	</script>
-
-{% endif %}
+{% endblock %}

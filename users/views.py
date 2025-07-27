@@ -22,7 +22,7 @@ def unwrap_user(user):
 
 class UserCreationView(CreateView):
 	model = UserModel
-	template_name = 'users/test.html'
+	template_name = 'users/create_user.html'
 	form_class = UserRegistrationForm
 	success_url = reverse_lazy('edit_profile')
 

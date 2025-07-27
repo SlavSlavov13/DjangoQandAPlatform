@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-
 from questions.forms import QuestionCreateForm, QuestionEditForm
 from questions.models import Question
 
@@ -16,6 +16,15 @@ class QuestionListView(ListView):
 	ordering = ['-created_at']
 	paginate_by = 10
 
+	def get_queryset(self):
+		queryset = super().get_queryset()
+		q = self.request.GET.get('search')
+		if q:
+			queryset = queryset.filter(
+				Q(title__icontains=q) | Q(body__icontains=q)
+			).distinct()
+		return queryset
+
 	def get(self, request, *args, **kwargs):
 		page = request.GET.get('page')
 		max_page = self.get_paginator(self.get_queryset(), self.paginate_by).num_pages
@@ -26,9 +35,7 @@ class QuestionListView(ListView):
 		if page_num > max_page:
 			page_num = max_page
 
-		# redirect or reset request.GET to the capped page_num
 		if str(page_num) != page:
-			# Redirect to capped page to keep URLs clean
 			url = request.path + f'?page={page_num}'
 			return redirect(url)
 
