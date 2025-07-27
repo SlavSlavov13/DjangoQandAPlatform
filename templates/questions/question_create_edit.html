@@ -28,7 +28,11 @@
 					</div>
 				{% endif %}
 				<button type="submit" class="btn btn-edit">Save</button>
-				<a href="{% url 'questions_list' %}" class="btn btn-answer">Back to list</a>
+				{% if form.instance.pk %}
+					<a href="{% url 'question_details' form.instance.pk %}" class="btn btn-answer">Back to question</a>
+				{% else %}
+					<a href="{% url 'questions_list' %}" class="btn btn-answer">Back to list</a>
+				{% endif %}
 			</form>
 		</article>
 	</main>

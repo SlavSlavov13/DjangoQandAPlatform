@@ -15,14 +15,14 @@
 			<button type="submit" class="site-search-btn">Search</button>
 		</form>
 
+		<!-- Status Message (loading, empty, or error) -->
+		<div id="questions-status-message" aria-live="polite"></div>
 
-		<!-- Questions List Container (to be populated by JS) -->
-		<ul class="questions-list" id="question-list-container">
+		<!-- Questions List (populated by JS) -->
+		<ul class="questions-list" id="question-list-container"></ul>
 
-		</ul>
-
-		<nav class="pagination" aria-label="Questions pagination" id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}>
-		</nav>
+		<!-- Pagination (populated by JS) -->
+		<nav class="pagination" aria-label="Questions pagination" id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}></nav>
 	</div>
 
 	<script>
@@ -37,6 +37,7 @@
 			const paginationContainer = document.getElementById('pagination-container');
 			const searchForm = document.getElementById('rest-search-form');
 			const searchInput = document.getElementById('rest-search-input');
+			const statusDiv = document.getElementById('questions-status-message');
 
 			let currentSearch = "";
 			let currentPage = 1;
@@ -45,6 +46,12 @@
 				return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
 			}
 
+			// ========== STATUS MESSAGE
+			function setStatusMessage(htmlOrNull, statusType="info") {
+				statusDiv.innerHTML = htmlOrNull ? `<div class="questions-status ${statusType}">${htmlOrNull}</div>` : "";
+			}
+
+			// ========== QUESTION ITEM
 			function renderQuestionItem(q) {
 				const container_a = document.createElement('a');
 				container_a.href = `/questions/${q.id}/details/`
@@ -70,6 +77,7 @@
 				return container_a;
 			}
 
+			// ========== PAGINATION
 			function renderPagination(page, totalPages) {
 				if (totalPages <= 1) {
 					paginationContainer.style.display = 'none';
@@ -115,6 +123,7 @@
 
 				paginationContainer.appendChild(ul);
 
+				// Page-jump form
 				const form = document.createElement('form');
 				form.id = 'pageJumpForm';
 				form.method = 'get';
@@ -172,6 +181,7 @@
 				});
 			}
 
+			// ========== FETCH AND DISPLAY
 			async function fetchQuestions(search = "", page = 1) {
 				currentSearch = search;
 				currentPage = page;
@@ -180,8 +190,9 @@
 				searchForm.querySelector('button[type="submit"]').disabled = true;
 
 				let loaderTimeout = setTimeout(() => {
-					questionList.textContent = 'Loading...';
+					setStatusMessage('<span class="spinner"></span> Loading...', 'loading');
 					paginationContainer.style.display = 'none';
+					questionList.textContent = '';
 				}, 300);
 
 				const params = new URLSearchParams();
@@ -197,7 +208,6 @@
 					clearTimeout(loaderTimeout);
 
 					if (!response.ok) throw new Error('Failed to fetch questions');
-
 					const data = await response.json();
 
 					const results = data.results || [];
@@ -205,9 +215,11 @@
 					const pageSize = data.page_size || 10;
 
 					if (results.length === 0) {
-						questionList.textContent = 'No questions found.';
+						setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search.', 'empty');
 						paginationContainer.style.display = 'none';
+						questionList.textContent = '';
 					} else {
+						setStatusMessage(null);
 						questionList.textContent = '';
 						results.forEach(q => {
 							questionList.appendChild(renderQuestionItem(q));
@@ -217,8 +229,9 @@
 					}
 				} catch (error) {
 					clearTimeout(loaderTimeout);
-					questionList.textContent = 'Error loading questions.';
+					setStatusMessage('&#9888; <b>Error loading questions.</b><br>Please try again.', 'error');
 					paginationContainer.style.display = 'none';
+					questionList.textContent = '';
 					console.error(error);
 				} finally {
 					searchInput.disabled = false;
@@ -248,5 +261,4 @@
 
 		})();
 	</script>
-
 {% endblock %}
