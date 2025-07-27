@@ -826,8 +826,8 @@ main {
 }
 
 .question-meta a,
-#answers-section a,
 #comments-section a,
+#answers-section a,
 .avatar-field a {
 	color: #39739d;
 	text-decoration: underline;
@@ -1116,6 +1116,261 @@ main {
 
 /* No results messages */
 .no-answers, .no-comments {
+	font-style: italic;
+	color: #6a737c;
+	margin: 1rem 0;
+}
+
+.comment-list {
+	list-style: none;
+	padding-left: 1.5rem;
+	margin-top: 0.75rem;
+}
+
+.comment-item {
+	background: #f9fafb;
+	border-radius: 4px;
+	padding: 0.6rem 1rem;
+	margin-bottom: 0.75rem;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-small {
+	font-size: 0.75rem;
+	padding: 0.25em 0.5em;
+	margin-top: 0.3rem;
+}
+
+.answer-buttons-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem; /* space between buttons */
+	margin-top: 0.5rem;
+}
+
+.btn-small {
+	font-size: 0.75rem;
+	padding: 0.25em 0.5em;
+}
+
+.add-comment-btn {
+	text-decoration: none;
+}
+
+/* Answer List Container - reuse questions-list styles if you want */
+.answers-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Each answer item styling similar to question-item */
+.answer-item {
+	background: white;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	padding: 1rem 1.5rem;
+	margin-bottom: 1.25rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	transition: box-shadow 0.2s ease;
+}
+
+.answer-item:hover {
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+/* Answer body retrieves styling like question-body */
+.answer-body {
+	font-size: 1.1rem;
+	line-height: 1.5;
+	margin-bottom: 1rem;
+	color: #3b4045;
+}
+
+/* Author and date like question-meta */
+.answer-meta {
+	font-size: 0.9rem;
+	color: #6a737c;
+	margin-bottom: 0.8rem;
+}
+
+/* Buttons container (toggle comments and add comment) */
+.answer-buttons-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+/* Smaller button style for inside answers */
+.btn-small {
+	font-size: 0.75rem;
+	padding: 0.25em 0.5em;
+}
+
+/* Comment list nested under answer (indent) */
+.comment-list {
+	list-style: none;
+	padding-left: 1.5rem;
+	margin-top: 0.75rem;
+}
+
+/* Individual comment styling (lighter background) */
+.comment-item {
+	background: #f9fafb;
+	border-radius: 4px;
+	padding: 0.6rem 1rem;
+	margin-bottom: 0.75rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+
+/* Comment body */
+.comment-body {
+	font-size: 0.95rem;
+	color: #3b4045;
+	line-height: 1.4;
+}
+
+/* Comment meta */
+.comment-meta {
+	font-size: 0.8rem;
+	color: #6a737c;
+	margin-top: 0.25rem;
+}
+
+/* Add comment button spacing */
+.add-comment-btn {
+	margin-top: 0.3rem;
+}
+
+/* Responsive tweaks */
+/* At smaller screens, stack buttons vertically */
+@media (max-width: 480px) {
+	.answer-buttons-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+/* Question comments container styling - reset list style */
+#comments-section ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* Individual comment item in question comments */
+#comments-section .comment-item {
+	background: #f9fafb;
+	border-radius: 4px;
+	padding: 0.6rem 1rem;
+	margin-bottom: 0.75rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+
+/* Comment body */
+#comments-section .comment-body {
+	font-size: 0.95rem;
+	color: #3b4045;
+	line-height: 1.4;
+}
+
+/* Comment meta (author, date) */
+#comments-section .comment-meta {
+	font-size: 0.8rem;
+	color: #6a737c;
+	margin-top: 0.25rem;
+}
+
+/* No comments message */
+#comments-section .no-comments {
+	font-style: italic;
+	color: #6a737c;
+	margin: 1rem 0;
+}
+
+/* Responsive styling if needed */
+@media (max-width: 480px) {
+	#comments-section ul {
+		padding-left: 1rem;
+	}
+}
+
+.comment-item-card {
+	background: white;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	padding: 1rem 1.5rem;
+	margin-bottom: 1.25rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); /* same as answer-item */
+	transition: box-shadow 0.2s ease;
+}
+
+.comment-item-card:hover {
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+.comment-body {
+	font-size: 1.1rem;
+	line-height: 1.5;
+	margin-bottom: 0.25rem;
+	color: #3b4045;
+}
+
+.comment-meta {
+	font-size: 0.9rem;
+	color: #6a737c;
+	margin-top: 0.25rem;
+}
+
+.card-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.card-item {
+	background: white;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	padding: 1rem 1.5rem;
+	margin-bottom: 1.25rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	transition: box-shadow 0.2s ease;
+}
+
+.card-item:hover {
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+.card-body {
+	font-size: 1.1rem;
+	line-height: 1.5;
+	margin-bottom: 0.25rem;
+	color: #3b4045;
+}
+
+.card-meta {
+	font-size: 0.9rem;
+	color: #6a737c;
+	margin-top: 0.25rem;
+}
+
+/* Buttons container (toggle/add comment) */
+.answer-buttons-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.btn-small {
+	font-size: 0.75rem;
+	padding: 0.25em 0.5em;
+}
+
+.no-comments {
 	font-style: italic;
 	color: #6a737c;
 	margin: 1rem 0;

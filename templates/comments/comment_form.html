@@ -5,8 +5,7 @@
 		<article class="form-demo-article">
 
 			{% if answer_id %}
-				<h2>Add Comment to Answer:
-					{{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }}
+				<h2>Add Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> on <br> Question: {{ question_title }}
 				</h2>
 			{% else %}
 				<h2>Add Comment to Question: "{{ question_title }}"</h2>

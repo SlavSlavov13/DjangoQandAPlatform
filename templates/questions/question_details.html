@@ -5,7 +5,9 @@
 		<article class="question-detail">
 			<h1 class="question-title">{{ question.title }}</h1>
 			<p class="question-meta">
-				Asked by <a href="{% url 'profile-details' question.author.pk %}"><strong>{{ question.author.username }}</strong></a>
+				Asked by <a href="{% url 'profile-details' question.author.pk %}">
+				<strong>{{ question.author.username }}</strong>
+			</a>
 				on {{ question.created_at|date:"F j, Y, g:i a" }}
 			</p>
 			<div class="question-body">
@@ -38,19 +40,54 @@
 				<button class="btn btn-answer" id="show-answers-btn" type="button" aria-controls="answers-section" aria-expanded="false" onclick="showSection('answers')">See Answers</button>
 			</div>
 
-			<!-- Section Heading that reflects the open section -->
 			<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
 
 			<!-- Answers Section -->
 			<div id="answers-section" class="content-section" aria-labelledby="section-heading" hidden>
 				{% if answers %}
-					<ul>
+					<ul class="card-list">
 						{% for answer in answers %}
-							<li class="answer-item">
-								<div class="answer-body">{{ answer.content }}</div>
-								<div class="answer-meta">
-									by <a href="{% url 'profile-details' answer.author.pk %}"><strong>{{ answer.author.username }}</strong></a> on {{ answer.created_at|date:"F j, Y, g:i a" }}
+							<li class="card-item">
+								<div class="card-body">{{ answer.content }}</div>
+								<div class="card-meta">
+									by <a href="{% url 'profile-details' answer.author.pk %}">
+									<strong>{{ answer.author.username }}</strong>
+								</a>
+									on {{ answer.created_at|date:"F j, Y, g:i a" }}
 								</div>
+
+								<div class="answer-buttons-wrapper">
+									<button class="btn btn-comment btn-small toggle-answer-comments-btn"
+									        aria-expanded="false"
+									        aria-controls="comments-for-answer-{{ answer.pk }}"
+									        onclick="toggleComments({{ answer.pk }})">
+										Show Comments
+									</button>
+									<a href="{% url 'add_comment_to_answer' answer.pk %}"
+									   class="btn btn-comment btn-small add-comment-btn"
+									   id="add-comment-btn-{{ answer.pk }}"
+									   style="display: none;">
+										Add Comment
+									</a>
+								</div>
+
+								<ul class="card-list" id="comments-for-answer-{{ answer.pk }}" hidden>
+									{% if answer.comments.all %}
+										{% for comment in answer.comments.all %}
+											<li class="card-item">
+												<div class="card-body">{{ comment.content|linebreaks }}</div>
+												<div class="card-meta">
+													by <a href="{% url 'profile-details' comment.author.pk %}">
+													<strong>{{ comment.author.username }}</strong>
+												</a>
+													on {{ comment.created_at|date:"F j, Y, g:i a" }}
+												</div>
+											</li>
+										{% endfor %}
+									{% else %}
+										<p class="no-comments">No comments yet.</p>
+									{% endif %}
+								</ul>
 							</li>
 						{% endfor %}
 					</ul>
@@ -59,15 +96,18 @@
 				{% endif %}
 			</div>
 
-			<!-- Comments Section -->
+			<!-- Question Comments Section -->
 			<div id="comments-section" class="content-section" aria-labelledby="section-heading" hidden>
 				{% if comments %}
-					<ul>
+					<ul class="card-list">
 						{% for comment in comments %}
-							<li class="comment-item">
-								<div class="comment-body">{{ comment.content|linebreaks }}</div>
-								<div class="comment-meta">
-									by <a href="{% url 'profile-details' comment.author.pk %}"><strong>{{ comment.author.username }}</strong></a> on {{ comment.created_at|date:"F j, Y, g:i a" }}
+							<li class="card-item">
+								<div class="card-body">{{ comment.content|linebreaksbr }}</div>
+								<div class="card-meta">
+									by <a href="{% url 'profile-details' comment.author.pk %}">
+									<strong>{{ comment.author.username }}</strong>
+								</a>
+									on {{ comment.created_at|date:"F j, Y, g:i a" }}
 								</div>
 							</li>
 						{% endfor %}
@@ -80,7 +120,24 @@
 	</main>
 
 	<script>
-		// Function to show one section and update heading and aria attributes
+		function toggleComments(answerId) {
+			const commentsList = document.getElementById(`comments-for-answer-${answerId}`);
+			const addCommentBtn = document.getElementById(`add-comment-btn-${answerId}`);
+			const btn = document.querySelector(`.toggle-answer-comments-btn[aria-controls="comments-for-answer-${answerId}"]`);
+
+			if (commentsList.hidden) {
+				commentsList.hidden = false;
+				addCommentBtn.style.display = 'inline-block';
+				btn.textContent = "Hide Comments";
+				btn.setAttribute('aria-expanded', 'true');
+			} else {
+				commentsList.hidden = true;
+				addCommentBtn.style.display = 'none';
+				btn.textContent = "Show Comments";
+				btn.setAttribute('aria-expanded', 'false');
+			}
+		}
+
 		function showSection(section) {
 			const answersSection = document.getElementById('answers-section');
 			const commentsSection = document.getElementById('comments-section');
@@ -103,15 +160,11 @@
 			}
 		}
 
-		// On page load, both sections hidden, no heading
 		document.addEventListener('DOMContentLoaded', () => {
-			// Start with both hidden and no heading text
 			document.getElementById('answers-section').hidden = true;
 			document.getElementById('comments-section').hidden = true;
 			document.getElementById('section-heading').textContent = '';
-
-			// If you want to default open one, call showSection('comments') or showSection('answers') here
-			// For example, default to comments:
+			// Optionally open one section by default:
 			// showSection('comments');
 		});
 	</script>

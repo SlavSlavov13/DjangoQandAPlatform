@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -94,14 +94,14 @@ class QuestionDetailView(DetailView):
 		context = super().get_context_data(**kwargs)
 		question = self.object
 
-		question_ct = ContentType.objects.get(app_label='questions', model='question')
+		# Question-level comments
+		comments_on_question = question.comments.select_related('author').order_by('-created_at')
 
-		comments_on_question = Comment.objects.filter(
-			content_type=question_ct,
-			object_id=question.id
+		# Answers with comments prefetched
+		answers = Answer.objects.filter(question=question).select_related('author').prefetch_related(
+			Prefetch('comments', queryset=Comment.objects.select_related('author').order_by('-created_at'))
 		).order_by('-created_at')
 
-		answers = Answer.objects.filter(question=question).order_by('-created_at')
 
 		context['comments'] = comments_on_question
 		context['answers'] = answers
