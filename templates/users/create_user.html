@@ -1,14 +1,15 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-	<main class="form-demo-container">
-		<article class="form-demo-article">
+	<main class="auth-container">
+		<article class="auth-article">
 			<h2>Sign Up</h2>
-			<form method="post" enctype="multipart/form-data" class="site-form">
+
+			<form method="post" class="auth-form" novalidate>
 				{% csrf_token %}
 				{% for field in form %}
 					<div class="form-field{% if field.errors %} has-error{% endif %}">
-						<label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+						<label for="{{ field.id_for_label }}">{{ field.label }}</label>
 						{{ field }}
 						{% if field.help_text %}
 							<small class="help-text">{{ field.help_text }}</small>
@@ -17,7 +18,13 @@
 							<div class="error-message">{{ error }}</div>
 						{% endfor %}
 					</div>
+
+					{# Add the username availability container JUST after the username input field #}
+					{% if field.name == 'username' %}
+						<div id="username-status" aria-live="polite" style="margin-top: -0.75em; margin-bottom: 1em; font-weight: 600;"></div>
+					{% endif %}
 				{% endfor %}
+
 				{% if form.non_field_errors %}
 					<div class="error-message">
 						{% for error in form.non_field_errors %}
@@ -25,8 +32,56 @@
 						{% endfor %}
 					</div>
 				{% endif %}
+
 				<button type="submit" class="btn btn-answer">Sign Up</button>
 			</form>
 		</article>
 	</main>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const usernameInput = document.getElementById('id_username');
+			const statusDiv = document.getElementById('username-status');
+
+			// Basic throttling/debounce to avoid too many requests (wait 300ms after last input)
+			let timeout = null;
+
+			usernameInput.addEventListener('input', function() {
+				const username = this.value.trim();
+				if (timeout) clearTimeout(timeout);
+
+				timeout = setTimeout(() => {
+					// Removed the minimum length check, so request fires for any length including empty
+
+					// Optionally, you can skip empty usernames if desired (comment out if you want to check empty)
+					if (username.length === 0) {
+						statusDiv.textContent = '';
+						statusDiv.style.color = '';
+						return;
+					}
+
+					// Fetch availability from your async endpoint
+					fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}`)
+						.then(response => {
+							if (!response.ok) throw new Error('Network response not ok');
+							return response.json();
+						})
+						.then(data => {
+							if (data.available) {
+								statusDiv.textContent = 'Username is available!';
+								statusDiv.style.color = 'green';
+							} else {
+								statusDiv.textContent = data.error ? data.error : 'Username is taken.';
+								statusDiv.style.color = 'red';
+							}
+						})
+						.catch(() => {
+							statusDiv.textContent = 'Could not check username availability.';
+							statusDiv.style.color = 'gray';
+						});
+				}, 300);
+			});
+		});
+	</script>
+
 {% endblock %}

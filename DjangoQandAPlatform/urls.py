@@ -27,6 +27,7 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     path('answers/', include('answers.urls')),
     path('questions/', include('questions.urls')),
+    path('comment/', include('comments.urls')),
 ]
 
 if settings.DEBUG:

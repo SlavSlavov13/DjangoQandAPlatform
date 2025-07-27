@@ -22,35 +22,35 @@
 
 			<div class="question-actions">
 				{% if user.is_authenticated %}
-
-					<a href="{% url 'create-answer' question.pk %}" class="btn btn-comment">Add Comment</a>
+					<a href="{% url 'add_comment_to_question' question.pk %}" class="btn btn-comment">Add Comment</a>
 					<a href="{% url 'create-answer' question.pk %}" class="btn btn-answer">Add Answer</a>
 
 					{% if user == question.author %}
 						<a href="{% url 'question_update' question.pk %}" class="btn btn-edit">Edit</a>
 						<a href="{% url 'question_delete' question.pk %}" class="btn btn-delete">Delete</a>
 					{% endif %}
-
 				{% endif %}
-
 			</div>
 
 			<!-- Toggle Buttons -->
-			<div class="toggle-buttons" style="margin-top:1.5rem;">
-				<button class="btn btn-comment" id="show-comments-btn" onclick="showSection('comments')">See Comments</button>
-				<button class="btn btn-answer" id="show-answers-btn" onclick="showSection('answers')">See Answers</button>
+			<div class="toggle-buttons">
+				<button class="btn btn-comment" id="show-comments-btn" type="button" aria-controls="comments-section" aria-expanded="false" onclick="showSection('comments')">See Comments</button>
+				<button class="btn btn-answer" id="show-answers-btn" type="button" aria-controls="answers-section" aria-expanded="false" onclick="showSection('answers')">See Answers</button>
 			</div>
+
+			<!-- Section Heading that reflects the open section -->
+			<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
+
 			<!-- Answers Section -->
-			<div id="answers-section" style="margin-top:1rem;">
+			<div id="answers-section" class="content-section" aria-labelledby="section-heading" hidden>
 				{% if answers %}
 					<ul>
 						{% for answer in answers %}
-							<li>
+							<li class="answer-item">
 								<div class="answer-body">{{ answer.content }}</div>
 								<div class="answer-meta">
 									by <a href="{% url 'profile-details' answer.author.pk %}"><strong>{{ answer.author.username }}</strong></a> on {{ answer.created_at|date:"F j, Y, g:i a" }}
 								</div>
-								<br>
 							</li>
 						{% endfor %}
 					</ul>
@@ -58,13 +58,14 @@
 					<p class="no-answers">No answers yet.</p>
 				{% endif %}
 			</div>
+
 			<!-- Comments Section -->
-			<div id="comments-section" style="margin-top:1rem; display:none;">
+			<div id="comments-section" class="content-section" aria-labelledby="section-heading" hidden>
 				{% if comments %}
 					<ul>
 						{% for comment in comments %}
-							<li>
-								<div class="comment-body">{{ comment.body|linebreaks }}</div>
+							<li class="comment-item">
+								<div class="comment-body">{{ comment.content|linebreaks }}</div>
 								<div class="comment-meta">
 									by <a href="{% url 'profile-details' comment.author.pk %}"><strong>{{ comment.author.username }}</strong></a> on {{ comment.created_at|date:"F j, Y, g:i a" }}
 								</div>
@@ -78,11 +79,40 @@
 		</article>
 	</main>
 
-	<!-- Simple JavaScript Toggle (add at the end, before </body>) -->
 	<script>
+		// Function to show one section and update heading and aria attributes
 		function showSection(section) {
-			document.getElementById('answers-section').style.display = (section === 'answers') ? 'block' : 'none';
-			document.getElementById('comments-section').style.display = (section === 'comments') ? 'block' : 'none';
+			const answersSection = document.getElementById('answers-section');
+			const commentsSection = document.getElementById('comments-section');
+			const heading = document.getElementById('section-heading');
+			const showAnswersBtn = document.getElementById('show-answers-btn');
+			const showCommentsBtn = document.getElementById('show-comments-btn');
+
+			if (section === 'answers') {
+				answersSection.hidden = false;
+				commentsSection.hidden = true;
+				heading.textContent = 'Answers:';
+				showAnswersBtn.setAttribute('aria-expanded', 'true');
+				showCommentsBtn.setAttribute('aria-expanded', 'false');
+			} else if (section === 'comments') {
+				commentsSection.hidden = false;
+				answersSection.hidden = true;
+				heading.textContent = 'Comments:';
+				showCommentsBtn.setAttribute('aria-expanded', 'true');
+				showAnswersBtn.setAttribute('aria-expanded', 'false');
+			}
 		}
+
+		// On page load, both sections hidden, no heading
+		document.addEventListener('DOMContentLoaded', () => {
+			// Start with both hidden and no heading text
+			document.getElementById('answers-section').hidden = true;
+			document.getElementById('comments-section').hidden = true;
+			document.getElementById('section-heading').textContent = '';
+
+			// If you want to default open one, call showSection('comments') or showSection('answers') here
+			// For example, default to comments:
+			// showSection('comments');
+		});
 	</script>
 {% endblock %}

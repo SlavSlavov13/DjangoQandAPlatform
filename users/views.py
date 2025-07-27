@@ -1,9 +1,11 @@
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model, authenticate, login, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.context_processors import request
 from django.urls import reverse_lazy
@@ -115,3 +117,11 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 	model = UserModel
 	template_name = 'users/user_details.html'
 	context_object_name = 'user_obj'
+
+async def check_username(request):
+	username = request.GET.get('username', '').strip()
+	if not username:
+		return JsonResponse({'available': False, 'error': 'No username provided.'}, status=400)
+
+	exists = await sync_to_async(UserModel.objects.filter(username=username).exists)()
+	return JsonResponse({'available': not exists})
