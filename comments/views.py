@@ -18,12 +18,12 @@ class AddCommentView(LoginRequiredMixin, FormView):
 
 		if question_id:
 			from questions.models import Question
-			question = Question.objects.get(pk=question_id)
+			question = get_object_or_404(Question, pk=question_id)
 			context['question_title'] = question.title
 			context['question_id'] = question_id
 		elif answer_id:
 			from answers.models import Answer
-			answer = Answer.objects.get(pk=answer_id)
+			answer = get_object_or_404(Answer, pk=answer_id)
 			context['question_title'] = answer.question.title
 			context['question_id'] = answer.question.pk    # critical: pass question_id here
 		else:

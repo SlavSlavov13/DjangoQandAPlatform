@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+	<main class="questions-container" style="max-width: 600px; margin: 4rem auto; padding: 0 1rem;">
+		<article class="question-detail" style="text-align: center; padding: 2rem 2.5rem; max-width: 700px; margin:  auto;">
+
+			<h1 class="question-title" style="font-size: 2.5rem; margin-bottom: 1rem; color: #d0393e;">
+				404 - Page Not Found
+			</h1>
+
+			<p class="question-meta" style="font-size: 1.1rem; color: #6a737c; margin-bottom: 2rem;">
+				Sorry, the page you're looking for doesn't exist.
+			</p>
+
+			<p class="question-body" style="font-size: 1.1rem; color: #3b4045; margin-bottom: 2rem; line-height: 1.5;">
+				It might have been removed, renamed, or never existed.
+			</p>
+
+			<a href="{% url 'home' %}" class="btn btn-answer" style="font-size: 1.1rem; padding: 0.75em 1.5em;">
+				Go to Home
+			</a>
+
+		</article>
+	</main>
+{% endblock %}

@@ -4,7 +4,7 @@ from .models import Question
 class BaseQuestionForm(forms.ModelForm):
 	class Meta:
 		model = Question
-		fields = ['title', 'body']
+		fields = ['title', 'tags', 'body']
 
 class QuestionCreateForm(BaseQuestionForm):
 	...
