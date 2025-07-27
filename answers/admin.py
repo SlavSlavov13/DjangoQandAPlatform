@@ -5,8 +5,7 @@ from .models import Answer
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-	list_display = ('question', 'author_link', 'is_accepted', 'created_at')
-	list_filter = ('is_accepted',)
+	list_display = ('question', 'author_link', 'created_at')
 	search_fields = ('question__title', 'author__user__username', 'content')
 	autocomplete_fields = ('question', 'author')
 	raw_id_fields = ('author',)

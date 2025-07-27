@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block main %}
+{% block content %}
 	<div class="questions-container" id="questions-container" data-user-id="{{ request.user.pk|default:'null' }}">
 		<!-- Search Bar -->
 		<form id="rest-search-form" autocomplete="off">
