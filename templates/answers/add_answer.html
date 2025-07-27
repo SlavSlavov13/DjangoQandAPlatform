@@ -1,12 +1,36 @@
 {% extends "core/base.html" %}
+
 {% block content %}
-	<h2>Answer to: {{ question.title }}</h2>
+	<main class="form-demo-container">
+		<article class="form-demo-article">
+			<h2 class="answer-heading">
+				Answer to: <span class="answer-question-title">{{ question.title }}</span>
+			</h2>
 
-	<form method="post">
-		{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit">Submit Answer</button>
-	</form>
+			<form method="post" class="site-form">
+				{% csrf_token %}
+				{% for field in form %}
+					<div class="form-field{% if field.errors %} has-error{% endif %}">
+						{{ field }}
+						{% if field.help_text %}
+							<small class="help-text">{{ field.help_text }}</small>
+						{% endif %}
+						{% for error in field.errors %}
+							<div class="error-message">{{ error }}</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+				{% if form.non_field_errors %}
+					<div class="error-message">
+						{% for error in form.non_field_errors %}
+							{{ error }}<br>
+						{% endfor %}
+					</div>
+				{% endif %}
 
-	<a href="{% url 'question_update' question.id %}">Back to Question</a>
+				<button type="submit" class="btn btn-edit">Submit Answer</button>
+				<a href="{% url 'question_details' question.id %}" class="btn btn-answer">Back to Question</a>
+			</form>
+		</article>
+	</main>
 {% endblock %}

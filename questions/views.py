@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from answers.models import Answer
@@ -45,6 +45,11 @@ class QuestionListView(ListView):
 
 		return super().get(request, *args, **kwargs)
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['has_questions'] = Question.objects.exists()
+		return context
+
 
 class QuestionCreateView(LoginRequiredMixin, CreateView):
 	model = Question
@@ -60,13 +65,15 @@ class QuestionUpdateView(LoginRequiredMixin, UpdateView):
 	model = Question
 	form_class = QuestionEditForm
 	template_name = "questions/question_create_edit.html"
-	success_url = reverse_lazy("questions_list")
 
 	def get_object(self, queryset=None):
 		obj = super().get_object(queryset)
 		if obj.author != self.request.user:
 			raise PermissionDenied("You do not have permission to edit this question.")
 		return obj
+
+	def get_success_url(self):
+		return reverse('question_details', args=[self.object.pk])
 
 class QuestionDeleteView(LoginRequiredMixin, DeleteView):
 	model = Question
@@ -87,17 +94,14 @@ class QuestionDetailView(DetailView):
 		context = super().get_context_data(**kwargs)
 		question = self.object
 
-		# Get content type for Question model
 		question_ct = ContentType.objects.get(app_label='questions', model='question')
 
-		# Filter comments directly referring to this question (not answers)
 		comments_on_question = Comment.objects.filter(
 			content_type=question_ct,
 			object_id=question.id
-		).order_by('created_at')
+		).order_by('-created_at')
 
-		# Also get answers as before
-		answers = Answer.objects.filter(question=question).order_by('created_at')
+		answers = Answer.objects.filter(question=question).order_by('-created_at')
 
 		context['comments'] = comments_on_question
 		context['answers'] = answers

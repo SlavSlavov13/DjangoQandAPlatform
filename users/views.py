@@ -2,8 +2,10 @@ from django.contrib.auth import get_user_model, authenticate, login, update_sess
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import render, redirect
+from django.template.context_processors import request
 from django.urls import reverse_lazy
 from django.utils.functional import SimpleLazyObject
 from django.views import View
@@ -40,7 +42,7 @@ class UserCreationView(CreateView):
 
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
-			return redirect('questions_list')
+			return redirect('profile-details', request.user.pk)
 		return super().dispatch(request, *args, **kwargs)
 
 
@@ -53,6 +55,7 @@ class EditProfileView(LoginRequiredMixin, View):
 		user_form = UserEditForm(instance=user)
 		profile_form = UserProfileEditForm(instance=user_profile)
 		password_form = PasswordChangeForm(user=user)
+		password_form.fields['old_password'].widget.attrs.pop('autofocus', None)
 		return render(request, self.template_name, {
 			'user_form': user_form,
 			'profile_form': profile_form,
@@ -62,11 +65,12 @@ class EditProfileView(LoginRequiredMixin, View):
 	def post(self, request):
 		user = request.user
 		user_profile = UserProfile.objects.get(user=user)
-		user_form = UserEditForm(request.POST, instance=user)
-		profile_form = UserProfileEditForm(request.POST, request.FILES, instance=user_profile)
-		password_form = PasswordChangeForm(user, request.POST)
 
 		if 'update_profile' in request.POST:
+			user_form = UserEditForm(request.POST, instance=user)
+			profile_form = UserProfileEditForm(request.POST, request.FILES, instance=user_profile)
+			password_form = PasswordChangeForm(user=user)
+			password_form.fields['old_password'].widget.attrs.pop('autofocus', None)
 			if user_form.is_valid() and profile_form.is_valid():
 				with transaction.atomic():
 					user_form.save()
@@ -74,10 +78,11 @@ class EditProfileView(LoginRequiredMixin, View):
 				return redirect('profile-details', user.id)
 
 		elif 'change_password' in request.POST:
+			password_form = PasswordChangeForm(user, request.POST)
+			user_form = UserEditForm(instance=user)
+			profile_form = UserProfileEditForm(instance=user_profile)
 			if password_form.is_valid():
 				user = password_form.save()
-				user = unwrap_user(user)
-				update_session_auth_hash(request, user)
 				return redirect('profile-details', user.id)
 
 		return render(request, self.template_name, {
@@ -85,6 +90,7 @@ class EditProfileView(LoginRequiredMixin, View):
 			'profile_form': profile_form,
 			'password_form': password_form,
 		})
+
 
 
 class ProfileLogoutView(LogoutView):
@@ -102,10 +108,10 @@ class ProfileLoginView(LoginView):
 
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
-			return redirect('questions_list')
+			return redirect('profile-details', request.user.pk)
 		return super().dispatch(request, *args, **kwargs)
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(LoginRequiredMixin, DetailView):
 	model = UserModel
 	template_name = 'users/user_details.html'
 	context_object_name = 'user_obj'

@@ -1,7 +1,18 @@
-<h2>Delete Question</h2>
-<p>Are you sure you want to delete the question "{{ object.title }}"?</p>
-<form method="post">
-	{% csrf_token %}
-	<button type="submit">Confirm Delete</button>
-	<a href="{% url 'questions_list' %}">Cancel</a>
-</form>
+{% extends "core/base.html" %}
+
+{% block content %}
+	<main class="form-demo-container">
+		<article class="form-demo-article">
+			<h2 class="delete-heading">Delete Question</h2>
+			<p class="delete-question-msg">
+				Are you sure you want to delete the question<br>
+				<span class="delete-question-title">"{{ object.title }}"</span>?
+			</p>
+			<form method="post" class="delete-form">
+				{% csrf_token %}
+				<button type="submit" class="btn btn-delete">Confirm Delete</button>
+				<a href="{% url 'question_details' object.pk %}" class="btn btn-edit">Cancel</a>
+			</form>
+		</article>
+	</main>
+{% endblock %}

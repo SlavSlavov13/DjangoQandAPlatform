@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -5,7 +6,7 @@ from .models import Answer
 from .forms import AnswerCreateForm
 from questions.models import Question
 
-class AnswerCreateView(CreateView):
+class AnswerCreateView(LoginRequiredMixin, CreateView):
 	model = Answer
 	form_class = AnswerCreateForm
 	template_name = 'answers/add_answer.html'

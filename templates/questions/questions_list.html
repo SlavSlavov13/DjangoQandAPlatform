@@ -1,7 +1,9 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-	<div class="questions-container" id="questions-container" data-user-id="{{ request.user.pk|default:'null' }}">
+	<div class="questions-container" id="questions-container"
+	     data-user-id="{{ request.user.pk|default:'null' }}"
+	     data-has-questions="{{ has_questions|yesno:'true,false' }}">
 		<!-- Search Bar -->
 		<form id="rest-search-form" autocomplete="off" class="top-bar-search site-search-form">
 			<input
@@ -22,7 +24,8 @@
 		<ul class="questions-list" id="question-list-container"></ul>
 
 		<!-- Pagination (populated by JS) -->
-		<nav class="pagination" aria-label="Questions pagination" id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}></nav>
+		<nav class="pagination" aria-label="Questions pagination"
+		     id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}></nav>
 	</div>
 
 	<script>
@@ -30,9 +33,8 @@
 			const container = document.getElementById('questions-container');
 			const userIdRaw = container.dataset.userId;
 			const userId = userIdRaw === 'null' ? null : parseInt(userIdRaw, 10);
-
+			const hasQuestions = container.dataset.hasQuestions === "true";
 			const apiEndpoint = "{% url 'question_search_api' %}";
-
 			const questionList = document.getElementById('question-list-container');
 			const paginationContainer = document.getElementById('pagination-container');
 			const searchForm = document.getElementById('rest-search-form');
@@ -123,7 +125,6 @@
 
 				paginationContainer.appendChild(ul);
 
-				// Page-jump form
 				const form = document.createElement('form');
 				form.id = 'pageJumpForm';
 				form.method = 'get';
@@ -215,7 +216,12 @@
 					const pageSize = data.page_size || 10;
 
 					if (results.length === 0) {
-						setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search.', 'empty');
+						// --- KEY CHANGE: decide message based on "initial" state ---
+						if (!hasQuestions) {
+							setStatusMessage('&#128578; <b>No questions have been posted yet.</b><br>Be the first to <a href="{% url "question_create" %}" class="ask-link">ask a question</a>!', 'empty');
+						} else {
+							setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search.', 'empty');
+						}
 						paginationContainer.style.display = 'none';
 						questionList.textContent = '';
 					} else {

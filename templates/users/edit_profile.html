@@ -3,23 +3,89 @@
 {% block content %}
 	<main class="profile-edit-container">
 		<article class="profile-edit-article">
+
+			<!-- Edit Profile Form -->
 			<form method="post" enctype="multipart/form-data" class="profile-form">
 				{% csrf_token %}
 				<h2>User Info</h2>
-				{{ user_form.as_p }}
+				{% for field in user_form %}
+					<div class="form-field{% if field.errors %} has-error{% endif %}">
+						<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+						{{ field }}
+						{% if field.help_text %}
+							<small class="help-text">{{ field.help_text }}</small>
+						{% endif %}
+						{% for error in field.errors %}
+							<div class="error-message">{{ error }}</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
 
 				<h2>Profile Info</h2>
-				{{ profile_form.as_p }}
+
+				<!-- Avatar field: custom displayed (PRETTY, NO "Currently") -->
+				<div class="form-field avatar-field">
+					<label for="id_avatar">Avatar</label>
+					<div class="avatar-upload-preview">
+						{% if profile_form.instance.avatar %}
+							<img src="{{ profile_form.instance.avatar.url }}" alt="Current avatar" class="avatar-preview-img">
+						{% else %}
+							<span class="avatar-img avatar-placeholder">
+				          {{ profile_form.instance.user.username|first|upper }}
+			        </span>
+						{% endif %}
+					</div>
+					{{ profile_form.avatar.as_widget }}
+					{% if profile_form.avatar.help_text %}
+						<small class="help-text">{{ profile_form.avatar.help_text }}</small>
+					{% endif %}
+					{% for error in profile_form.avatar.errors %}
+						<div class="error-message">{{ error }}</div>
+					{% endfor %}
+					{% if profile_form.avatar.field.required == False and profile_form.fields.avatar.value %}
+						<div class="form-field">
+							{{ profile_form.avatar_clear }} <label for="id_avatar-clear">Remove current avatar</label>
+						</div>
+					{% endif %}
+				</div>
+
+				{# Render rest of the profile fields (except avatar & avatar_clear) #}
+				{% for field in profile_form %}
+					{% if field.name != 'avatar' and field.name != 'avatar_clear' %}
+						<div class="form-field{% if field.errors %} has-error{% endif %}">
+							<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+							{{ field }}
+							{% if field.help_text %}
+								<small class="help-text">{{ field.help_text }}</small>
+							{% endif %}
+							{% for error in field.errors %}
+								<div class="error-message">{{ error }}</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% endfor %}
 
 				<button type="submit" name="update_profile" class="btn btn-edit">Save Profile</button>
 			</form>
 
 			<hr class="profile-edit-divider">
 
+			<!-- Change Password Form -->
 			<form method="post" class="password-form">
 				{% csrf_token %}
 				<h2>Change Password</h2>
-				{{ password_form.as_p }}
+				{% for field in password_form %}
+					<div class="form-field{% if field.errors %} has-error{% endif %}">
+						<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+						{{ field }}
+						{% if field.help_text %}
+							<small class="help-text">{{ field.help_text }}</small>
+						{% endif %}
+						{% for error in field.errors %}
+							<div class="error-message">{{ error }}</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
 				<button type="submit" name="change_password" class="btn btn-edit">Change Password</button>
 			</form>
 		</article>
