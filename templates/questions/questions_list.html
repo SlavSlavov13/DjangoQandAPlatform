@@ -16,20 +16,7 @@
 
 		<!-- Questions List Container (to be populated by JS) -->
 		<ul class="questions-list" id="question-list-container">
-			{% for question in questions %}
-				<li class="question-item">
-					<h2 class="question-title">{{ question.title|escape }}</h2>
-					<p class="question-body">{{ question.body|linebreaksbr|safe }}</p>
-					{% if question.author.pk == request.user.pk %}
-						<div class="question-actions">
-							<a class="btn btn-edit" href="{% url 'question_update' question.pk %}">Edit</a>
-							<a class="btn btn-delete" href="{% url 'question_delete' question.pk %}">Delete</a>
-						</div>
-					{% endif %}
-				</li>
-			{% empty %}
-				<li class="no-questions">No questions found.</li>
-			{% endfor %}
+
 		</ul>
 
 		<!-- Pagination -->
@@ -54,12 +41,10 @@
 			let currentSearch = "";
 			let currentPage = 1;
 
-			// Truncate text to maxLength with ellipsis
 			function truncate(text, maxLength) {
 				return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
 			}
 
-			// Render a single question item using DOM methods to avoid innerHTML and escape safely
 			function renderQuestionItem(q) {
 				const li = document.createElement('li');
 				li.className = 'question-item';
@@ -67,32 +52,50 @@
 				const h2 = document.createElement('h2');
 				h2.className = 'question-title';
 
-				// Create link for question title (linking to update page)
 				const a = document.createElement('a');
-				a.href = `/questions/${q.id}/update/`;  // Dynamic URL construction
-				a.textContent = q.title;  // textContent escapes automatically
+				a.href = `/questions/${q.id}/update/`;
+				a.textContent = q.title;
 				h2.appendChild(a);
 				li.appendChild(h2);
 
 				const p = document.createElement('p');
 				p.className = 'question-body';
-				p.textContent = truncate(q.body, 500); // safe truncation and text insertion
+				p.textContent = truncate(q.body, 500);
 				li.appendChild(p);
 
+				// Add Comment / Add Answer buttons for authenticated users
+				if (userId !== null) {
+					const divActions2 = document.createElement('div');
+					divActions2.className = 'question-actions';
+
+					const commentLink = document.createElement('a');
+					commentLink.className = 'btn btn-comment';
+					commentLink.href = `/questions/${q.id}/add_comment/`;
+					commentLink.textContent = 'Add Comment';
+
+					const answerLink = document.createElement('a');
+					answerLink.className = 'btn btn-answer';
+					answerLink.href = `/questions/${q.id}/add_answer/`;
+					answerLink.textContent = 'Add Answer';
+
+					divActions2.appendChild(commentLink);
+					divActions2.appendChild(answerLink);
+					li.appendChild(divActions2);
+				}
+
+				// Edit/Delete for author
 				if (q.author_pk === userId) {
 					const divActions = document.createElement('div');
 					divActions.className = 'question-actions';
 
-					// Edit button
 					const editLink = document.createElement('a');
 					editLink.className = 'btn btn-edit';
-					editLink.href = `/questions/${q.id}/update/`;  // Dynamic URL
+					editLink.href = `/questions/${q.id}/update/`;
 					editLink.textContent = 'Edit';
 
-					// Delete button
 					const deleteLink = document.createElement('a');
 					deleteLink.className = 'btn btn-delete';
-					deleteLink.href = `/questions/${q.id}/delete/`;  // Dynamic URL
+					deleteLink.href = `/questions/${q.id}/delete/`;
 					deleteLink.textContent = 'Delete';
 
 					divActions.appendChild(editLink);
@@ -103,7 +106,6 @@
 				return li;
 			}
 
-			// Create pagination elements safely without innerHTML
 			function renderPagination(page, totalPages) {
 				if (totalPages <= 1) {
 					paginationContainer.style.display = 'none';
@@ -111,7 +113,7 @@
 					return;
 				}
 				paginationContainer.style.display = 'block';
-				paginationContainer.textContent = ''; // Clear previous content
+				paginationContainer.textContent = '';
 
 				const ul = document.createElement('ul');
 				ul.className = 'pagination-links';
@@ -149,7 +151,6 @@
 
 				paginationContainer.appendChild(ul);
 
-				// Page jump form (constructed via DOM)
 				const form = document.createElement('form');
 				form.id = 'pageJumpForm';
 				form.method = 'get';
@@ -166,8 +167,6 @@
 				input.type = 'number';
 				input.id = 'page_number';
 				input.name = 'page';
-				input.min = 1;
-				input.max = totalPages;
 				input.value = page;
 				input.required = true;
 				input.className = 'page-jump-input';
@@ -190,7 +189,6 @@
 
 				paginationContainer.appendChild(form);
 
-				// Event listeners for links
 				ul.querySelectorAll('a[data-page]').forEach(link => {
 					link.addEventListener('click', e => {
 						e.preventDefault();
@@ -201,7 +199,6 @@
 					});
 				});
 
-				// Page jump form submission
 				form.addEventListener('submit', e => {
 					e.preventDefault();
 					let val = parseInt(input.value, 10);
@@ -211,7 +208,6 @@
 				});
 			}
 
-			// Fetch questions from API with optional search and page
 			async function fetchQuestions(search = "", page = 1) {
 				currentSearch = search;
 				currentPage = page;
@@ -267,7 +263,6 @@
 				}
 			}
 
-			// Debounce function
 			function debounce(func, wait) {
 				let timeout;
 				return function(...args) {
@@ -276,18 +271,15 @@
 				};
 			}
 
-			// Live search on input with debounce
 			searchInput.addEventListener('input', debounce(() => {
 				fetchQuestions(searchInput.value.trim(), 1);
 			}, 300));
 
-			// Form submit handler
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
 				fetchQuestions(searchInput.value.trim(), 1);
 			});
 
-			// Initial load immediately
 			fetchQuestions("", 1);
 
 		})();

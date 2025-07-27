@@ -316,3 +316,31 @@ main {
 	text-align: center;
 }
 
+
+/* Add Comment button */
+.btn-comment {
+	background-color: #d0e9c6;
+	color: #3c763d;
+	border-color: #a4d0a2;
+}
+
+.btn-comment:hover,
+.btn-comment:focus {
+	background-color: #bce1a8;
+	border-color: #7ebf6e;
+	color: #2a542b;
+}
+
+/* Add Answer button */
+.btn-answer {
+	background-color: #c6def7;
+	color: #31708f;
+	border-color: #9ac7f1;
+}
+
+.btn-answer:hover,
+.btn-answer:focus {
+	background-color: #a0cdfb;
+	border-color: #579edb;
+	color: #245269;
+}
