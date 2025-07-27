@@ -14,9 +14,11 @@
 				<strong>Q&A Platform</strong>
 			</a>
 
-			<form id="rest-search-form" autocomplete="off" onsubmit="return false;" class="top-bar-search">
-				<input type="text" id="rest-search-input" placeholder="Search..." aria-label="Search questions"/>
-				<button type="submit" aria-label="Search">🔍</button>
+			<form action="{% url 'questions_list' %}" method="get" class="top-bar-search">
+				<input type="text" name="q" placeholder="Search..." aria-label="Search questions"/>
+				<button type="submit" aria-label="Search">
+					🔍
+				</button>
 			</form>
 
 			<ul class="top-bar-links">
@@ -46,89 +48,6 @@
 		</div>
 	</div>
 </footer>
-
-<script>
-	// Expose current user's primary key
-	window.currentUserPk = {{ request.user.pk|default:"null" }};
-
-	function renderResults(data) {
-		let html = '';
-		if (!data || data.length === 0) {
-			html = '<li class="no-questions">No questions found.</li>';
-		} else {
-			data.forEach(q => {
-				html += `<li class="question-item">
-                <h2 class="question-title">${q.title}</h2>
-                <p class="question-body">${q.body}</p>
-                ${
-					q.tags && q.tags.length > 0
-						? `<div><strong>Tags:</strong> ${q.tags.map(t => t.name).join(', ')}</div>`
-						: ''
-				}
-                ${
-					q.author_pk && q.author_pk === window.currentUserPk
-						? `<div class="question-actions">
-                              <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
-                              <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
-                           </div>`
-						: ''
-				}
-             </li>`;
-			});
-		}
-		document.getElementById('questions-list').innerHTML = html;
-
-		// Hide pagination during search if there's a query, show if empty
-		const pag = document.querySelector('.pagination');
-		if (pag) {
-			pag.style.display = (searchInput.value.trim() !== '') ? 'none' : '';
-		}
-	}
-
-	// Debounce function: delays execution until user stops typing for 300ms
-	function debounce(func, delay) {
-		let timer = null;
-		return function(...args) {
-			clearTimeout(timer);
-			timer = setTimeout(() => func.apply(this, args), delay);
-		};
-	}
-
-	const searchInput = document.getElementById('rest-search-input');
-	const searchForm = document.getElementById('rest-search-form');
-
-	searchInput.addEventListener('input', debounce(function() {
-		const query = this.value.trim();
-
-		// Optional: If query is empty, show default questions list (or clear results)
-		if (query === '') {
-			// Fetch all questions without any search filter
-			fetch(`/api/questions/search/`)  // no search param returns all
-				.then(response => response.json())
-				.then(data => renderResults(data.results || []))
-				.catch(() => {
-					document.getElementById('questions-list').innerHTML =
-						'<li class="no-questions" style="color:red;">Error loading questions.</li>';
-				});
-			const pag = document.querySelector('.pagination');
-			if (pag) pag.style.display = '';  // Show pagination if exists
-			return;
-		}
-
-		fetch(`/api/questions/search/?search=${encodeURIComponent(query)}`)
-			.then(response => response.json())
-			.then(data => renderResults(data.results || []))
-			.catch(err => {
-				document.getElementById('questions-list').innerHTML =
-					'<li class="no-questions" style="color:red;">Error searching.</li>';
-			});
-	}, 300));  // 300ms debounce delay
-
-	// Prevent form submission from reloading the page (for accessibility)
-	searchForm.onsubmit = function() { return false; };
-</script>
-
-
 
 
 </body>

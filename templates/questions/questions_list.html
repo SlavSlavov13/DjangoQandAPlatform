@@ -2,14 +2,11 @@
 {% block main %}
 	<div class="questions-container">
 
-		<ul class="questions-list" id="questions-list">
+		<ul class="questions-list">
 			{% for question in questions %}
 				<li class="question-item">
 					<h2 class="question-title">{{ question.title }}</h2>
 					<p class="question-body">{{ question.body }}</p>
-					{% if question.tags.all %}
-						<div><strong>Tags:</strong> {{ question.tags.all|join:', ' }}</div>
-					{% endif %}
 					{% if question.author.pk == request.user.pk %}
 						<div class="question-actions">
 							<a class="btn btn-edit" href="{% url 'question_update' question.pk %}">Edit</a>
@@ -21,7 +18,6 @@
 				<li class="no-questions">No questions found.</li>
 			{% endfor %}
 		</ul>
-
 
 		{% if is_paginated %}
 			<nav class="pagination" aria-label="Questions pagination">
