@@ -26,7 +26,7 @@ class UserCreationView(CreateView):
 	model = UserModel
 	template_name = 'users/create_user.html'
 	form_class = UserRegistrationForm
-	success_url = reverse_lazy('edit_profile')
+	success_url = reverse_lazy('profile-details')
 
 	def form_valid(self, form):
 		response = super().form_valid(form)

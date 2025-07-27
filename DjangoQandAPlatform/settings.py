@@ -44,10 +44,7 @@ INSTALLED_APPS = [
     'answers.apps.AnswersConfig',
     'comments.apps.CommentsConfig',
     'tags.apps.TagsConfig',
-    'notifications.apps.NotificationsConfig',
-    'votes.apps.VotesConfig',
     'api.apps.ApiConfig',
-    'core.apps.CoreConfig',
     'badges.apps.BadgesConfig',
     'rest_framework',
 ]
