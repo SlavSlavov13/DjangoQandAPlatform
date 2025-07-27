@@ -14,13 +14,6 @@
 				<strong>Q&A Platform</strong>
 			</a>
 
-			<form action="{% url 'questions_list' %}" method="get" class="top-bar-search">
-				<input type="text" name="q" placeholder="Search..." aria-label="Search questions"/>
-				<button type="submit" aria-label="Search">
-					🔍
-				</button>
-			</form>
-
 			<ul class="top-bar-links">
 				<li><a href="{% url 'questions_list' %}">Questions</a></li>
 				{% if request.user.is_authenticated %}
@@ -48,7 +41,6 @@
 		</div>
 	</div>
 </footer>
-
 
 </body>
 </html>
