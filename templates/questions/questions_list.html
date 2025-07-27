@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
-{% block main %}
-	<div class="questions-container">
 
+{% block main %}
+	<div class="questions-container" id="questions-container" data-user-id="{{ request.user.pk|default:'null' }}">
 		<!-- Search Bar -->
 		<form id="rest-search-form" autocomplete="off">
 			<input
@@ -18,8 +18,8 @@
 		<ul class="questions-list" id="question-list-container">
 			{% for question in questions %}
 				<li class="question-item">
-					<h2 class="question-title">{{ question.title }}</h2>
-					<p class="question-body">{{ question.body }}</p>
+					<h2 class="question-title">{{ question.title|escape }}</h2>
+					<p class="question-body">{{ question.body|linebreaksbr|safe }}</p>
 					{% if question.author.pk == request.user.pk %}
 						<div class="question-actions">
 							<a class="btn btn-edit" href="{% url 'question_update' question.pk %}">Edit</a>
@@ -36,20 +36,26 @@
 		<nav class="pagination" aria-label="Questions pagination" id="pagination-container" {% if not is_paginated %}style="display:none"{% endif %}>
 			<!-- Pagination links will be rendered here by JS -->
 		</nav>
-
 	</div>
 
 	<script>
 		(function() {
-			const apiEndpoint = "/api/questions/search/";
+			const container = document.getElementById('questions-container');
+			const userIdRaw = container.dataset.userId;
+			// Convert userId to integer or null if 'null'
+			const userId = userIdRaw === 'null' ? null : parseInt(userIdRaw, 10);
+
+			const apiEndpoint = "{% url 'question_search_api' %}";
+
 			const questionList = document.getElementById('question-list-container');
 			const paginationContainer = document.getElementById('pagination-container');
 			const searchForm = document.getElementById('rest-search-form');
 			const searchInput = document.getElementById('rest-search-input');
+
 			let currentSearch = "";
 			let currentPage = 1;
 
-			// Escape HTML in strings to prevent XSS
+			// Escape HTML to prevent XSS
 			function escapeHtml(text) {
 				const map = {
 					'&': '&amp;',
@@ -67,22 +73,21 @@
 				return text.substring(0, maxLength) + '...';
 			}
 
-			// Render a single question item HTML (matches your template style)
+			// Render a single question item HTML matching template style
 			function renderQuestionItem(q) {
-				const userId = {{ request.user.pk|default:'null' }};
 				const authorId = q.author_pk;
 
 				return `
-        <li class="question-item">
-          <h2 class="question-title"><a href="/questions/${q.id}/">${escapeHtml(q.title)}</a></h2>
-          <p class="question-body">${escapeHtml(truncate(q.body, 500))}</p>
-          ${authorId === userId ? `
-            <div class="question-actions">
-              <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
-              <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
-            </div>` : ''}
-        </li>
-      `;
+            <li class="question-item">
+                <h2 class="question-title"><a href="/questions/${q.id}/">${escapeHtml(q.title)}</a></h2>
+                <p class="question-body">${escapeHtml(truncate(q.body, 500))}</p>
+                ${authorId === userId ? `
+                    <div class="question-actions">
+                        <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
+                        <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
+                    </div>` : ''}
+            </li>
+        `;
 			}
 
 			// Render pagination links and page jump form
@@ -99,56 +104,50 @@
 				function makePageLink(label, p, disabled = false, ariaLabel = null) {
 					const aria = ariaLabel ? `aria-label="${ariaLabel}"` : "";
 					if (disabled) {
-						return `<li class="disabled">${label}</li>`;
+						return `<li class="disabled" aria-disabled="true">${label}</li>`;
 					} else {
 						return `<li><a href="#" data-page="${p}" ${aria}>${label}</a></li>`;
 					}
 				}
 
-				// First
 				html += (page === 1)
 					? makePageLink("First", 1, true)
 					: makePageLink("First", 1, false, "First page");
 
-				// Previous
 				html += (page === 1)
 					? makePageLink("Previous", page - 1, true)
 					: makePageLink("Previous", page - 1, false, "Previous page");
 
-				// Current page info
 				html += `<li class="current-page" aria-current="page">Page ${page} of ${totalPages}</li>`;
 
-				// Next
 				html += (page === totalPages)
 					? makePageLink("Next", page + 1, true)
 					: makePageLink("Next", page + 1, false, "Next page");
 
-				// Last
 				html += (page === totalPages)
 					? makePageLink("Last", totalPages, true)
 					: makePageLink("Last", totalPages, false, "Last page");
 
 				html += `</ul>`;
 
-				// Page jump form
 				html += `
-        <form id="pageJumpForm" method="get" class="page-jump-form" aria-label="Jump to page form" onsubmit="return false;">
-          <label for="page_number" class="page-jump-label">Go to page:</label>
-          <input
-            type="number"
-            id="page_number"
-            name="page"
-            min="1"
-            max="${totalPages}"
-            value="${page}"
-            required
-            class="page-jump-input"
-            aria-describedby="pageJumpHelp"
-          >
-          <button type="submit" class="btn btn-go">Go</button>
-          <small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and ${totalPages}</small>
-        </form>
-      `;
+            <form id="pageJumpForm" method="get" class="page-jump-form" aria-label="Jump to page form" onsubmit="return false;">
+                <label for="page_number" class="page-jump-label">Go to page:</label>
+                <input
+                    type="number"
+                    id="page_number"
+                    name="page"
+                    min="1"
+                    max="${totalPages}"
+                    value="${page}"
+                    required
+                    class="page-jump-input"
+                    aria-describedby="pageJumpHelp"
+                >
+                <button type="submit" class="btn btn-go">Go</button>
+                <small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and ${totalPages}</small>
+            </form>
+        `;
 
 				paginationContainer.innerHTML = html;
 
@@ -181,8 +180,15 @@
 				currentSearch = search;
 				currentPage = page;
 
-				questionList.innerHTML = `<li>Loading...</li>`;
-				paginationContainer.style.display = 'none';
+				// Disable inputs while loading
+				searchInput.disabled = true;
+				searchForm.querySelector('button[type="submit"]').disabled = true;
+
+				// Delayed loader timeout for smooth UI
+				let loaderTimeout = setTimeout(() => {
+					questionList.innerHTML = `<li>Loading...</li>`;
+					paginationContainer.style.display = 'none';
+				}, 300);
 
 				// Build query params
 				const params = new URLSearchParams();
@@ -194,32 +200,39 @@
 						headers: {
 							'Accept': 'application/json',
 						},
-						credentials: 'same-origin' // send cookies for auth if any
+						credentials: 'same-origin',
 					});
+
+					clearTimeout(loaderTimeout);
 
 					if (!response.ok) {
 						throw new Error('Failed to fetch questions');
 					}
+
 					const data = await response.json();
 
 					const results = data.results || [];
 					const count = data.count || 0;
-					const pageSize = data.page_size || 10; // fallback page size
+					const pageSize = data.page_size || 10;
 
 					if (results.length === 0) {
 						questionList.innerHTML = `<li class="no-questions">No questions found.</li>`;
 						paginationContainer.style.display = 'none';
-						return;
+					} else {
+						questionList.innerHTML = results.map(renderQuestionItem).join('');
+						const totalPages = Math.ceil(count / pageSize);
+						renderPagination(page, totalPages);
 					}
-
-					questionList.innerHTML = results.map(renderQuestionItem).join('');
-					const totalPages = Math.ceil(count / pageSize);
-					renderPagination(page, totalPages);
-
 				} catch (error) {
+					clearTimeout(loaderTimeout);
 					questionList.innerHTML = `<li class="error">Error loading questions.</li>`;
 					paginationContainer.style.display = 'none';
 					console.error(error);
+				} finally {
+					searchInput.disabled = false;
+					searchForm.querySelector('button[type="submit"]').disabled = false;
+
+					searchInput.focus();
 				}
 			}
 
@@ -238,17 +251,16 @@
 				fetchQuestions(searchVal, 1);
 			}, 300));
 
-			// Optional form submit handler (Enter key press)
+			// Form submit handler for Enter key
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
 				const searchVal = searchInput.value.trim();
 				fetchQuestions(searchVal, 1);
 			});
 
-			// Initial load: fetch all questions on page load
-			document.addEventListener('DOMContentLoaded', () => {
-				fetchQuestions("", 1);
-			});
+			// Initial load immediately without waiting for DOMContentLoaded
+			fetchQuestions("", 1);
+
 		})();
 	</script>
 
