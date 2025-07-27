@@ -42,7 +42,6 @@
 		(function() {
 			const container = document.getElementById('questions-container');
 			const userIdRaw = container.dataset.userId;
-			// Convert userId to integer or null if 'null'
 			const userId = userIdRaw === 'null' ? null : parseInt(userIdRaw, 10);
 
 			const apiEndpoint = "{% url 'question_search_api' %}";
@@ -55,120 +54,157 @@
 			let currentSearch = "";
 			let currentPage = 1;
 
-			// Escape HTML to prevent XSS
-			function escapeHtml(text) {
-				const map = {
-					'&': '&amp;',
-					'<': '&lt;',
-					'>': '&gt;',
-					'"': '&quot;',
-					"'": '&#039;'
-				};
-				return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-			}
-
-			// Truncate a string with ellipsis
+			// Truncate text to maxLength with ellipsis
 			function truncate(text, maxLength) {
-				if (text.length <= maxLength) return text;
-				return text.substring(0, maxLength) + '...';
+				return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
 			}
 
-			// Render a single question item HTML matching template style
+			// Render a single question item using DOM methods to avoid innerHTML and escape safely
 			function renderQuestionItem(q) {
-				const authorId = q.author_pk;
+				const li = document.createElement('li');
+				li.className = 'question-item';
 
-				return `
-            <li class="question-item">
-                <h2 class="question-title"><a href="/questions/${q.id}/">${escapeHtml(q.title)}</a></h2>
-                <p class="question-body">${escapeHtml(truncate(q.body, 500))}</p>
-                ${authorId === userId ? `
-                    <div class="question-actions">
-                        <a class="btn btn-edit" href="/questions/${q.id}/edit/">Edit</a>
-                        <a class="btn btn-delete" href="/questions/${q.id}/delete/">Delete</a>
-                    </div>` : ''}
-            </li>
-        `;
+				const h2 = document.createElement('h2');
+				h2.className = 'question-title';
+
+				// Create link for question title (linking to update page)
+				const a = document.createElement('a');
+				a.href = `/questions/${q.id}/update/`;  // Dynamic URL construction
+				a.textContent = q.title;  // textContent escapes automatically
+				h2.appendChild(a);
+				li.appendChild(h2);
+
+				const p = document.createElement('p');
+				p.className = 'question-body';
+				p.textContent = truncate(q.body, 500); // safe truncation and text insertion
+				li.appendChild(p);
+
+				if (q.author_pk === userId) {
+					const divActions = document.createElement('div');
+					divActions.className = 'question-actions';
+
+					// Edit button
+					const editLink = document.createElement('a');
+					editLink.className = 'btn btn-edit';
+					editLink.href = `/questions/${q.id}/update/`;  // Dynamic URL
+					editLink.textContent = 'Edit';
+
+					// Delete button
+					const deleteLink = document.createElement('a');
+					deleteLink.className = 'btn btn-delete';
+					deleteLink.href = `/questions/${q.id}/delete/`;  // Dynamic URL
+					deleteLink.textContent = 'Delete';
+
+					divActions.appendChild(editLink);
+					divActions.appendChild(deleteLink);
+					li.appendChild(divActions);
+				}
+
+				return li;
 			}
 
-			// Render pagination links and page jump form
+			// Create pagination elements safely without innerHTML
 			function renderPagination(page, totalPages) {
 				if (totalPages <= 1) {
 					paginationContainer.style.display = 'none';
-					paginationContainer.innerHTML = '';
+					paginationContainer.textContent = '';
 					return;
 				}
 				paginationContainer.style.display = 'block';
+				paginationContainer.textContent = ''; // Clear previous content
 
-				let html = `<ul class="pagination-links">`;
+				const ul = document.createElement('ul');
+				ul.className = 'pagination-links';
 
 				function makePageLink(label, p, disabled = false, ariaLabel = null) {
-					const aria = ariaLabel ? `aria-label="${ariaLabel}"` : "";
+					const li = document.createElement('li');
 					if (disabled) {
-						return `<li class="disabled" aria-disabled="true">${label}</li>`;
+						li.className = 'disabled';
+						li.setAttribute('aria-disabled', 'true');
+						li.textContent = label;
 					} else {
-						return `<li><a href="#" data-page="${p}" ${aria}>${label}</a></li>`;
+						const a = document.createElement('a');
+						a.href = '#';
+						a.dataset.page = p;
+						if (ariaLabel) {
+							a.setAttribute('aria-label', ariaLabel);
+						}
+						a.textContent = label;
+						li.appendChild(a);
 					}
+					return li;
 				}
 
-				html += (page === 1)
-					? makePageLink("First", 1, true)
-					: makePageLink("First", 1, false, "First page");
+				ul.appendChild(page === 1 ? makePageLink("First", 1, true) : makePageLink("First", 1, false, "First page"));
+				ul.appendChild(page === 1 ? makePageLink("Previous", page - 1, true) : makePageLink("Previous", page - 1, false, "Previous page"));
 
-				html += (page === 1)
-					? makePageLink("Previous", page - 1, true)
-					: makePageLink("Previous", page - 1, false, "Previous page");
+				const currentLi = document.createElement('li');
+				currentLi.className = 'current-page';
+				currentLi.setAttribute('aria-current', 'page');
+				currentLi.textContent = `Page ${page} of ${totalPages}`;
+				ul.appendChild(currentLi);
 
-				html += `<li class="current-page" aria-current="page">Page ${page} of ${totalPages}</li>`;
+				ul.appendChild(page === totalPages ? makePageLink("Next", page + 1, true) : makePageLink("Next", page + 1, false, "Next page"));
+				ul.appendChild(page === totalPages ? makePageLink("Last", totalPages, true) : makePageLink("Last", totalPages, false, "Last page"));
 
-				html += (page === totalPages)
-					? makePageLink("Next", page + 1, true)
-					: makePageLink("Next", page + 1, false, "Next page");
+				paginationContainer.appendChild(ul);
 
-				html += (page === totalPages)
-					? makePageLink("Last", totalPages, true)
-					: makePageLink("Last", totalPages, false, "Last page");
+				// Page jump form (constructed via DOM)
+				const form = document.createElement('form');
+				form.id = 'pageJumpForm';
+				form.method = 'get';
+				form.className = 'page-jump-form';
+				form.setAttribute('aria-label', 'Jump to page form');
+				form.onsubmit = function(e) { e.preventDefault(); return false; };
 
-				html += `</ul>`;
+				const label = document.createElement('label');
+				label.setAttribute('for', 'page_number');
+				label.className = 'page-jump-label';
+				label.textContent = 'Go to page:';
 
-				html += `
-            <form id="pageJumpForm" method="get" class="page-jump-form" aria-label="Jump to page form" onsubmit="return false;">
-                <label for="page_number" class="page-jump-label">Go to page:</label>
-                <input
-                    type="number"
-                    id="page_number"
-                    name="page"
-                    min="1"
-                    max="${totalPages}"
-                    value="${page}"
-                    required
-                    class="page-jump-input"
-                    aria-describedby="pageJumpHelp"
-                >
-                <button type="submit" class="btn btn-go">Go</button>
-                <small id="pageJumpHelp" class="form-help-text">Enter a page number between 1 and ${totalPages}</small>
-            </form>
-        `;
+				const input = document.createElement('input');
+				input.type = 'number';
+				input.id = 'page_number';
+				input.name = 'page';
+				input.min = 1;
+				input.max = totalPages;
+				input.value = page;
+				input.required = true;
+				input.className = 'page-jump-input';
+				input.setAttribute('aria-describedby', 'pageJumpHelp');
 
-				paginationContainer.innerHTML = html;
+				const button = document.createElement('button');
+				button.type = 'submit';
+				button.className = 'btn btn-go';
+				button.textContent = 'Go';
 
-				// Add click event listeners for pagination links
-				paginationContainer.querySelectorAll('a[data-page]').forEach(link => {
+				const small = document.createElement('small');
+				small.id = 'pageJumpHelp';
+				small.className = 'form-help-text';
+				small.textContent = `Enter a page number between 1 and ${totalPages}`;
+
+				form.appendChild(label);
+				form.appendChild(input);
+				form.appendChild(button);
+				form.appendChild(small);
+
+				paginationContainer.appendChild(form);
+
+				// Event listeners for links
+				ul.querySelectorAll('a[data-page]').forEach(link => {
 					link.addEventListener('click', e => {
 						e.preventDefault();
-						const selectedPage = parseInt(link.getAttribute('data-page'));
+						const selectedPage = parseInt(link.dataset.page, 10);
 						if (selectedPage && selectedPage !== currentPage && selectedPage >= 1 && selectedPage <= totalPages) {
 							fetchQuestions(currentSearch, selectedPage);
 						}
 					});
 				});
 
-				// Page jump form handler
-				const pageJumpForm = document.getElementById('pageJumpForm');
-				const pageNumberInput = document.getElementById('page_number');
-
-				pageJumpForm.addEventListener('submit', e => {
+				// Page jump form submission
+				form.addEventListener('submit', e => {
 					e.preventDefault();
-					let val = parseInt(pageNumberInput.value, 10);
+					let val = parseInt(input.value, 10);
 					if (isNaN(val) || val < 1) val = 1;
 					if (val > totalPages) val = totalPages;
 					fetchQuestions(currentSearch, val);
@@ -180,34 +216,27 @@
 				currentSearch = search;
 				currentPage = page;
 
-				// Disable inputs while loading
 				searchInput.disabled = true;
 				searchForm.querySelector('button[type="submit"]').disabled = true;
 
-				// Delayed loader timeout for smooth UI
 				let loaderTimeout = setTimeout(() => {
-					questionList.innerHTML = `<li>Loading...</li>`;
+					questionList.textContent = 'Loading...';
 					paginationContainer.style.display = 'none';
 				}, 300);
 
-				// Build query params
 				const params = new URLSearchParams();
 				if (search) params.append('search', search);
 				if (page) params.append('page', page);
 
 				try {
 					const response = await fetch(`${apiEndpoint}?${params.toString()}`, {
-						headers: {
-							'Accept': 'application/json',
-						},
+						headers: { 'Accept': 'application/json' },
 						credentials: 'same-origin',
 					});
 
 					clearTimeout(loaderTimeout);
 
-					if (!response.ok) {
-						throw new Error('Failed to fetch questions');
-					}
+					if (!response.ok) throw new Error('Failed to fetch questions');
 
 					const data = await response.json();
 
@@ -216,27 +245,29 @@
 					const pageSize = data.page_size || 10;
 
 					if (results.length === 0) {
-						questionList.innerHTML = `<li class="no-questions">No questions found.</li>`;
+						questionList.textContent = 'No questions found.';
 						paginationContainer.style.display = 'none';
 					} else {
-						questionList.innerHTML = results.map(renderQuestionItem).join('');
+						questionList.textContent = '';
+						results.forEach(q => {
+							questionList.appendChild(renderQuestionItem(q));
+						});
 						const totalPages = Math.ceil(count / pageSize);
 						renderPagination(page, totalPages);
 					}
 				} catch (error) {
 					clearTimeout(loaderTimeout);
-					questionList.innerHTML = `<li class="error">Error loading questions.</li>`;
+					questionList.textContent = 'Error loading questions.';
 					paginationContainer.style.display = 'none';
 					console.error(error);
 				} finally {
 					searchInput.disabled = false;
 					searchForm.querySelector('button[type="submit"]').disabled = false;
-
 					searchInput.focus();
 				}
 			}
 
-			// Debounce function to limit how often a function is called
+			// Debounce function
 			function debounce(func, wait) {
 				let timeout;
 				return function(...args) {
@@ -247,18 +278,16 @@
 
 			// Live search on input with debounce
 			searchInput.addEventListener('input', debounce(() => {
-				const searchVal = searchInput.value.trim();
-				fetchQuestions(searchVal, 1);
+				fetchQuestions(searchInput.value.trim(), 1);
 			}, 300));
 
-			// Form submit handler for Enter key
+			// Form submit handler
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
-				const searchVal = searchInput.value.trim();
-				fetchQuestions(searchVal, 1);
+				fetchQuestions(searchInput.value.trim(), 1);
 			});
 
-			// Initial load immediately without waiting for DOMContentLoaded
+			// Initial load immediately
 			fetchQuestions("", 1);
 
 		})();
