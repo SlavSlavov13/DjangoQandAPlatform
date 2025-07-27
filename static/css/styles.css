@@ -1376,3 +1376,28 @@ main {
 	margin: 1rem 0;
 }
 
+.btn-tag-filter {
+	display: inline-block;
+	background-color: #e1ecf4;
+	border: 1px solid #7aa7c7;
+	color: #39739d;
+	padding: 0.3em 0.75em;
+	border-radius: 3px;
+	font-weight: 600;
+	cursor: pointer;
+	margin: 0 0.25rem 0.25rem 0;
+	transition: background-color 0.2s ease;
+}
+
+.btn-tag-filter:hover,
+.btn-tag-filter:focus {
+	background-color: #a6c8ff;
+	border-color: #4791db;
+	outline: none;
+}
+
+.btn-tag-filter.selected {
+	background-color: #0077cc;
+	border-color: #005fa3;
+	color: white;
+}

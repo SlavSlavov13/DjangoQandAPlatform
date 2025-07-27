@@ -10,6 +10,7 @@ from answers.models import Answer
 from comments.models import Comment
 from questions.forms import QuestionCreateForm, QuestionEditForm
 from questions.models import Question
+from tags.models import Tag
 
 
 # Create your views here.
@@ -48,6 +49,7 @@ class QuestionListView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['has_questions'] = Question.objects.exists()
+		context['tags'] = Tag.objects.all()
 		return context
 
 
@@ -89,6 +91,10 @@ class QuestionDeleteView(LoginRequiredMixin, DeleteView):
 class QuestionDetailView(DetailView):
 	model = Question
 	template_name = "questions/question_details.html"
+
+	def get_object(self, queryset=None):
+		queryset = self.get_queryset().select_related('author')
+		return super().get_object(queryset=queryset)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)

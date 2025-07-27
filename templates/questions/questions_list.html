@@ -4,6 +4,15 @@
 	<div class="questions-container" id="questions-container"
 	     data-user-id="{{ request.user.pk|default:'null' }}"
 	     data-has-questions="{{ has_questions|yesno:'true,false' }}">
+
+		<div id="tag-filter-container" aria-label="Filter questions by tags" role="region" style="margin-bottom: 1rem;">
+			<span style="font-weight: 600; margin-right: 0.75rem;">Filter by tag:</span>
+			{% for tag in tags %}
+				<button type="button" class="btn btn-tag-filter" data-tag-id="{{ tag.id }}">{{ tag.name|lower|capfirst }}</button>
+			{% endfor %}
+			<button type="button" class="btn btn-tag-filter btn-clear" style="margin-left: 1rem;">Clear Filter</button>
+		</div>
+
 		<!-- Search Bar -->
 		<form id="rest-search-form" autocomplete="off" class="top-bar-search site-search-form">
 			<input
@@ -43,6 +52,45 @@
 
 			let currentSearch = "";
 			let currentPage = 1;
+
+			const tagFilterContainer = document.getElementById('tag-filter-container');
+			let selectedTagIds = new Set();  // Use a Set to track selected tag IDs
+
+			tagFilterContainer.addEventListener('click', (e) => {
+				const button = e.target.closest('button.btn-tag-filter');
+				if (!button) return;
+
+				if (button.classList.contains('btn-clear')) {
+					// Clear all selected tags
+					selectedTagIds.clear();
+					updateTagFilterButtons();
+					fetchQuestions(searchInput.value.trim(), 1);
+				} else {
+					const tagId = button.dataset.tagId;
+					// Toggle selection of the clicked tag
+					if (selectedTagIds.has(tagId)) {
+						selectedTagIds.delete(tagId);
+					} else {
+						selectedTagIds.add(tagId);
+					}
+					updateTagFilterButtons();
+					fetchQuestions(searchInput.value.trim(), 1);
+				}
+			});
+
+			function updateTagFilterButtons() {
+				tagFilterContainer.querySelectorAll('.btn-tag-filter').forEach(btn => {
+					const tagId = btn.dataset.tagId;
+					if (btn.classList.contains('btn-clear')) {
+						btn.disabled = selectedTagIds.size === 0;  // Enable only if some tags selected
+					} else if (selectedTagIds.has(tagId)) {
+						btn.classList.add('selected');
+					} else {
+						btn.classList.remove('selected');
+					}
+				});
+			}
+
 
 			function truncate(text, maxLength) {
 				return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
@@ -200,6 +248,11 @@
 				if (search) params.append('search', search);
 				if (page) params.append('page', page);
 
+				// Append all selected tags - multiple tag params with same key 'tag'
+				selectedTagIds.forEach(tagId => {
+					params.append('tag', tagId);
+				});
+
 				try {
 					const response = await fetch(`${apiEndpoint}?${params.toString()}`, {
 						headers: { 'Accept': 'application/json' },
@@ -216,11 +269,10 @@
 					const pageSize = data.page_size || 10;
 
 					if (results.length === 0) {
-						// --- KEY CHANGE: decide message based on "initial" state ---
 						if (!hasQuestions) {
 							setStatusMessage('&#128578; <b>No questions have been posted yet.</b><br>Be the first to <a href="{% url "question_create" %}" class="ask-link">ask a question</a>!', 'empty');
 						} else {
-							setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search.', 'empty');
+							setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search or tag filter.', 'empty');
 						}
 						paginationContainer.style.display = 'none';
 						questionList.textContent = '';
@@ -263,8 +315,10 @@
 				fetchQuestions(searchInput.value.trim(), 1);
 			});
 
+			// Initialize UI and fetch initial questions
+			updateTagFilterButtons();
 			fetchQuestions("", 1);
-
 		})();
+
 	</script>
 {% endblock %}
