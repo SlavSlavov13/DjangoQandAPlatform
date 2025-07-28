@@ -1043,7 +1043,7 @@ main {
 }
 
 .btn-comment {
-	background-color: #f1f3f5;
+	background-color: #e4e6e7;
 	color: #39739d;
 	border: 1px solid #d6d9dc;
 	transition: background-color 0.2s ease;
@@ -1400,4 +1400,182 @@ main {
 	background-color: #0077cc;
 	border-color: #005fa3;
 	color: white;
+}
+.questions-container {
+	max-width: 900px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}
+
+.question-title-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.question-title {
+	margin: 0;
+	flex: 1 1 auto;
+}
+
+.question-edit-delete-buttons a {
+	margin-left: 0.5rem;
+	padding: 0.3rem 0.7rem;
+	text-decoration: none;
+	border-radius: 3px;
+	font-size: 0.9rem;
+	transition: background-color 0.2s ease;
+}
+
+.question-edit-delete-buttons a.btn-edit {
+	background-color: #007bff;
+	color: white;
+}
+
+.question-edit-delete-buttons a.btn-edit:hover {
+	background-color: #0056b3;
+}
+
+.question-edit-delete-buttons a.btn-delete {
+	background-color: #dc3545;
+	color: white;
+}
+
+.question-edit-delete-buttons a.btn-delete:hover {
+	background-color: #a71d2a;
+}
+
+.question-meta {
+	font-size: 0.9rem;
+	color: #555;
+	margin-bottom: 1rem;
+}
+
+.question-body {
+	line-height: 1.5;
+	margin-bottom: 1rem;
+}
+
+.question-tags {
+	margin-bottom: 1rem;
+}
+
+.question-tags .tag {
+	display: inline-block;
+	background-color: #e1ecf4;
+	color: #39739d;
+	border-radius: 3px;
+	padding: 0.2rem 0.6rem;
+	font-size: 0.85rem;
+	margin-right: 0.3rem;
+	margin-bottom: 0.3rem;
+}
+
+.toggle-buttons {
+	margin-bottom: 1rem;
+}
+
+.toggle-buttons .btn {
+	margin-right: 0.5rem;
+}
+
+/* Buttons */
+
+.btn {
+	cursor: pointer;
+	border: none;
+	border-radius: 4px;
+	padding: 0.5rem 0.9rem;
+	font-size: 1rem;
+	text-decoration: none;
+	display: inline-block;
+	user-select: none;
+	transition: background-color 0.2s ease;
+}
+
+.btn-small {
+	font-size: 0.85rem;
+	padding: 0.3rem 0.6rem;
+}
+
+/* Cards */
+
+.card-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.card-item {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 0.8rem 1rem;
+	margin-bottom: 1rem;
+	background-color: #fafafa;
+}
+
+.card-body {
+	margin-bottom: 0.5rem;
+	white-space: pre-wrap;
+}
+
+.card-meta {
+	font-size: 0.85rem;
+	color: #666;
+}
+
+.answer-buttons-wrapper {
+	margin-top: 0.5rem;
+}
+
+/* Section heading + add button container */
+
+.section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+	gap: 1rem;
+}
+
+.section-heading {
+	font-weight: 600;
+	margin: 0;
+	flex-grow: 1;
+}
+
+.add-section-btn {
+	white-space: nowrap;
+	padding: 0.4rem 0.9rem;
+	font-size: 1rem;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+	.question-title-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.question-edit-delete-buttons {
+		margin-top: 0.5rem;
+	}
+	.section-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+	.add-section-btn {
+		align-self: flex-start;
+	}
+}
+
+li.card-item {
+	margin: 1rem 0 0 0 ;
+	padding: 1rem;
+}
+
+li.card-item p {
+	margin: 0 ;
 }

@@ -3,16 +3,25 @@
 {% block content %}
 	<main class="questions-container">
 		<article class="question-detail">
-			<h1 class="question-title">{{ question.title }}</h1>
+			<div class="question-title-row">
+				<h1 class="question-title">{{ question.title }}</h1>
+
+				{% if user.is_authenticated and user == question.author %}
+					<div class="question-edit-delete-buttons">
+						<a href="{% url 'question_update' question.pk %}" class="btn btn-edit">Edit</a>
+						<a href="{% url 'question_delete' question.pk %}" class="btn btn-delete">Delete</a>
+					</div>
+				{% endif %}
+			</div>
+
 			<p class="question-meta">
 				Asked by <a href="{% url 'profile-details' question.author.pk %}">
-				<strong>{{ question.author.username }}</strong>
-			</a>
+				<strong>{{ question.author.username }}</strong></a>
 				on {{ question.created_at|date:"F j, Y, g:i a" }}
 			</p>
-			<div class="question-body">
-				{{ question.body|linebreaks }}
-			</div>
+
+			<div class="question-body">{{ question.body|linebreaks }}</div>
+
 			{% if question.tags.all %}
 				<div class="question-tags">
 					<strong>Tags:</strong>
@@ -22,25 +31,25 @@
 				</div>
 			{% endif %}
 
-			<div class="question-actions">
-				{% if user.is_authenticated %}
-					<a href="{% url 'add_comment_to_question' question.pk %}" class="btn btn-comment">Add Comment</a>
-					<a href="{% url 'create-answer' question.pk %}" class="btn btn-answer">Add Answer</a>
-
-					{% if user == question.author %}
-						<a href="{% url 'question_update' question.pk %}" class="btn btn-edit">Edit</a>
-						<a href="{% url 'question_delete' question.pk %}" class="btn btn-delete">Delete</a>
-					{% endif %}
-				{% endif %}
-			</div>
-
 			<!-- Toggle Buttons -->
 			<div class="toggle-buttons">
 				<button class="btn btn-comment" id="show-comments-btn" type="button" aria-controls="comments-section" aria-expanded="false" onclick="showSection('comments')">See Comments</button>
 				<button class="btn btn-answer" id="show-answers-btn" type="button" aria-controls="answers-section" aria-expanded="false" onclick="showSection('answers')">See Answers</button>
 			</div>
 
-			<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
+			<!-- Section Header with heading + add button -->
+			<div class="section-header" hidden>
+				<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
+
+				{% if user.is_authenticated %}
+					<a href="{% url 'add_comment_to_question' question.pk %}" class="btn btn-comment add-section-btn" id="add-comment-btn" style="display:none;">
+						Add Comment
+					</a>
+					<a href="{% url 'create-answer' question.pk %}" class="btn btn-answer add-section-btn" id="add-answer-btn" style="display:none;">
+						Add Answer
+					</a>
+				{% endif %}
+			</div>
 
 			<!-- Answers Section -->
 			<div id="answers-section" class="content-section" aria-labelledby="section-heading" hidden>
@@ -51,8 +60,7 @@
 								<div class="card-body">{{ answer.content }}</div>
 								<div class="card-meta">
 									by <a href="{% url 'profile-details' answer.author.pk %}">
-									<strong>{{ answer.author.username }}</strong>
-								</a>
+									<strong>{{ answer.author.username }}</strong></a>
 									on {{ answer.created_at|date:"F j, Y, g:i a" }}
 								</div>
 
@@ -78,8 +86,7 @@
 												<div class="card-body">{{ comment.content|linebreaks }}</div>
 												<div class="card-meta">
 													by <a href="{% url 'profile-details' comment.author.pk %}">
-													<strong>{{ comment.author.username }}</strong>
-												</a>
+													<strong>{{ comment.author.username }}</strong></a>
 													on {{ comment.created_at|date:"F j, Y, g:i a" }}
 												</div>
 											</li>
@@ -105,8 +112,7 @@
 								<div class="card-body">{{ comment.content|linebreaksbr }}</div>
 								<div class="card-meta">
 									by <a href="{% url 'profile-details' comment.author.pk %}">
-									<strong>{{ comment.author.username }}</strong>
-								</a>
+									<strong>{{ comment.author.username }}</strong></a>
 									on {{ comment.created_at|date:"F j, Y, g:i a" }}
 								</div>
 							</li>
@@ -141,31 +147,52 @@
 		function showSection(section) {
 			const answersSection = document.getElementById('answers-section');
 			const commentsSection = document.getElementById('comments-section');
+			const sectionHeader = document.querySelector('.section-header');
 			const heading = document.getElementById('section-heading');
 			const showAnswersBtn = document.getElementById('show-answers-btn');
 			const showCommentsBtn = document.getElementById('show-comments-btn');
 
+			const addAnswerBtn = document.getElementById('add-answer-btn');
+			const addCommentBtn = document.getElementById('add-comment-btn');
+
 			if (section === 'answers') {
 				answersSection.hidden = false;
 				commentsSection.hidden = true;
+
+				sectionHeader.hidden = false;
 				heading.textContent = 'Answers:';
 				showAnswersBtn.setAttribute('aria-expanded', 'true');
 				showCommentsBtn.setAttribute('aria-expanded', 'false');
+
+				if (addAnswerBtn) addAnswerBtn.style.display = 'inline-block';
+				if (addCommentBtn) addCommentBtn.style.display = 'none';
 			} else if (section === 'comments') {
 				commentsSection.hidden = false;
 				answersSection.hidden = true;
+
+				sectionHeader.hidden = false;
 				heading.textContent = 'Comments:';
 				showCommentsBtn.setAttribute('aria-expanded', 'true');
 				showAnswersBtn.setAttribute('aria-expanded', 'false');
+
+				if (addCommentBtn) addCommentBtn.style.display = 'inline-block';
+				if (addAnswerBtn) addAnswerBtn.style.display = 'none';
 			}
 		}
 
 		document.addEventListener('DOMContentLoaded', () => {
-			document.getElementById('answers-section').hidden = true;
-			document.getElementById('comments-section').hidden = true;
-			document.getElementById('section-heading').textContent = '';
-			// Optionally open one section by default:
-			// showSection('comments');
+			const answersSection = document.getElementById('answers-section');
+			const commentsSection = document.getElementById('comments-section');
+			const sectionHeader = document.querySelector('.section-header');
+			const addAnswerBtn = document.getElementById('add-answer-btn');
+			const addCommentBtn = document.getElementById('add-comment-btn');
+
+			answersSection.hidden = true;
+			commentsSection.hidden = true;
+			sectionHeader.hidden = true;
+
+			if (addAnswerBtn) addAnswerBtn.style.display = 'none';
+			if (addCommentBtn) addCommentBtn.style.display = 'none';
 		});
 	</script>
 {% endblock %}
