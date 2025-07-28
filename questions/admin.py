@@ -9,17 +9,15 @@ class QuestionAdmin(admin.ModelAdmin):
 	list_filter = ('created_at', 'tags')
 	autocomplete_fields = ('author', 'tags')
 	date_hierarchy = 'created_at'
+	readonly_fields = ['author']
 
 	def author_link(self, obj):
-		"""
-		Returns an HTML link to the author’s UserProfile in the admin.
-		"""
-		# obj.author.pk is the UserProfile's primary key
-		# 'users_userprofile' = '<app_label>_<modelname>' (all lowercase)
 		url = f"/admin/users/userprofile/{obj.author.pk}/change/"
-		# Display the username as the clickable text
 		return format_html('<a href="{}">{}</a>', url, obj.author)
-	author_link.short_description = 'Author'  # Sets the admin column header
+	author_link.short_description = 'Author'
+
+	def has_add_permission(self, request, obj=None):
+		return False
 
 	# Extensive comment:
 	# - format_html safely constructs the link to the UserProfile admin "change" page.

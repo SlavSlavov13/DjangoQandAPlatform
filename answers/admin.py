@@ -9,16 +9,12 @@ class AnswerAdmin(admin.ModelAdmin):
 	search_fields = ('question__title', 'author__user__username', 'content')
 	autocomplete_fields = ('question', 'author')
 	raw_id_fields = ('author',)
+	readonly_fields = ['author']
 
 	def author_link(self, obj):
-		"""
-		Returns an HTML link to the author’s UserProfile in the admin.
-		"""
-		# obj.author.pk is the UserProfile's primary key
-		# 'users_userprofile' = '<app_label>_<modelname>' (all lowercase)
 		url = f"/admin/users/userprofile/{obj.author.pk}/change/"
-		# Display the username as the clickable text
 		return format_html('<a href="{}">{}</a>', url, obj.author)
-	author_link.short_description = 'Author'  # Sets the admin column header
+	author_link.short_description = 'Author'
 
-	# Extensive comment: Use autocomplete and raw_id for high-volume relations.
+	def has_add_permission(self, request, obj=None):
+		return False
