@@ -8,7 +8,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.context_processors import request
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.functional import SimpleLazyObject
 from django.views import View
 from django.views.generic import CreateView, DetailView
@@ -28,7 +28,9 @@ class UserCreationView(CreateView):
 	model = UserModel
 	template_name = 'users/create_user.html'
 	form_class = UserRegistrationForm
-	success_url = reverse_lazy('profile-details')
+
+	def get_success_url(self):
+		return reverse('profile-details', args=[self.object.pk])
 
 	def form_valid(self, form):
 		response = super().form_valid(form)
@@ -113,7 +115,7 @@ class ProfileLoginView(LoginView):
 			return redirect('profile-details', request.user.pk)
 		return super().dispatch(request, *args, **kwargs)
 
-class ProfileDetailView(LoginRequiredMixin, DetailView):
+class ProfileDetailView(DetailView):
 	model = UserModel
 	template_name = 'users/user_details.html'
 	context_object_name = 'user_obj'

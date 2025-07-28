@@ -17,7 +17,7 @@
 				<div class="question-tags">
 					<strong>Tags:</strong>
 					{% for tag in question.tags.all %}
-						<span class="tag">{{ tag.name }}</span>
+						<span class="tag">{{ tag.name|lower|capfirst }}</span>
 					{% endfor %}
 				</div>
 			{% endif %}

@@ -270,9 +270,9 @@
 
 					if (results.length === 0) {
 						if (!hasQuestions) {
-							setStatusMessage('&#128578; <b>No questions have been posted yet.</b><br>Be the first to <a href="{% url "question_create" %}" class="ask-link">ask a question</a>!', 'empty');
+							setStatusMessage('<b>No questions have been posted yet.</b> &#128578;<br>Be the first to <a href="{% url "question_create" %}" class="ask-link">ask a question</a>!', 'empty');
 						} else {
-							setStatusMessage('&#128577; <b>No questions found.</b><br>Try a different search or tag filter.', 'empty');
+							setStatusMessage('<b>No questions found.</b> &#128577;<br>Try a different search or tag filter.', 'empty');
 						}
 						paginationContainer.style.display = 'none';
 						questionList.textContent = '';
@@ -287,7 +287,7 @@
 					}
 				} catch (error) {
 					clearTimeout(loaderTimeout);
-					setStatusMessage('&#9888; <b>Error loading questions.</b><br>Please try again.', 'error');
+					setStatusMessage('<b>Error loading questions.</b> &#9888;<br>Please try again.', 'error');
 					paginationContainer.style.display = 'none';
 					questionList.textContent = '';
 					console.error(error);
