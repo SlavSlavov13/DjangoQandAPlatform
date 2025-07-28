@@ -64,6 +64,19 @@
 									on {{ answer.created_at|date:"F j, Y, g:i a" }}
 								</div>
 
+								<!-- Kebab menu at top-right of answer card -->
+								{% if user.is_authenticated and user == answer.author %}
+									<div class="dropdown" aria-haspopup="true" aria-expanded="false">
+										<button class="dropdown-toggle" aria-label="Edit or delete answer" onclick="toggleDropdown(event)">
+											&#8942;
+										</button>
+										<div class="dropdown-menu" hidden>
+											<a href="{% url 'create-answer' answer.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+											<a href="{% url 'create-answer' answer.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+										</div>
+									</div>
+								{% endif %}
+
 								<div class="answer-buttons-wrapper">
 									<button class="btn btn-comment btn-small toggle-answer-comments-btn"
 									        aria-expanded="false"
@@ -89,6 +102,20 @@
 													<strong>{{ comment.author.username }}</strong></a>
 													on {{ comment.created_at|date:"F j, Y, g:i a" }}
 												</div>
+
+												<!-- Kebab menu at top-right of comment card -->
+												{% if user.is_authenticated and user == comment.author %}
+													<div class="dropdown" aria-haspopup="true" aria-expanded="false">
+														<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
+															&#8942;
+														</button>
+														<div class="dropdown-menu" hidden>
+															<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+															<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+														</div>
+													</div>
+												{% endif %}
+
 											</li>
 										{% endfor %}
 									{% else %}
@@ -115,6 +142,19 @@
 									<strong>{{ comment.author.username }}</strong></a>
 									on {{ comment.created_at|date:"F j, Y, g:i a" }}
 								</div>
+
+								<!-- Kebab menu at top-right of comment card -->
+								{% if user.is_authenticated and user == comment.author %}
+									<div class="dropdown" aria-haspopup="true" aria-expanded="false">
+										<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
+											&#8942;
+										</button>
+										<div class="dropdown-menu" hidden>
+											<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+											<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+										</div>
+									</div>
+								{% endif %}
 							</li>
 						{% endfor %}
 					</ul>
@@ -179,6 +219,40 @@
 				if (addAnswerBtn) addAnswerBtn.style.display = 'none';
 			}
 		}
+
+		// Toggle dropdown menu for kebab menus; closes others
+		function toggleDropdown(event) {
+			event.stopPropagation();
+			const button = event.currentTarget;
+			const menu = button.nextElementSibling;
+			const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+			// Close other dropdown menus
+			document.querySelectorAll('.dropdown-menu').forEach(m => {
+				if (m !== menu) {
+					m.hidden = true;
+					if(m.previousElementSibling) m.previousElementSibling.setAttribute('aria-expanded', 'false');
+				}
+			});
+
+			if (isExpanded) {
+				menu.hidden = true;
+				button.setAttribute('aria-expanded', 'false');
+			} else {
+				menu.hidden = false;
+				button.setAttribute('aria-expanded', 'true');
+			}
+		}
+
+		// Close dropdown menus on clicking outside
+		document.addEventListener('click', () => {
+			document.querySelectorAll('.dropdown-menu').forEach(menu => {
+				menu.hidden = true;
+			});
+			document.querySelectorAll('.dropdown-toggle').forEach(button => {
+				button.setAttribute('aria-expanded', 'false');
+			});
+		});
 
 		document.addEventListener('DOMContentLoaded', () => {
 			const answersSection = document.getElementById('answers-section');

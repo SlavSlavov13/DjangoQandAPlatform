@@ -1579,3 +1579,128 @@ li.card-item {
 li.card-item p {
 	margin: 0 ;
 }
+
+/* Ensure .card-item is the positioning context */
+.card-item {
+	position: relative;
+}
+
+/* Kebab menu container, top-right inside each card */
+.dropdown {
+	position: absolute;
+	top: 0.6rem;
+	right: 0.65rem;
+	z-index: 20;
+}
+
+/* Kebab button styling: subtle dots */
+.dropdown-toggle {
+	background: transparent;
+	border: none;
+	font-size: 1.18rem;
+	color: #9ca6af;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
+	line-height: 1;
+	border-radius: 3px;
+	transition: background 0.17s ease, color 0.17s ease;
+}
+
+/* Hover/focus effect for kebab */
+.dropdown-toggle:hover,
+.dropdown-toggle:focus {
+	background: #f1f2f3;
+	color: #0077cc;
+	outline: none;
+}
+
+/* Dropdown menu is hidden by default */
+.dropdown-menu {
+	display: none;
+	position: absolute;
+	top: 1.8rem;
+	right: 0;
+	min-width: 95px;
+	background: #fff;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	box-shadow: 0 4px 18px rgba(0,0,0,0.07), 0 1.5px 2px rgba(0,0,0,0.03);
+	z-index: 200;
+	flex-direction: column;
+	padding: 0.25rem 0;
+}
+
+/* Show dropdown when not hidden (controlled by JS) */
+.dropdown-menu:not([hidden]) {
+	display: flex;
+}
+
+/* Style for Edit/Delete links inside dropdown */
+.dropdown-menu .dropdown-item {
+	display: block;
+	width: 100%;
+	background: none;
+	border: none;
+	color: #3b4045;
+	padding: 0.38rem 1.1rem 0.38rem 0.85rem;
+	text-align: left;
+	font-size: 0.88em;           /* smaller font */
+	font-weight: 500;
+	border-radius: 0;
+	margin: 0;
+	transition: background 0.17s, color 0.17s;
+	white-space: nowrap;
+	cursor: pointer;
+	min-width: unset;
+}
+
+/* Differentiate edit and delete colors */
+.dropdown-menu .dropdown-item.btn-edit {
+	color: #39739d;
+}
+
+.dropdown-menu .dropdown-item.btn-delete {
+	color: #842029;
+}
+
+/* Hover/focus states for dropdown items */
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+	background: #f5f6f7;
+	color: #145399;
+	outline: none;
+}
+
+/* Responsive dropdown menu sizing */
+@media (max-width: 480px) {
+	.dropdown-menu {
+		right: 0.2rem;
+		min-width: 80px;
+		font-size: 0.87em;
+	}
+}
+
+/* Remove width: 100% and min-width: unset from dropdown items */
+.dropdown-menu .dropdown-item {
+	width: auto;
+	min-width: 0;
+	max-width: 180px;     /* optional, for very long text */
+	box-sizing: border-box;
+	font-size: 0.88em;
+	padding: 0.32em 1.1em 0.32em 0.7em;
+}
+
+/* Let the menu itself size to its content (+ fallback min-width) */
+.dropdown-menu {
+	min-width: 95px;
+	width: max-content;
+	max-width: 220px;
+}
+
+/* Optionally, prevent the menu from being too wide on mobile */
+@media (max-width:480px) {
+	.dropdown-menu {
+		max-width: 98vw;
+	}
+}
