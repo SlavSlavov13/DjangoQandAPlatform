@@ -43,7 +43,7 @@
 			const userIdRaw = container.dataset.userId;
 			const userId = userIdRaw === 'null' ? null : parseInt(userIdRaw, 10);
 			const hasQuestions = container.dataset.hasQuestions === "true";
-			const apiEndpoint = "{% url 'question_search_api' %}";
+			const apiEndpoint = "{% url 'question-search-api' %}";
 			const questionList = document.getElementById('question-list-container');
 			const paginationContainer = document.getElementById('pagination-container');
 			const searchForm = document.getElementById('rest-search-form');

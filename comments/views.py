@@ -81,7 +81,7 @@ class AddCommentView(LoginRequiredMixin, CreateView):
 		elif answer_id:
 			answer = get_object_or_404(Answer, pk=answer_id)
 			return redirect('question_details', pk=answer.question.pk)
-		return redirect('questions_list')
+		return redirect('questions-list')
 
 class EditCommentView(LoginRequiredMixin, UpdateView):
 	"""

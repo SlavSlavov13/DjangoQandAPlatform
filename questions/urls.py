@@ -14,7 +14,7 @@ from .views import (
 )
 
 urlpatterns = [
-	path("", QuestionListView.as_view(), name="questions_list"),
+	path("", QuestionListView.as_view(), name="questions-list"),
 	path("create/", QuestionCreateView.as_view(), name="question_create"),
 	path("<int:pk>/update/", QuestionUpdateView.as_view(), name="question_update"),
 	path("<int:pk>/details/", QuestionDetailView.as_view(), name="question_details"),

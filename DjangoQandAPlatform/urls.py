@@ -16,7 +16,7 @@ from django.urls import path, include
 
 urlpatterns = [
     # Redirect root to questions list (main page)
-    path('', lambda request: redirect('questions_list', permanent=True)),
+    path('', lambda request: redirect('questions-list', permanent=True)),
 
     # API endpoints (REST)
     path('api/', include('api.urls')),

@@ -16,7 +16,7 @@
 					<div class="user-joined">Joined on {{ user_obj.date_joined|date:"F j, Y" }}</div>
 				</div>
 				{% if user.is_authenticated and user == user_obj %}
-					<a href="{% url 'edit_profile' %}" class="btn btn-edit" style="margin-left:auto;">Edit Profile</a>
+					<a href="{% url 'edit-profile' %}" class="btn btn-edit" style="margin-left:auto;">Edit Profile</a>
 				{% endif %}
 			</div>
 

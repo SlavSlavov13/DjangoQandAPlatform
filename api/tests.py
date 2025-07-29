@@ -48,7 +48,7 @@ class QuestionSearchApiTest(TestCase):
 		"""
 		Search returns expected questions for title matches.
 		"""
-		url = reverse('question_search_api')
+		url = reverse('question-search-api')
 		resp = self.client.get(url, {'search': 'Python'})
 		self.assertEqual(resp.status_code, 200)
 		data = resp.json()
@@ -60,7 +60,7 @@ class QuestionSearchApiTest(TestCase):
 		"""
 		Filtering by tag returns only matching questions.
 		"""
-		url = reverse('question_search_api')
+		url = reverse('question-search-api')
 		resp = self.client.get(url, {'tag': self.tag1.id})
 		self.assertEqual(resp.status_code, 200)
 		data = resp.json()
@@ -74,7 +74,7 @@ class QuestionSearchApiTest(TestCase):
 		"""
 		The API paginates results correctly.
 		"""
-		url = reverse('question_search_api')
+		url = reverse('question-search-api')
 		resp1 = self.client.get(url, {'page': 1, 'page_size': 3})
 		resp2 = self.client.get(url, {'page': 2, 'page_size': 3})
 		data1 = resp1.json()
@@ -92,7 +92,7 @@ class QuestionSearchApiTest(TestCase):
 		"""
 		Searching and filtering by tag at the same time works as expected.
 		"""
-		url = reverse('question_search_api')
+		url = reverse('question-search-api')
 		resp = self.client.get(url, {'tag': self.tag1.id, 'search': 'Django'})
 		self.assertEqual(resp.status_code, 200)
 		data = resp.json()

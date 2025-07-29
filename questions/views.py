@@ -39,7 +39,7 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
 	model = Question
 	form_class = QuestionCreateForm
 	template_name = "questions/question_create_edit.html"
-	success_url = reverse_lazy("questions_list")
+	success_url = reverse_lazy("questions-list")
 
 	def form_valid(self, form):
 		form.instance.author = self.request.user
@@ -68,7 +68,7 @@ class QuestionDeleteView(LoginRequiredMixin, DeleteView):
 	"""
 	model = Question
 	template_name = "questions/question_confirm_delete.html"
-	success_url = reverse_lazy("questions_list")
+	success_url = reverse_lazy("questions-list")
 
 	def get_object(self, queryset=None):
 		obj = super().get_object(queryset)

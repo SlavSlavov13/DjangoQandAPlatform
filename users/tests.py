@@ -138,7 +138,7 @@ class UserViewsTests(TestCase):
 		logout_url = reverse('logout')
 		resp = self.client.post(login_url, {'username': 'foo', 'password': 'barbaz0!'})
 		self.assertEqual(resp.status_code, 302)
-		home_url = reverse('questions_list')
+		home_url = reverse('questions-list')
 		self.assertRedirects(resp, home_url, fetch_redirect_response=False)
 		self.assertIn('_auth_user_id', self.client.session)
 		# Now try logging out
@@ -154,7 +154,7 @@ class UserViewsTests(TestCase):
 		"""
 		user = UserModel.objects.create_user('edity', password='pw4edit')
 		self.client.login(username='edity', password='pw4edit')
-		url = reverse('edit_profile')
+		url = reverse('edit-profile')
 		form_data = {
 			'username': 'edity',
 			'email': 'e@x.com',
@@ -192,20 +192,20 @@ class AjaxUsernameCheckTests(TestCase):
 	"""
 
 	def test_username_check_available(self):
-		url = reverse('check_username')
+		url = reverse('check-username')
 		resp = self.client.get(url, {'username': 'unassignedname'})
 		self.assertEqual(resp.status_code, 200)
 		self.assertJSONEqual(resp.content, {'available': True})
 
 	def test_username_check_taken(self):
 		UserModel.objects.create_user('takenx', password='pw')
-		url = reverse('check_username')
+		url = reverse('check-username')
 		resp = self.client.get(url, {'username': 'takenx'})
 		self.assertEqual(resp.status_code, 200)
 		self.assertJSONEqual(resp.content, {'available': False})
 
 	def test_username_check_missing(self):
-		url = reverse('check_username')
+		url = reverse('check-username')
 		resp = self.client.get(url)
 		self.assertEqual(resp.status_code, 400)
 		self.assertJSONEqual(resp.content, {'available': False, 'error': 'No username provided.'})

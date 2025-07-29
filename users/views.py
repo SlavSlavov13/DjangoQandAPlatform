@@ -112,7 +112,7 @@ class ProfileLogoutView(LogoutView):
 	template_name = 'users/logout.html'
 
 	def get_success_url(self):
-		return reverse_lazy('questions_list')
+		return reverse_lazy('questions-list')
 
 class ProfileLoginView(LoginView):
 	"""
@@ -122,7 +122,7 @@ class ProfileLoginView(LoginView):
 	template_name = 'users/login.html'
 
 	def get_success_url(self):
-		return reverse_lazy('questions_list')
+		return reverse_lazy('questions-list')
 
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
