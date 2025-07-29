@@ -25,7 +25,11 @@
 			<form method="post">
 				{% csrf_token %}
 				<button type="submit" class="btn btn-danger">Yes, Delete</button>
-				<a href="{% url 'question_details' comment.content_object.pk %}" class="btn btn-cancel">Cancel</a>
+				{% if answer_id %}
+					<a href="{% url 'question_details' comment.content_object.question.pk %}" class="btn btn-cancel">Cancel</a>
+				{% else %}
+					<a href="{% url 'question_details' comment.content_object.pk %}" class="btn btn-cancel">Cancel</a>
+				{% endif %}
 			</form>
 		</article>
 	</main>
