@@ -1230,4 +1230,30 @@ li.card-item p {
 	}
 }
 
+.badge-description {
+	margin-top: 1.5em;
+	font-size: 1.09rem;
+	line-height: 1.65;
+	color: var(--galaxy-blue-deep); /* or var(--galaxy-purple-dark) for more punch */
+	background: var(--galaxy-white-icy);
+	border-left: 4px solid var(--galaxy-accent);
+	border-radius: 5px;
+	padding: 1.1rem 1.3rem;
+	box-shadow: 0 1px 7px rgba(122,56,127,0.08);
+	word-break: break-word;
+	transition: background 0.2s;
+	min-height: 2.5em;
+	font-family: inherit;
+}
+
+.badge-description strong {
+	color: var(--galaxy-purple-dark);
+}
+
+@media (max-width: 600px) {
+	.badge-description {
+		font-size: 0.97rem;
+		padding: 0.8rem 0.6rem;
+	}
+}
 
