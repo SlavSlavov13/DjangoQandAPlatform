@@ -19,32 +19,6 @@ class QuestionListView(ListView):
 	template_name = 'questions/questions_list.html'
 	context_object_name = 'questions'
 	ordering = ['-created_at']
-	paginate_by = 10
-
-	def get_queryset(self):
-		queryset = super().get_queryset()
-		q = self.request.GET.get('search')
-		if q:
-			queryset = queryset.filter(
-				Q(title__icontains=q) | Q(body__icontains=q)
-			).distinct()
-		return queryset
-
-	def get(self, request, *args, **kwargs):
-		page = request.GET.get('page')
-		max_page = self.get_paginator(self.get_queryset(), self.paginate_by).num_pages
-		try:
-			page_num = int(page)
-		except (TypeError, ValueError):
-			page_num = 1
-		if page_num > max_page:
-			page_num = max_page
-
-		if str(page_num) != page:
-			url = request.path + f'?page={page_num}'
-			return redirect(url)
-
-		return super().get(request, *args, **kwargs)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)

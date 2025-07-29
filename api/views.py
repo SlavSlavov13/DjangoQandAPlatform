@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from questions.models import Question
+from .pagination import QuestionApiPagination
 from .serializers import QuestionSerializer
 
 class QuestionSearchAPIView(generics.ListAPIView):
@@ -11,6 +12,7 @@ class QuestionSearchAPIView(generics.ListAPIView):
 	filter_backends = [filters.SearchFilter, DjangoFilterBackend]
 	search_fields = ['title', 'body']
 	filterset_fields = ['tags__id']  # Enables filtering by tag ID through query parameter `tags__id`
+	pagination_class = QuestionApiPagination
 
 	def get_queryset(self):
 		queryset = super().get_queryset()
