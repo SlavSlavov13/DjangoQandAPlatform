@@ -1,3 +1,10 @@
+"""
+questions/urls.py
+
+Routing for CRUD and listing of question objects.
+Each route uses a unique name for reversing in templates and views.
+"""
+
 from django.urls import path
 from .views import (
 	QuestionListView,
