@@ -1,6 +1,17 @@
-from django.urls import path
+"""
+URL configurations for the users app.
+Maps views for registration, profile editing, login/logout, detail, and AJAX username check.
+"""
 
-from users.views import UserCreationView, EditProfileView, ProfileLogoutView, ProfileLoginView, ProfileDetailView, check_username
+from django.urls import path
+from users.views import (
+	UserCreationView,
+	EditProfileView,
+	ProfileLogoutView,
+	ProfileLoginView,
+	ProfileDetailView,
+	check_username,
+)
 
 urlpatterns = [
 	path('register/', UserCreationView.as_view(), name='register'),
