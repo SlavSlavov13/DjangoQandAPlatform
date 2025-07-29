@@ -3,6 +3,9 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from django.contrib.auth.models import Group
+from django.urls import reverse
+from django.utils.html import format_html_join
+
 from .models import UserProfile
 
 @admin.register(UserProfile)
@@ -47,17 +50,44 @@ admin.site.register(Group, NoAddGroupAdmin)
 UserModel = get_user_model()
 
 class CustomUserAdmin(UserAdmin):
+	def group_links(self, obj):
+		if not obj.pk:
+			return "-"
+		return format_html_join(
+			', ',
+			'<a href="{}">{}</a>',
+			(
+				(
+					reverse('admin:auth_group_change', args=(group.pk,)),
+					group.name
+				)
+				for group in obj.groups.all()
+			)
+		) or "-"
+	group_links.short_description = "Groups"
+	group_links.allow_tags = True
+
+	def get_fieldsets(self, request, obj=None):
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			fieldsets = super().get_fieldsets(request, obj)
+			new_fieldsets = []
+			for name, opts in fieldsets:
+				fields = list(opts['fields']) if 'fields' in opts else []
+				if 'groups' in fields and 'group_links' not in fields:
+					idx = fields.index('groups')
+					fields.insert(idx, 'group_links')
+					fields.remove('groups')
+					opts = {**opts, 'fields': tuple(fields)}
+				new_fieldsets.append((name, opts))
+			return new_fieldsets
+		return super().get_fieldsets(request, obj)
+
 	def has_delete_permission(self, request, obj=None):
 		if request.user.groups.filter(name='Staff Moderators').exists():
 			return False
 		return True
 
-	def save_model(self, request, obj, form, change):
-		super().save_model(request, obj, form, change)
-		groups = form.cleaned_data.get('groups')
-		if groups:
-			obj.groups.set(groups)  # set expects a list/iterable
-
 admin.site.unregister(UserModel)
 admin.site.register(UserModel, CustomUserAdmin)
+
 
