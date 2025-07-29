@@ -9,7 +9,6 @@ class QuestionAdmin(admin.ModelAdmin):
 	list_filter = ('created_at', 'tags')
 	autocomplete_fields = ('author', 'tags')
 	date_hierarchy = 'created_at'
-	readonly_fields = ['author']
 
 	def author_link(self, obj):
 		url = f"/admin/users/userprofile/{obj.author.pk}/change/"
@@ -17,9 +16,11 @@ class QuestionAdmin(admin.ModelAdmin):
 	author_link.short_description = 'Author'
 
 	def has_add_permission(self, request, obj=None):
-		return False
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
 
-	# Extensive comment:
-	# - format_html safely constructs the link to the UserProfile admin "change" page.
-	# - Clicking the author’s name in the admin will open the UserProfile for editing.
-	# - The method is included in list_display to replace or supplement the plain author field.
+	def get_readonly_fields(self, request, obj=None):
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return ['author']
+		return []

@@ -10,5 +10,5 @@ class Answer(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	comments = GenericRelation(to='comments.Comment', related_query_name='answer')
 
-def __str__(self):
+	def __str__(self):
 		return f'Answer by {self.author.username} on {self.question}'

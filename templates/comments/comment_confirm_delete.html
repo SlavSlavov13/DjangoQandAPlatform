@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+	<main class="confirm-delete-container">
+		<article class="confirm-delete-article">
+			<h2>Confirm Delete Comment</h2>
+			{% if answer_id %}
+				<p>Are you sure you want to delete this answer comment?</p>
+			{% else %}
+				<p>Are you sure you want to delete this question comment?</p>
+			{% endif %}
+
+			<div class="comment-preview">
+				<blockquote>
+					Question: {{ question_title }}
+					<br>
+					{% if answer_id %}
+						Answer: {{ answer_excerpt }}
+					{% endif %}
+					<br>
+					Comment: {{ comment.content|linebreaksbr|default:"(No comment content)" }}
+				</blockquote>
+			</div>
+
+			<form method="post">
+				{% csrf_token %}
+				<button type="submit" class="btn btn-danger">Yes, Delete</button>
+				<a href="{% url 'question_details' comment.content_object.pk %}" class="btn btn-cancel">Cancel</a>
+			</form>
+		</article>
+	</main>
+{% endblock %}

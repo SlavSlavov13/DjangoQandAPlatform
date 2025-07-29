@@ -19,6 +19,10 @@
 							<div class="error-message">{{ error }}</div>
 						{% endfor %}
 					</div>
+
+					{% if field.name == 'username' %}
+						<div id="username-status" aria-live="polite" style="margin-top: -0.75em; margin-bottom: 1em; font-weight: 600;"></div>
+					{% endif %}
 				{% endfor %}
 
 				<h2>Profile Info</h2>
@@ -89,5 +93,62 @@
 				<button type="submit" name="change_password" class="btn btn-edit">Change Password</button>
 			</form>
 		</article>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const usernameInput = document.getElementById('id_username');
+				const statusDiv = document.getElementById('username-status');
+
+				if (!usernameInput || !statusDiv) return;
+
+				// Current logged-in username from Django context, lowercased
+				const currentUsername = "{% if user.is_authenticated %}{{ user.username|escapejs }}{% else %}{% endif %}".toLowerCase();
+				// The initial value inside the input on page load (could be empty)
+				const initialUsername = usernameInput.value.trim().toLowerCase();
+
+				let timeout = null;
+
+				usernameInput.addEventListener('input', function() {
+					const username = this.value.trim().toLowerCase();
+					if (timeout) clearTimeout(timeout);
+
+					timeout = setTimeout(() => {
+						if (username.length === 0) {
+							statusDiv.textContent = '';
+							statusDiv.style.color = '';
+							return;
+						}
+
+						// Show message only if user changed input and now it matches current username
+						if (username === initialUsername) {
+							statusDiv.textContent = 'This is your current username.';
+							statusDiv.style.color = 'blue';
+							return;
+						}
+
+						// AJAX request to check availability
+						fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}`)
+							.then(response => {
+								if (!response.ok) throw new Error('Network response was not ok');
+								return response.json();
+							})
+							.then(data => {
+								if (data.available) {
+									statusDiv.textContent = 'Username is available!';
+									statusDiv.style.color = 'green';
+								} else {
+									statusDiv.textContent = data.error ? data.error : 'Username is taken.';
+									statusDiv.style.color = 'red';
+								}
+							})
+							.catch(() => {
+								statusDiv.textContent = 'Could not check username availability.';
+								statusDiv.style.color = 'gray';
+							});
+					}, 300);  // debounce delay 300ms
+				});
+			});
+		</script>
+
 	</main>
 {% endblock %}

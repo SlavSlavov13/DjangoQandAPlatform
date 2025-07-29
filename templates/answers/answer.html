@@ -4,7 +4,11 @@
 	<main class="form-demo-container">
 		<article class="form-demo-article">
 			<h2 class="answer-heading">
-				Answer to: <span class="answer-question-title">{{ question.title }}</span>
+				{% if not exists %}
+					Answer to: <span class="answer-question-title">{{ question.title }}</span>
+				{% else %}
+					Edit answer to: <span class="answer-question-title">{{ question.title }}</span>
+				{% endif %}
 			</h2>
 
 			<form method="post" class="site-form">
@@ -28,7 +32,11 @@
 					</div>
 				{% endif %}
 
-				<button type="submit" class="btn btn-edit">Submit Answer</button>
+				{% if not exists %}
+					<button type="submit" class="btn btn-edit">Submit Answer</button>
+				{% else %}
+					<button type="submit" class="btn btn-edit">Edit Answer</button>
+				{% endif %}
 				<a href="{% url 'question_details' question.id %}" class="btn btn-answer">Cancel</a>
 			</form>
 		</article>

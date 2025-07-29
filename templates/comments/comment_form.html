@@ -5,10 +5,19 @@
 		<article class="form-demo-article">
 
 			{% if answer_id %}
-				<h2>Add Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> on <br> Question: {{ question_title }}
-				</h2>
+				{% if not exists %}
+					<h2>Add Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> to <br> Question: {{ question_title }}
+					</h2>
+				{% else %}
+					<h2>Edit Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> to <br> Question: {{ question_title }}
+					</h2>
+				{% endif %}
 			{% else %}
-				<h2>Add Comment to Question: "{{ question_title }}"</h2>
+				{% if not exists %}
+					<h2>Add Comment to Question: "{{ question_title }}"</h2>
+				{% else %}
+					<h2>Edit Comment to Question: "{{ question_title }}"</h2>
+				{% endif %}
 			{% endif %}
 
 			<form method="post" class="site-form">
@@ -31,7 +40,11 @@
 					</div>
 				{% endif %}
 
-				<button type="submit" class="btn btn-edit">Post Comment</button>
+				{% if not exists %}
+					<button type="submit" class="btn btn-edit">Post Comment</button>
+				{% else %}
+					<button type="submit" class="btn btn-edit">Edit Comment</button>
+				{% endif %}
 				<a href="{% url 'question_details' question_id %}" class="btn btn-answer">Cancel</a>
 			</form>
 		</article>

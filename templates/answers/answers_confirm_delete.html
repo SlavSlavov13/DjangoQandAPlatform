@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+	<main class="confirm-delete-container">
+		<article class="confirm-delete-article">
+			<h2>Confirm Delete Answer</h2>
+			<p>Are you sure you want to delete this answer?</p>
+
+			<div class="comment-preview">
+				<blockquote>
+					Question: {{ question_title }}
+					<br>
+					Answer: {{ answer.content|linebreaksbr|default:"(No answer content)" }}
+				</blockquote>
+			</div>
+
+			<form method="post">
+				{% csrf_token %}
+				<button type="submit" class="btn btn-danger">Yes, Delete</button>
+				<a href="{% url 'question_details' answer.question.pk %}" class="btn btn-cancel">Cancel</a>
+			</form>
+		</article>
+	</main>
+{% endblock %}

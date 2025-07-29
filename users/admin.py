@@ -10,23 +10,35 @@ class UserProfileAdmin(admin.ModelAdmin):
 	list_display = ('user', 'bio', 'avatar')  # Show these columns in admin list
 	search_fields = ('user__username', 'bio')  # Search by username or bio
 	list_filter = ('user__is_staff',)  # Filter by staff status if desired
-	readonly_fields = ('user',)  # Prevent manual changing of linked User
 
 	def has_add_permission(self, request, obj=None):
-		return False
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
+
+	def get_readonly_fields(self, request, obj=None):
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return ['user',]
+		return []
 
 
 admin.site.unregister(Group)
 
 class NoAddGroupAdmin(GroupAdmin):
-	def has_add_permission(self, request):
-		return False
+	def has_add_permission(self, request, obj=None):
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
 
 	def has_delete_permission(self, request, obj=None):
-		return False
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
 
 	def has_change_permission(self, request, obj=None):
-		return False
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
 
 # Register your custom admin:
 admin.site.register(Group, NoAddGroupAdmin)
@@ -35,20 +47,16 @@ admin.site.register(Group, NoAddGroupAdmin)
 UserModel = get_user_model()
 
 class CustomUserAdmin(UserAdmin):
-	fieldsets = (
-		(None, {'fields': ('username', 'password')}),
-		('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
-		('Groups', {'fields': ('groups',)}),
-		('Account Deactivation', {'fields': ('is_active',)}),
-	)
-
 	def has_delete_permission(self, request, obj=None):
-		return False
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return False
+		return True
 
 	def save_model(self, request, obj, form, change):
 		super().save_model(request, obj, form, change)
 		groups = form.cleaned_data.get('groups')
-		obj.groups.set(groups)  # set expects a list/iterable
+		if groups:
+			obj.groups.set(groups)  # set expects a list/iterable
 
 admin.site.unregister(UserModel)
 admin.site.register(UserModel, CustomUserAdmin)

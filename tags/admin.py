@@ -7,4 +7,8 @@ class TagAdmin(admin.ModelAdmin):
 	search_fields = ('name',)
 	prepopulated_fields = {'slug': ('name',)}  # Auto-populate slugs from name
 
+	def get_readonly_fields(self, request, obj=None):
+		if request.user.groups.filter(name='Staff Moderators').exists():
+			return ['slug']
+		return []
 	# Extensive comment: Prepopulated fields prevent manual slug errors.

@@ -8,3 +8,6 @@ class BaseAnswerForm(forms.ModelForm):
 
 class AnswerCreateForm(BaseAnswerForm):
 	...
+
+class AnswerEditForm(BaseAnswerForm):
+	...

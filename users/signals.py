@@ -19,7 +19,49 @@ def create_default_groups(sender, **kwargs):
 	super_admins.permissions.set(all_permissions)
 	super_admins.save()
 
+	staff_mods_perms_codenames = [
+		# For Log Entry model
+		'view_logentry',
+
+		# For Group model
+		'view_group',
+
+		# For User model
+		'view_user',
+
+		# For User Profile model
+		'change_userprofile',
+		'view_userprofile',
+
+		# For Question model
+		'view_question',
+		'change_question',
+
+		# For Answer model
+		'change_answer',
+		'view_answer',
+
+		# For Comment model
+		'change_comment',
+		'view_comment',
+
+		# For Tag model
+		'add_tag',
+		'change_tag',
+		'delete_tag',
+		'view_tag',
+
+		# For Tag model
+		'add_badge',
+		'change_badge',
+		'delete_badge',
+		'view_badge',
+	]
+
 	staff_mods, created = Group.objects.get_or_create(name='Staff Moderators')
+	staff_mods_permissions = Permission.objects.filter(codename__in=staff_mods_perms_codenames)
+	staff_mods.permissions.set(staff_mods_permissions)
+	staff_mods.save()
 
 
 @receiver(m2m_changed, sender=UserModel.groups.through)
@@ -58,8 +100,11 @@ def user_groups_changed(sender, instance, action, **kwargs):
 @receiver(post_save, sender=UserModel)
 def assign_superuser_group(sender, instance, created, **kwargs):
 	if instance.is_superuser:
-		group = Group.objects.get(name='Super Admins')
-		staff_group = Group.objects.get(name='Staff Moderators')
-		instance.groups.add(group)
+		try:
+			super_admin_group = Group.objects.get(name='Super Admins')
+			staff_group = Group.objects.get(name='Staff Moderators')
+		except Group.DoesNotExist:
+			return
+		instance.groups.add(super_admin_group)
 		if staff_group in instance.groups.all():
 			instance.groups.remove(staff_group)

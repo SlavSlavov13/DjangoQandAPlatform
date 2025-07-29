@@ -42,7 +42,7 @@
 				<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
 
 				{% if user.is_authenticated %}
-					<a href="{% url 'add_comment_to_question' question.pk %}" class="btn btn-comment add-section-btn" id="add-comment-btn" style="display:none;">
+					<a href="{% url 'add-comment-to-question' question.pk %}" class="btn btn-comment add-section-btn" id="add-comment-btn" style="display:none;">
 						Add Comment
 					</a>
 					<a href="{% url 'create-answer' question.pk %}" class="btn btn-answer add-section-btn" id="add-answer-btn" style="display:none;">
@@ -71,8 +71,8 @@
 											&#8942;
 										</button>
 										<div class="dropdown-menu" hidden>
-											<a href="{% url 'create-answer' answer.pk %}" class="btn dropdown-item btn-edit">Edit</a>
-											<a href="{% url 'create-answer' answer.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+											<a href="{% url 'edit-answer' answer.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+											<a href="{% url 'delete-answer' answer.pk %}" class="btn dropdown-item btn-delete">Delete</a>
 										</div>
 									</div>
 								{% endif %}
@@ -84,7 +84,7 @@
 									        onclick="toggleComments({{ answer.pk }})">
 										Show Comments
 									</button>
-									<a href="{% url 'add_comment_to_answer' answer.pk %}"
+									<a href="{% url 'add-comment-to-answer' answer.pk %}"
 									   class="btn btn-comment btn-small add-comment-btn"
 									   id="add-comment-btn-{{ answer.pk }}"
 									   style="display: none;">
@@ -110,8 +110,8 @@
 															&#8942;
 														</button>
 														<div class="dropdown-menu" hidden>
-															<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
-															<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+															<a href="{% url 'edit-comment-to-answer' answer_id=answer.pk comment_id=comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+															<a href="{% url 'delete-comment-to-answer' answer_id=answer.pk comment_id=comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
 														</div>
 													</div>
 												{% endif %}
@@ -150,8 +150,8 @@
 											&#8942;
 										</button>
 										<div class="dropdown-menu" hidden>
-											<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
-											<a href="{% url 'create-answer' comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+											<a href="{% url 'edit-comment-to-question' question_id=question.pk comment_id=comment.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+											<a href="{% url 'delete-comment-to-question' question_id=question.pk comment_id=comment.pk %}" class="btn dropdown-item btn-delete">Delete</a>
 										</div>
 									</div>
 								{% endif %}
