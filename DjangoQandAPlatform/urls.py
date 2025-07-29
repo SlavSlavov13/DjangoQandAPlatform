@@ -28,6 +28,7 @@ urlpatterns = [
     path('answers/', include('answers.urls')),
     path('questions/', include('questions.urls')),
     path('comment/', include('comments.urls')),
+    path('badges/', include('badges.urls')),
 ]
 
 if settings.DEBUG:

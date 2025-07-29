@@ -36,7 +36,7 @@
 				{% if user_obj.profile.badges.all %}
 					<div class="user-badges">
 						{% for badge in user_obj.profile.badges.all %}
-							<span class="badge">{{ badge.name }}</span>
+							<a href="{% url 'badge-details' badge_slug=badge.slug %}"><span class="badge">{{ badge.name }}</span></a>
 						{% endfor %}
 					</div>
 				{% else %}

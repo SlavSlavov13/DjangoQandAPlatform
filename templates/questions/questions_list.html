@@ -8,7 +8,7 @@
 		<div id="tag-filter-container" aria-label="Filter questions by tags" role="region" style="margin-bottom: 1rem;">
 			<span style="font-weight: 600; margin-right: 0.75rem;">Filter by tag:</span>
 			{% for tag in tags %}
-				<button type="button" class="btn btn-tag-filter" data-tag-id="{{ tag.id }}">{{ tag.name|lower|capfirst }}</button>
+				<button type="button" class="btn btn-tag-filter" data-tag-id="{{ tag.id }}">{{ tag.name }}</button>
 			{% endfor %}
 			<button type="button" class="btn btn-tag-filter btn-clear" style="margin-left: 1rem;">Clear Filter</button>
 		</div>

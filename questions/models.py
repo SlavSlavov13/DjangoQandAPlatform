@@ -8,7 +8,7 @@ class Question(models.Model):
 	title = models.CharField(max_length=150)
 	body = models.TextField()
 	author = models.ForeignKey(to=UserModel, on_delete=models.CASCADE)
-	tags = models.ManyToManyField(to='tags.Tag', blank=True)
+	tags = models.ManyToManyField(to='tags.Tag', blank=True, related_name='questions')
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	comments = GenericRelation(to='comments.Comment', related_query_name='question')
