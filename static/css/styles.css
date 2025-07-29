@@ -1146,3 +1146,88 @@ li.card-item p {
 	outline: none;
 }
 
+.single-badge-details {
+	max-width: 700px;
+	margin: 2rem auto;
+	padding: 2.1rem 2.3rem;
+	background: var(--galaxy-white-icy);
+	border: 1.5px solid var(--galaxy-purple-dark);
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(58,23,64,0.09);
+}
+
+.badge-title {
+	font-size: 2rem;
+	font-weight: 800;
+	color: var(--galaxy-violet-light);
+	margin: 0 0 0.10em 0;
+	line-height: 1.15;
+	text-align: left;
+	letter-spacing: 0.01em;
+	/* No flex/gap in the main title */
+	display: block;
+}
+
+.badge-item {
+	background: var(--galaxy-accent);
+	color: var(--galaxy-white-icy);
+	border-radius: 5px;
+	padding: 0.12em 0.55em;
+	font-size: 1em;
+	font-weight: 600;
+	border: none;
+	margin-top: 0.32em;
+	margin-bottom: 0.1em;
+	margin-left: 0;
+	letter-spacing: 0.025em;
+	display: inline-block;
+	box-shadow: 0 1px 4px rgba(122,56,127,0.05);
+}
+
+.badge-icon-container {
+	margin-bottom: 1.05rem;
+	text-align: left;
+}
+
+.badge-icon {
+	width: 98px;
+	height: 98px;
+	object-fit: contain;
+	background: var(--galaxy-accent-light);
+	border-radius: 12px;
+	border: 2px solid var(--galaxy-accent-dark);
+	/* Much softer shadow (glow) */
+	box-shadow: 0 2px 9px -3px var(--galaxy-accent-dark), 0 0.5px 2px rgba(122,56,127,0.045);
+	display: block;
+	margin: 0;
+}
+
+.badge-description {
+	font-size: 1.07rem;
+	color: var(--galaxy-blue-deep);
+	line-height: 1.65;
+	margin-top: 1.4em;
+	background: none;
+	border: none;
+	padding: 0;
+}
+
+@media (max-width: 600px) {
+	.single-badge-details {
+		max-width: 98vw;
+		padding: 1.1rem 0.6rem;
+	}
+	.badge-title {
+		font-size: 1.2rem;
+	}
+	.badge-icon {
+		width: 70px;
+		height: 70px;
+		border-radius: 7px;
+	}
+	.badge-description {
+		font-size: 0.92rem;
+	}
+}
+
+
