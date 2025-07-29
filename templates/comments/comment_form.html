@@ -25,6 +25,9 @@
 
 				{# Render the comment field (usually a textarea) #}
 				{{ form.content }}
+				{% if form.content.help_text %}
+					<small class="help-text">{{ form.content.help_text }}</small>
+				{% endif %}
 
 				{# Show form-level errors #}
 				{% if form.errors %}

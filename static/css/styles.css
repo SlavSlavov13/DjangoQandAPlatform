@@ -1,15 +1,25 @@
+/**
+ * GALAXY THEME GLOBAL COLORS
+ * -----------------------------------------------------------------
+ * Root palette for consistent theming across all UI components.
+ */
 :root {
-	--galaxy-purple-dark:   #3A1740;
-	--galaxy-purple-med:    #7A387F;
-	--galaxy-blue-deep:     #1F1B3B;
-	--galaxy-white-icy:     #F5F7FA;
-	--galaxy-violet-light:  #B26EB6;
-	--galaxy-grey:          #8A7F9B;
-	--galaxy-accent:        #E26CA5;
-	--galaxy-accent-dark:   #A6366E;
-	--galaxy-accent-light:  #F3D1E3;
+	--galaxy-purple-dark: #3A1740;
+	--galaxy-purple-med: #7A387F;
+	--galaxy-blue-deep: #1F1B3B;
+	--galaxy-white-icy: #F5F7FA;
+	--galaxy-violet-light: #B26EB6;
+	--galaxy-grey: #8A7F9B;
+	--galaxy-accent: #E26CA5;
+	--galaxy-accent-dark: #A6366E;
+	--galaxy-accent-light: #F3D1E3;
 }
 
+/*=========================================================================
+    BASE LAYOUT & TYPOGRAPHY
+==========================================================================*/
+
+/* Main document body */
 body {
 	font-family: Arial, sans-serif;
 	margin: 0;
@@ -20,30 +30,41 @@ body {
 	flex-direction: column;
 	min-height: 100vh;
 }
+
+/* Centered content container */
 .container {
 	width: 90%;
 	max-width: 1100px;
 	margin: 0 auto;
 }
-/* Top Bar */
+
+/*=========================================================================
+    TOP BAR: Navigation, Search, and Links
+==========================================================================*/
 nav.top-bar {
 	background-color: var(--galaxy-purple-med);
 	padding: 10px 0;
-	box-shadow: 0 2px 4px rgba(58,23,64,0.10);
+	box-shadow: 0 2px 4px rgba(58, 23, 64, 0.10);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
+
 nav.top-bar .top-bar-logo {
 	color: var(--galaxy-white-icy);
 	font-size: 1.5em;
+	font-weight: bold;
 	text-decoration: none;
 	margin-right: 2em;
-	font-weight: bold;
 	display: inline-block;
 }
+
 nav.top-bar form.top-bar-search {
 	display: inline-block;
 	vertical-align: middle;
 	margin-right: 2em;
 }
+
 nav.top-bar form.top-bar-search input[type="text"] {
 	padding: 6px 8px;
 	border: 1px solid var(--galaxy-grey);
@@ -53,6 +74,7 @@ nav.top-bar form.top-bar-search input[type="text"] {
 	background: var(--galaxy-white-icy);
 	color: var(--galaxy-blue-deep);
 }
+
 nav.top-bar form.top-bar-search button {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-grey);
@@ -63,6 +85,7 @@ nav.top-bar form.top-bar-search button {
 	font-size: 16px;
 	color: var(--galaxy-purple-dark);
 }
+
 nav.top-bar ul.top-bar-links {
 	list-style: none;
 	margin: 0;
@@ -72,16 +95,20 @@ nav.top-bar ul.top-bar-links {
 	text-align: center;
 	align-content: center;
 }
+
 nav.top-bar ul.top-bar-links li {
 	display: inline;
 	margin-right: 1em;
 }
+
 nav.top-bar ul.top-bar-links a,
 nav.top-bar .top-bar-link-btn {
 	color: var(--galaxy-white-icy);
 	text-decoration: none;
 	font-weight: 600;
+	transition: color 0.18s, text-decoration 0.18s;
 }
+
 nav.top-bar ul.top-bar-links a:hover,
 nav.top-bar ul.top-bar-links a:focus,
 nav.top-bar .top-bar-link-btn:hover,
@@ -89,22 +116,29 @@ nav.top-bar .top-bar-link-btn:focus {
 	text-decoration: underline;
 	color: var(--galaxy-accent);
 }
+
 nav.top-bar ul.top-bar-links .btn.ask-question {
 	background-color: var(--galaxy-white-icy);
 	color: var(--galaxy-purple-med);
 	padding: 6px 10px;
 	border-radius: 3px;
+	transition: background 0.18s, color 0.18s;
 }
+
 nav.top-bar ul.top-bar-links .btn.ask-question:hover {
 	background-color: var(--galaxy-accent);
 	color: var(--galaxy-white-icy);
 }
+
 #top-bar-container {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 }
-/* Footer */
+
+/*=========================================================================
+    FOOTER STYLES
+==========================================================================*/
 footer.footer {
 	background-color: var(--galaxy-blue-deep);
 	color: var(--galaxy-grey);
@@ -114,26 +148,41 @@ footer.footer {
 	margin-top: 3em;
 	flex-shrink: 0;
 }
+
 footer.footer .footer-links a {
 	color: var(--galaxy-accent);
 	margin: 0 8px;
 	text-decoration: none;
+	transition: color 0.18s;
 }
+
 footer.footer .footer-links a:hover,
 footer.footer .footer-links a:focus {
 	text-decoration: underline;
 	color: var(--galaxy-white-icy);
 }
+
+/*=========================================================================
+    MAIN CONTENT AREA
+==========================================================================*/
 main {
 	flex: 1 0 auto;
 }
-/* General Anchors and Buttons */
+
+/*=========================================================================
+    BUTTONS / GENERAL ANCHORS
+==========================================================================*/
+
+/* No underline for links by default */
 a {
 	text-decoration: none;
 }
+
 a.btn.btn-answer {
 	text-align: center;
 }
+
+/** Base button rule (extend with modifiers) */
 .btn {
 	cursor: pointer;
 	border: none;
@@ -149,41 +198,49 @@ a.btn.btn-answer {
 	background: var(--galaxy-violet-light);
 	color: var(--galaxy-white-icy);
 }
+
 .btn-small {
 	font-size: 0.85rem;
 	padding: 0.3rem 0.6rem;
 }
+
 .btn-edit {
 	background-color: var(--galaxy-purple-med);
 	color: var(--galaxy-white-icy);
 	margin-left: 1rem;
 }
+
 .btn-delete,
 .btn-danger {
 	background-color: var(--galaxy-purple-dark);
 	color: var(--galaxy-white-icy);
 	margin-left: 1rem;
 }
+
 .btn-comment {
 	background-color: var(--galaxy-white-icy);
 	color: var(--galaxy-accent-dark);
 	border: 1px solid var(--galaxy-accent);
-	transition: background-color 0.2s ease;
+	transition: background-color 0.2s;
 }
-.btn-comment:hover, .btn-comment:focus {
+.btn-comment:hover,
+.btn-comment:focus {
 	background-color: var(--galaxy-purple-med);
 	color: var(--galaxy-white-icy);
 }
+
 .btn-answer {
 	background-color: var(--galaxy-accent);
 	color: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-med);
 	transition: background-color 0.2s ease;
 }
-.btn-answer:hover, .btn-answer:focus {
+.btn-answer:hover,
+.btn-answer:focus {
 	background-color: var(--galaxy-purple-med);
 	border-color: var(--galaxy-purple-dark);
 }
+
 .btn-tag-filter {
 	background-color: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-med);
@@ -195,18 +252,23 @@ a.btn.btn-answer {
 	margin: 0 0.25rem 0.25rem 0;
 	transition: background-color 0.2s ease;
 }
+
 .btn-tag-filter:hover,
 .btn-tag-filter:focus {
 	background-color: var(--galaxy-purple-med);
 	border-color: var(--galaxy-purple-dark);
 	color: var(--galaxy-white-icy);
 }
+
 .btn-tag-filter.selected {
 	background-color: var(--galaxy-blue-deep);
 	border-color: var(--galaxy-purple-dark);
 	color: var(--galaxy-white-icy);
 }
-/* Questions Container & List */
+
+/*=========================================================================
+    QUESTION/ANSWER CARD LISTS & ITEMS
+==========================================================================*/
 .questions-container {
 	max-width: 900px;
 	margin: 2rem auto;
@@ -214,6 +276,7 @@ a.btn.btn-answer {
 	font-family: Arial, sans-serif;
 	color: var(--galaxy-blue-deep);
 }
+
 .questions-list,
 .answers-list,
 .card-list {
@@ -221,6 +284,7 @@ a.btn.btn-answer {
 	margin: 0;
 	padding: 0;
 }
+
 .question-item,
 .answer-item,
 .card-item {
@@ -229,7 +293,7 @@ a.btn.btn-answer {
 	border-radius: 4px;
 	padding: 1rem 1.5rem;
 	margin-bottom: 1.25rem;
-	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 	transition: box-shadow 0.2s ease;
 	position: relative;
 }
@@ -245,6 +309,7 @@ li.card-item {
 li.card-item p {
 	margin: 0;
 }
+
 .card-body,
 .answer-body {
 	font-size: 1.1rem;
@@ -253,6 +318,7 @@ li.card-item p {
 	color: var(--galaxy-purple-dark);
 	white-space: pre-wrap;
 }
+
 .card-meta,
 .answer-meta {
 	font-size: 0.9rem;
@@ -260,6 +326,7 @@ li.card-item p {
 	margin-top: 0.25rem;
 	margin-bottom: 0.8rem;
 }
+
 .no-questions,
 .no-answers,
 .no-comments {
@@ -269,13 +336,17 @@ li.card-item p {
 	margin: 1rem 0;
 	padding: 2rem 0;
 }
-/* Question/Answer Titles & Metas */
+
+/*=========================================================================
+    QUESTION/ANSWER TITLES, META, TAGS
+==========================================================================*/
 .question-title-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 0.5rem;
 }
+
 .question-title {
 	margin: 0;
 	flex: 1 1 auto;
@@ -283,18 +354,38 @@ li.card-item p {
 	font-weight: 600;
 	font-size: 1.3rem;
 }
+.question-title a {
+	color: inherit;
+}
+
 .question-meta {
 	font-size: 0.9rem;
 	color: var(--galaxy-purple-med);
 	margin-bottom: 1rem;
 }
+.question-meta a,
+#comments-section a,
+#answers-section a,
+.avatar-field a {
+	color: var(--galaxy-purple-med);
+	text-decoration: underline;
+}
+.question-meta a:hover,
+#answers-section a:hover,
+#comments-section a:hover,
+.avatar-field a:hover {
+	text-decoration: underline;
+	color: var(--galaxy-purple-dark);
+}
+
 .question-body {
 	line-height: 1.5;
 	margin-bottom: 1rem;
 	color: var(--galaxy-blue-deep);
 	font-size: 1rem;
 }
-/* Question tags */
+
+/* Question tags styling */
 .question-tags {
 	margin-bottom: 1rem;
 	margin-top: 1rem;
@@ -313,7 +404,10 @@ li.card-item p {
 	border: 1px solid var(--galaxy-accent);
 	box-shadow: 0 1px 3px rgba(49,27,56,0.06);
 }
-/* Edit/Delete buttons on question */
+
+/*=========================================================================
+    QUESTION/ANSWER CARD ACTION BUTTONS
+==========================================================================*/
 .question-edit-delete-buttons a {
 	margin-left: 0.5rem;
 	padding: 0.3rem 0.7rem;
@@ -336,7 +430,10 @@ li.card-item p {
 .question-edit-delete-buttons a.btn-delete:hover {
 	background-color: var(--galaxy-accent);
 }
-/* Section Headers */
+
+/*=========================================================================
+    SECTION & ADD BUTTONS
+==========================================================================*/
 .section-header {
 	display: flex;
 	justify-content: space-between;
@@ -358,7 +455,10 @@ li.card-item p {
 	color: var(--galaxy-white-icy);
 	border: none;
 }
-/* Action Buttons Container (toggle/add comment) */
+
+/*=========================================================================
+    ACTION BUTTON GROUPS (e.g., TOGGLE/ADD COMMENTS)
+==========================================================================*/
 .toggle-buttons,
 .answer-buttons-wrapper {
 	margin-top: 1.5rem;
@@ -374,7 +474,8 @@ li.card-item p {
 	text-decoration: none;
 	margin-top: 0.3rem;
 }
-/* Responsive tweaks */
+
+/*=================== Responsive tweaks for section headers ==============*/
 @media (max-width: 480px) {
 	.answer-buttons-wrapper,
 	.section-header {
@@ -386,24 +487,10 @@ li.card-item p {
 		align-self: flex-start;
 	}
 }
-@media (max-width: 600px) {
-	.question-title-row {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	.question-edit-delete-buttons {
-		margin-top: 0.5rem;
-	}
-	.section-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.5rem;
-	}
-	.add-section-btn {
-		align-self: flex-start;
-	}
-}
-/* Comment Lists & Items */
+
+/*=========================================================================
+    COMMENT LISTS & ITEMS
+==========================================================================*/
 .comment-list {
 	list-style: none;
 	padding-left: 1.5rem;
@@ -415,7 +502,7 @@ li.card-item p {
 	border-radius: 4px;
 	padding: 0.6rem 1rem;
 	margin-bottom: 0.75rem;
-	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .comment-body,
 #comments-section .comment-body {
@@ -430,7 +517,10 @@ li.card-item p {
 	color: var(--galaxy-violet-light);
 	margin-top: 0.25rem;
 }
-/* Card drop-down (kebab) menu styling */
+
+/*=========================================================================
+    DROPDOWN (kebab) MENU FOR CARDS
+==========================================================================*/
 .dropdown {
 	position: absolute;
 	top: 0.6rem;
@@ -512,7 +602,10 @@ li.card-item p {
 		max-width: 98vw;
 	}
 }
-/* Status/Spinner */
+
+/*=========================================================================
+    STATUS, LOADING, SPINNER
+==========================================================================*/
 #questions-status-message {
 	margin: 2.2rem auto 1.3rem auto;
 	text-align: center;
@@ -546,9 +639,11 @@ li.card-item p {
 	border-color: var(--galaxy-purple-dark);
 	background: #F8D7DA;
 }
+
 .questions-status b {
 	color: inherit;
 }
+
 .spinner {
 	display: inline-block;
 	width: 1.1em;
@@ -563,7 +658,10 @@ li.card-item p {
 @keyframes spin {
 	100% { transform: rotate(360deg); }
 }
-/* Pagination */
+
+/*=========================================================================
+    PAGINATION
+==========================================================================*/
 .pagination {
 	margin-top: 2rem;
 	text-align: center;
@@ -610,6 +708,7 @@ li.card-item p {
 	border-color: var(--galaxy-purple-dark);
 	color: var(--galaxy-white-icy);
 }
+
 .page-jump-form {
 	display: inline-flex;
 	align-items: center;
@@ -645,7 +744,8 @@ li.card-item p {
 	cursor: pointer;
 	transition: background-color 0.2s, border-color 0.2s;
 }
-.btn-go:hover, .btn-go:focus {
+.btn-go:hover,
+.btn-go:focus {
 	background-color: var(--galaxy-purple-dark);
 	border-color: var(--galaxy-purple-dark);
 }
@@ -657,7 +757,10 @@ li.card-item p {
 	width: 100%;
 	text-align: center;
 }
-/* Various Forms: Profile, Auth, Ask (Site) */
+
+/*=========================================================================
+    FORMS (PROFILE, AUTH, ASK, ETC.)
+==========================================================================*/
 .profile-edit-container,
 .form-demo-container,
 .auth-container {
@@ -666,10 +769,12 @@ li.card-item p {
 	padding: 0 1rem;
 	background: var(--galaxy-white-icy);
 }
-.profile-form, .password-form, .site-form, .auth-form {
+.profile-form, .password-form,
+.site-form, .auth-form {
 	margin-bottom: 2rem;
 }
-.profile-form h2, .password-form h2, .form-demo-article h2, .auth-article h2 {
+.profile-form h2, .password-form h2,
+.form-demo-article h2, .auth-article h2 {
 	margin-top: 0;
 	margin-bottom: 1em;
 	font-size: 1.1rem;
@@ -716,8 +821,10 @@ li.card-item p {
 	margin-bottom: 0.14em;
 	color: var(--galaxy-purple-dark);
 }
-.profile-form ul.errorlist, .password-form ul.errorlist,
-.site-form ul.errorlist, .auth-form ul.errorlist {
+.profile-form ul.errorlist,
+.password-form ul.errorlist,
+.site-form ul.errorlist,
+.auth-form ul.errorlist {
 	color: #842029;
 	list-style: none;
 	margin: 0 0 0.25em 0;
@@ -758,7 +865,10 @@ li.card-item p {
 	margin-top: 0.4em;
 	min-width: 100px;
 }
-/* Auth Containers */
+
+/*=========================================================================
+    AUTH CONTAINERS
+==========================================================================*/
 .auth-container {
 	max-width: 400px;
 	margin: 3rem auto;
@@ -788,11 +898,13 @@ li.card-item p {
 	font-size: 1em;
 	font-weight: 600;
 }
-.auth-links a:hover,
-.auth-links a:focus {
+.auth-links a:hover, .auth-links a:focus {
 	text-decoration: underline;
 }
-/* Search Bar (site-wide) */
+
+/*=========================================================================
+    SITE-WIDE SEARCH BAR
+==========================================================================*/
 .site-search-form {
 	display: flex;
 	align-items: center;
@@ -838,12 +950,15 @@ li.card-item p {
 .site-search-form:focus-within {
 	box-shadow: 0 0 0 3px #E26CA529;
 }
-/* User/Profile/Badges */
+
+/*=========================================================================
+    USER/PROFILE/BADGES
+==========================================================================*/
 .user-detail, .profile-edit-article, .form-demo-article, .auth-article {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-dark);
 	border-radius: 4px;
-	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 	max-width: 700px;
 	margin: 2rem auto;
 	padding: 2rem 2.5rem;
@@ -877,15 +992,9 @@ li.card-item p {
 	height: 84px;
 	font-size: 2.4em;
 }
-.user-detail h2 {
-	margin: 0 0 0.3em 0;
-}
-.user-joined {
-	color: var(--galaxy-grey);
-}
-.profile-section {
-	margin-top: 1.5rem;
-}
+.user-detail h2 { margin: 0 0 0.3em 0; }
+.user-joined { color: var(--galaxy-grey); }
+.profile-section { margin-top: 1.5rem; }
 .profile-section h3 {
 	margin-bottom: 0.5em;
 	font-size: 1.1rem;
@@ -901,10 +1010,7 @@ li.card-item p {
 .bio-placeholder, .badges-placeholder {
 	color: var(--galaxy-grey);
 }
-.user-badges {
-	margin-top: 0.5em;
-}
-/* Enhanced badge styles for clarity and contrast */
+.user-badges { margin-top: 0.5em; }
 .badge {
 	background: var(--galaxy-accent-light);
 	color: var(--galaxy-accent-dark);
@@ -918,9 +1024,7 @@ li.card-item p {
 	letter-spacing: 0.02em;
 	box-shadow: 0 1px 5px rgba(122,56,127,0.10);
 }
-.avatar-field {
-	margin-bottom: 2em;
-}
+.avatar-field { margin-bottom: 2em; }
 .avatar-upload-preview {
 	display: flex;
 	align-items: center;
@@ -941,7 +1045,8 @@ li.card-item p {
 	margin: 0.5em 0 0 0;
 	font-size: 0.96em;
 }
-/* Miscellaneous */
+
+/* Misc: Asks, Links, Headings, Delete Confirm */
 .ask-link {
 	color: var(--galaxy-purple-dark);
 	text-decoration: underline;
@@ -953,20 +1058,7 @@ li.card-item p {
 	color: var(--galaxy-accent);
 	text-decoration: underline;
 }
-.question-meta a,
-#comments-section a,
-#answers-section a,
-.avatar-field a {
-	color: var(--galaxy-purple-med);
-	text-decoration: underline;
-}
-.question-meta a:hover,
-#answers-section a:hover,
-#comments-section a:hover,
-.avatar-field a:hover {
-	text-decoration: underline;
-	color: var(--galaxy-purple-dark);
-}
+
 .delete-heading {
 	margin: 0 0 1.2em 0;
 	text-align: center;
@@ -991,19 +1083,21 @@ li.card-item p {
 	gap: 1.5em;
 	margin-top: 2em;
 }
+
 .confirm-delete-container,
 .form-demo-container {
 	max-width: 650px;
 	margin: 2rem auto;
 	padding: 0 1rem;
 }
+
 .confirm-delete-article,
 .form-demo-article {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-dark);
 	border-radius: 4px;
 	padding: 2rem 2.5rem;
-	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 	max-width: 700px;
 	margin: 0 auto;
 }
@@ -1053,9 +1147,7 @@ li.card-item p {
 .btn-edit:hover, .btn-edit:focus {
 	background-color: var(--galaxy-accent);
 }
-.question-title a {
-	color: inherit;
-}
+
 .question-detail {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-dark);
@@ -1069,60 +1161,119 @@ li.card-item p {
 	box-shadow: 0 4px 12px rgba(58,23,64,0.13);
 }
 
-/* Additional mobile responsive for text, paddings, badges, questions, tags */
-@media (max-width: 768px) {
-	body {
-		font-size: 14px;
-	}
-	nav.top-bar .top-bar-logo {
-		font-size: 1.25em;
-	}
-	.btn, .btn-edit, .btn-delete, .btn-comment, .btn-answer {
-		padding: 0.45rem 0.75rem;
-		font-size: 0.93rem;
-	}
-	.questions-container {
-		width: 95%;
-		margin: 1rem auto;
-		padding: 0 0.75rem;
-	}
-	.question-title {
-		font-size: 1.1rem;
-	}
-	.badge, .question-tags .tag {
-		padding: 0.15em 0.62em;
-		font-size: 0.9rem;
-	}
+/*=========================================================================
+    BADGES DISPLAY (single badge view)
+==========================================================================*/
+.single-badge-details {
+	max-width: 700px;
+	margin: 2rem auto;
+	padding: 2.1rem 2.3rem;
+	background: var(--galaxy-white-icy);
+	border: 1.5px solid var(--galaxy-purple-dark);
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(58,23,64,0.09);
 }
-@media (max-width: 480px) {
-	body {
-		font-size: 12.5px;
-	}
-	nav.top-bar .top-bar-logo {
-		font-size: 1em;
-	}
-	nav.top-bar form.top-bar-search input[type="text"] {
-		width: 140px;
-	}
-	.btn, .btn-edit, .btn-delete, .btn-comment, .btn-answer {
-		padding: 0.37rem 0.5rem;
-		font-size: 0.84rem;
-		margin-right: 0.18rem;
-	}
-	.questions-container {
-		width: 100%;
-		margin: 0.5rem auto;
-		padding: 0 0.3rem;
-	}
-	.question-title {
-		font-size: 1rem;
-	}
-	.badge, .question-tags .tag {
-		padding: 0.11em 0.33em;
-		font-size: 0.7rem;
-	}
+.badge-title {
+	font-size: 2rem;
+	font-weight: 800;
+	color: var(--galaxy-violet-light);
+	margin: 0 0 0.10em 0;
+	line-height: 1.15;
+	text-align: left;
+	letter-spacing: 0.01em;
+	display: block;
+}
+.badge-item {
+	background: var(--galaxy-accent);
+	color: var(--galaxy-white-icy);
+	border-radius: 5px;
+	padding: 0.12em 0.55em;
+	font-size: 1em;
+	font-weight: 600;
+	border: none;
+	margin-top: 0.32em;
+	margin-bottom: 0.1em;
+	margin-left: 0;
+	letter-spacing: 0.025em;
+	display: inline-block;
+	box-shadow: 0 1px 4px rgba(122,56,127,0.05);
+}
+.badge-icon-container {
+	margin-bottom: 1.05rem;
+	text-align: left;
+}
+.badge-icon {
+	width: 98px;
+	height: 98px;
+	object-fit: contain;
+	background: var(--galaxy-accent-light);
+	border-radius: 12px;
+	border: 2px solid var(--galaxy-accent-dark);
+	box-shadow: 0 2px 9px -3px var(--galaxy-accent-dark), 0 0.5px 2px rgba(122,56,127,0.045);
+	display: block;
+	margin: 0;
+}
+.badge-description {
+	font-size: 1.07rem;
+	color: var(--galaxy-blue-deep);
+	line-height: 1.65;
+	margin-top: 1.4em;
+	background: none;
+	border: none;
+	padding: 0;
 }
 
+/* Enhanced badge description w/ highlight */
+.badge-description {
+	margin-top: 1.5em;
+	font-size: 1.09rem;
+	line-height: 1.65;
+	color: var(--galaxy-blue-deep);
+	background: var(--galaxy-white-icy);
+	border-left: 4px solid var(--galaxy-accent);
+	border-radius: 5px;
+	padding: 1.1rem 1.3rem;
+	box-shadow: 0 1px 7px rgba(122,56,127,0.08);
+	word-break: break-word;
+	transition: background 0.2s;
+	min-height: 2.5em;
+	font-family: inherit;
+}
+.badge-description strong {
+	color: var(--galaxy-purple-dark);
+}
+
+/*=========================================================================
+    RESPONSIVENESS & TWEAKS (for various breakpoints)
+==========================================================================*/
+@media (max-width: 768px) {
+	body { font-size: 14px; }
+	nav.top-bar .top-bar-logo { font-size: 1.25em; }
+	.btn, .btn-edit, .btn-delete, .btn-comment, .btn-answer { padding: 0.45rem 0.75rem; font-size: 0.93rem; }
+	.questions-container { width: 95%; margin: 1rem auto; padding: 0 0.75rem; }
+	.question-title { font-size: 1.1rem; }
+	.badge, .question-tags .tag { padding: 0.15em 0.62em; font-size: 0.9rem; }
+}
+@media (max-width: 600px) {
+	.question-title-row { flex-direction: column; align-items: flex-start; }
+	.question-edit-delete-buttons { margin-top: 0.5rem; }
+	.section-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+	.add-section-btn { align-self: flex-start; }
+}
+@media (max-width: 480px) {
+	body { font-size: 12.5px; }
+	nav.top-bar .top-bar-logo { font-size: 1em; }
+	nav.top-bar form.top-bar-search input[type="text"] { width: 140px; }
+	.btn, .btn-edit, .btn-delete, .btn-comment, .btn-answer { padding: 0.37rem 0.5rem; font-size: 0.84rem; margin-right: 0.18rem; }
+	.questions-container { width: 100%; margin: 0.5rem auto; padding: 0 0.3rem; }
+	.question-title { font-size: 1rem; }
+	.badge, .question-tags .tag { padding: 0.11em 0.33em; font-size: 0.7rem; }
+	.dropdown-menu { right: 0.2rem; min-width: 80px; font-size: 0.87em; max-width: 98vw; }
+}
+
+/*----------
+  Utility: top-bar link button
+-----------*/
 .top-bar-link-btn {
 	background: none;
 	border: none;
@@ -1139,121 +1290,20 @@ li.card-item p {
 	transition: color 0.18s, text-decoration 0.18s;
 	box-shadow: none;
 }
-
-.top-bar-link-btn:active, .top-bar-link-btn:focus, .top-bar-link-btn:hover {
+.top-bar-link-btn:active,
+.top-bar-link-btn:focus,
+.top-bar-link-btn:hover {
 	color: var(--galaxy-accent);
 	text-decoration: underline;
 	outline: none;
 }
 
-.single-badge-details {
-	max-width: 700px;
-	margin: 2rem auto;
-	padding: 2.1rem 2.3rem;
-	background: var(--galaxy-white-icy);
-	border: 1.5px solid var(--galaxy-purple-dark);
-	border-radius: 6px;
-	box-shadow: 0 1px 2px rgba(58,23,64,0.09);
-}
-
-.badge-title {
-	font-size: 2rem;
-	font-weight: 800;
-	color: var(--galaxy-violet-light);
-	margin: 0 0 0.10em 0;
-	line-height: 1.15;
-	text-align: left;
-	letter-spacing: 0.01em;
-	/* No flex/gap in the main title */
-	display: block;
-}
-
-.badge-item {
-	background: var(--galaxy-accent);
-	color: var(--galaxy-white-icy);
-	border-radius: 5px;
-	padding: 0.12em 0.55em;
-	font-size: 1em;
-	font-weight: 600;
-	border: none;
-	margin-top: 0.32em;
-	margin-bottom: 0.1em;
-	margin-left: 0;
-	letter-spacing: 0.025em;
-	display: inline-block;
-	box-shadow: 0 1px 4px rgba(122,56,127,0.05);
-}
-
-.badge-icon-container {
-	margin-bottom: 1.05rem;
-	text-align: left;
-}
-
-.badge-icon {
-	width: 98px;
-	height: 98px;
-	object-fit: contain;
-	background: var(--galaxy-accent-light);
-	border-radius: 12px;
-	border: 2px solid var(--galaxy-accent-dark);
-	/* Much softer shadow (glow) */
-	box-shadow: 0 2px 9px -3px var(--galaxy-accent-dark), 0 0.5px 2px rgba(122,56,127,0.045);
-	display: block;
-	margin: 0;
-}
-
-.badge-description {
-	font-size: 1.07rem;
-	color: var(--galaxy-blue-deep);
-	line-height: 1.65;
-	margin-top: 1.4em;
-	background: none;
-	border: none;
-	padding: 0;
-}
-
+/*=========================================================================
+    MORE BADGE MOBILE TWEAKS
+==========================================================================*/
 @media (max-width: 600px) {
-	.single-badge-details {
-		max-width: 98vw;
-		padding: 1.1rem 0.6rem;
-	}
-	.badge-title {
-		font-size: 1.2rem;
-	}
-	.badge-icon {
-		width: 70px;
-		height: 70px;
-		border-radius: 7px;
-	}
-	.badge-description {
-		font-size: 0.92rem;
-	}
+	.single-badge-details { max-width: 98vw; padding: 1.1rem 0.6rem; }
+	.badge-title { font-size: 1.2rem; }
+	.badge-icon { width: 70px; height: 70px; border-radius: 7px; }
+	.badge-description { font-size: 0.97rem; padding: 0.8rem 0.6rem; }
 }
-
-.badge-description {
-	margin-top: 1.5em;
-	font-size: 1.09rem;
-	line-height: 1.65;
-	color: var(--galaxy-blue-deep); /* or var(--galaxy-purple-dark) for more punch */
-	background: var(--galaxy-white-icy);
-	border-left: 4px solid var(--galaxy-accent);
-	border-radius: 5px;
-	padding: 1.1rem 1.3rem;
-	box-shadow: 0 1px 7px rgba(122,56,127,0.08);
-	word-break: break-word;
-	transition: background 0.2s;
-	min-height: 2.5em;
-	font-family: inherit;
-}
-
-.badge-description strong {
-	color: var(--galaxy-purple-dark);
-}
-
-@media (max-width: 600px) {
-	.badge-description {
-		font-size: 0.97rem;
-		padding: 0.8rem 0.6rem;
-	}
-}
-
