@@ -1,5 +1,10 @@
-from django.urls import path, include
+"""
+answers/urls.py
 
+URL patterns for answering questions: create, edit, and delete answers.
+"""
+
+from django.urls import path, include
 from answers.views import AnswerCreateView, AnswerEditView, AnswerDeleteView
 
 urlpatterns = [
