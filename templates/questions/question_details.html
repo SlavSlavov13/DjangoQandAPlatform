@@ -166,107 +166,141 @@
 	</main>
 
 	<script>
-		function toggleComments(answerId) {
-			const commentsList = document.getElementById(`comments-for-answer-${answerId}`);
-			const addCommentBtn = document.getElementById(`add-comment-btn-${answerId}`);
-			const btn = document.querySelector(`.toggle-answer-comments-btn[aria-controls="comments-for-answer-${answerId}"]`);
+		(function() {
+			// ---- State helpers ----
+			const QUESTION_ID = '{{ question.pk }}';
+			const STORAGE_KEY = `questionDetailsState:${QUESTION_ID}`;
 
-			if (commentsList.hidden) {
-				commentsList.hidden = false;
-				addCommentBtn.style.display = 'inline-block';
-				btn.textContent = "Hide Comments";
-				btn.setAttribute('aria-expanded', 'true');
-			} else {
-				commentsList.hidden = true;
-				addCommentBtn.style.display = 'none';
-				btn.textContent = "Show Comments";
-				btn.setAttribute('aria-expanded', 'false');
+			function getStateFromStorage() {
+				let state = { openTab: 'answers', expandedAnswers: [] }; // default
+				try {
+					if(window.sessionStorage.getItem(STORAGE_KEY)) {
+						state = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY)) || state;
+					}
+				} catch(e) {}
+				return state;
 			}
-		}
-
-		function showSection(section) {
-			const answersSection = document.getElementById('answers-section');
-			const commentsSection = document.getElementById('comments-section');
-			const sectionHeader = document.querySelector('.section-header');
-			const heading = document.getElementById('section-heading');
-			const showAnswersBtn = document.getElementById('show-answers-btn');
-			const showCommentsBtn = document.getElementById('show-comments-btn');
-
-			const addAnswerBtn = document.getElementById('add-answer-btn');
-			const addCommentBtn = document.getElementById('add-comment-btn');
-
-			if (section === 'answers') {
-				answersSection.hidden = false;
-				commentsSection.hidden = true;
-
-				sectionHeader.hidden = false;
-				heading.textContent = 'Answers:';
-				showAnswersBtn.setAttribute('aria-expanded', 'true');
-				showCommentsBtn.setAttribute('aria-expanded', 'false');
-
-				if (addAnswerBtn) addAnswerBtn.style.display = 'inline-block';
-				if (addCommentBtn) addCommentBtn.style.display = 'none';
-			} else if (section === 'comments') {
-				commentsSection.hidden = false;
-				answersSection.hidden = true;
-
-				sectionHeader.hidden = false;
-				heading.textContent = 'Comments:';
-				showCommentsBtn.setAttribute('aria-expanded', 'true');
-				showAnswersBtn.setAttribute('aria-expanded', 'false');
-
-				if (addCommentBtn) addCommentBtn.style.display = 'inline-block';
-				if (addAnswerBtn) addAnswerBtn.style.display = 'none';
+			function saveStateToStorage(state) {
+				let cleanState = {
+					openTab: state.openTab || 'answers',
+					expandedAnswers: state.expandedAnswers ? Array.from(new Set(state.expandedAnswers)).map(Number) : []
+				};
+				try {
+					window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cleanState));
+				} catch(e) {}
 			}
-		}
 
-		// Toggle dropdown menu for kebab menus; closes others
-		function toggleDropdown(event) {
-			event.stopPropagation();
-			const button = event.currentTarget;
-			const menu = button.nextElementSibling;
-			const isExpanded = button.getAttribute('aria-expanded') === 'true';
+			// ---- UI Actions with state recording ----
 
-			// Close other dropdown menus
-			document.querySelectorAll('.dropdown-menu').forEach(m => {
-				if (m !== menu) {
-					m.hidden = true;
-					if(m.previousElementSibling) m.previousElementSibling.setAttribute('aria-expanded', 'false');
+			function showSection(section, restoreFromStateOnLoad) {
+				const answersSection = document.getElementById('answers-section');
+				const commentsSection = document.getElementById('comments-section');
+				const sectionHeader = document.querySelector('.section-header');
+				const heading = document.getElementById('section-heading');
+				const showAnswersBtn = document.getElementById('show-answers-btn');
+				const showCommentsBtn = document.getElementById('show-comments-btn');
+				const addAnswerBtn = document.getElementById('add-answer-btn');
+				const addCommentBtn = document.getElementById('add-comment-btn');
+				answersSection.hidden = (section !== 'answers');
+				commentsSection.hidden = (section !== 'comments');
+				sectionHeader.hidden = false;
+				heading.textContent = section === 'answers' ? 'Answers:' : 'Comments:';
+				showAnswersBtn.setAttribute('aria-expanded', section === 'answers');
+				showCommentsBtn.setAttribute('aria-expanded', section === 'comments');
+				if(addAnswerBtn) addAnswerBtn.style.display = (section === 'answers') ? 'inline-block' : 'none';
+				if(addCommentBtn) addCommentBtn.style.display = (section === 'comments') ? 'inline-block' : 'none';
+
+				if(!restoreFromStateOnLoad) {
+					let state = getStateFromStorage();
+					state.openTab = section;
+					saveStateToStorage(state);
+				}
+			}
+
+			function toggleComments(answerId, restoreFromStateOnLoad) {
+				const commentsList = document.getElementById(`comments-for-answer-${answerId}`);
+				const addCommentBtn = document.getElementById(`add-comment-btn-${answerId}`);
+				const btn = document.querySelector(
+					`.toggle-answer-comments-btn[aria-controls="comments-for-answer-${answerId}"]`
+				);
+				if(commentsList.hidden) {
+					commentsList.hidden = false;
+					addCommentBtn.style.display = 'inline-block';
+					btn.textContent = "Hide Comments";
+					btn.setAttribute('aria-expanded', 'true');
+					if(!restoreFromStateOnLoad) addAnswerIdToState(answerId);
+				} else {
+					commentsList.hidden = true;
+					addCommentBtn.style.display = 'none';
+					btn.textContent = "Show Comments";
+					btn.setAttribute('aria-expanded', 'false');
+					if(!restoreFromStateOnLoad) removeAnswerIdFromState(answerId);
+				}
+			}
+			function addAnswerIdToState(answerId) {
+				let state = getStateFromStorage();
+				state.expandedAnswers = Array.from(new Set([...(state.expandedAnswers || []), answerId]));
+				saveStateToStorage(state);
+			}
+			function removeAnswerIdFromState(answerId) {
+				let state = getStateFromStorage();
+				state.expandedAnswers = (state.expandedAnswers || []).filter(id => id !== answerId);
+				saveStateToStorage(state);
+			}
+			// --- Dropdown menu and init behavior (unchanged) ---
+			window.showSection = function(section) { showSection(section, false); }
+			window.toggleComments = function(answerId) { toggleComments(answerId, false); }
+			window.toggleDropdown = function(event) {
+				event.stopPropagation();
+				const button = event.currentTarget;
+				const menu = button.nextElementSibling;
+				const isExpanded = button.getAttribute('aria-expanded') === 'true';
+				document.querySelectorAll('.dropdown-menu').forEach(m => {
+					if(m !== menu) {
+						m.hidden = true;
+						if(m.previousElementSibling) m.previousElementSibling.setAttribute('aria-expanded', 'false');
+					}
+				});
+				if(isExpanded) {
+					menu.hidden = true;
+					button.setAttribute('aria-expanded', 'false');
+				} else {
+					menu.hidden = false;
+					button.setAttribute('aria-expanded', 'true');
+				}
+			};
+			document.addEventListener('click', () => {
+				document.querySelectorAll('.dropdown-menu').forEach(menu => {
+					menu.hidden = true;
+				});
+				document.querySelectorAll('.dropdown-toggle').forEach(button => {
+					button.setAttribute('aria-expanded', 'false');
+				});
+			});
+
+			document.addEventListener('DOMContentLoaded', () => {
+				// Hide everything by default
+				document.getElementById('answers-section').hidden = true;
+				document.getElementById('comments-section').hidden = true;
+				document.querySelector('.section-header').hidden = true;
+				if(document.getElementById('add-answer-btn')) document.getElementById('add-answer-btn').style.display = 'none';
+				if(document.getElementById('add-comment-btn')) document.getElementById('add-comment-btn').style.display = 'none';
+
+				// --- Restore state from sessionStorage ---
+				let state = getStateFromStorage();
+				if(!state.openTab) state.openTab = "answers";
+				showSection(state.openTab, true);
+
+				// Restore expanded answer comments
+				if(Array.isArray(state.expandedAnswers)) {
+					state.expandedAnswers.forEach(answerId => {
+						if(document.getElementById(`comments-for-answer-${answerId}`)) {
+							toggleComments(answerId, true);
+						}
+					});
 				}
 			});
-
-			if (isExpanded) {
-				menu.hidden = true;
-				button.setAttribute('aria-expanded', 'false');
-			} else {
-				menu.hidden = false;
-				button.setAttribute('aria-expanded', 'true');
-			}
-		}
-
-		// Close dropdown menus on clicking outside
-		document.addEventListener('click', () => {
-			document.querySelectorAll('.dropdown-menu').forEach(menu => {
-				menu.hidden = true;
-			});
-			document.querySelectorAll('.dropdown-toggle').forEach(button => {
-				button.setAttribute('aria-expanded', 'false');
-			});
-		});
-
-		document.addEventListener('DOMContentLoaded', () => {
-			const answersSection = document.getElementById('answers-section');
-			const commentsSection = document.getElementById('comments-section');
-			const sectionHeader = document.querySelector('.section-header');
-			const addAnswerBtn = document.getElementById('add-answer-btn');
-			const addCommentBtn = document.getElementById('add-comment-btn');
-
-			answersSection.hidden = true;
-			commentsSection.hidden = true;
-			sectionHeader.hidden = true;
-
-			if (addAnswerBtn) addAnswerBtn.style.display = 'none';
-			if (addCommentBtn) addCommentBtn.style.display = 'none';
-		});
+		})();
 	</script>
+
 {% endblock %}

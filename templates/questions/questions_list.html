@@ -75,7 +75,6 @@
 				const button = e.target.closest('button.btn-tag-filter');
 				if (!button) return;
 
-				const params = getParamsFromUrl();
 				let page = 1;
 				let search = searchInput.value.trim();
 
@@ -90,7 +89,7 @@
 					}
 				}
 				updateTagFilterButtons();
-				updateUrlAndFetch({search, page, tags: Array.from(selectedTagIds)});
+				pushUrlAndFetch({search, page, tags: Array.from(selectedTagIds)});
 			});
 
 			function updateTagFilterButtons() {
@@ -230,7 +229,7 @@
 						e.preventDefault();
 						const selectedPage = parseInt(link.dataset.page, 10);
 						if (selectedPage && selectedPage !== parseInt(input.value, 10) && selectedPage >= 1 && selectedPage <= totalPages) {
-							updateUrlAndFetch({search:searchInput.value.trim(), page:selectedPage, tags:Array.from(selectedTagIds)});
+							pushUrlAndFetch({search:searchInput.value.trim(), page:selectedPage, tags:Array.from(selectedTagIds)});
 						}
 					});
 				});
@@ -240,15 +239,12 @@
 					let val = parseInt(input.value, 10);
 					if (isNaN(val) || val < 1) val = 1;
 					if (val > totalPages) val = totalPages;
-					updateUrlAndFetch({search:searchInput.value.trim(), page:val, tags:Array.from(selectedTagIds)});
+					pushUrlAndFetch({search:searchInput.value.trim(), page:val, tags:Array.from(selectedTagIds)});
 				});
 			}
 
 			// ========== FETCH AND DISPLAY ==========
 			async function fetchQuestions(search = "", page = 1, tags = []) {
-				currentSearch = search;
-				currentPage = page;
-
 				searchInput.disabled = true;
 				searchForm.querySelector('button[type="submit"]').disabled = true;
 
@@ -317,17 +313,16 @@
 			}
 
 			searchInput.addEventListener('input', debounce(() => {
-				updateUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
+				pushUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
 			}, 300));
 
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
-				updateUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
+				pushUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
 			});
 
-			// Unified function to update URL and call fetchQuestions
-			function updateUrlAndFetch({search, page, tags}) {
-				// tags: array of tagIds
+			// Unified function to update URL and call fetchQuestions with history.pushState
+			function pushUrlAndFetch({search, page, tags}) {
 				const url = new URL(window.location.href);
 				url.searchParams.set('page', page);
 				if (search) {
@@ -337,8 +332,9 @@
 				}
 				url.searchParams.delete('tag');
 				(tags || []).forEach(tagId => url.searchParams.append('tag', tagId));
-				history.replaceState(null, '', url);
-				syncUIToParams({search, tags, page}); // keeps UI in sync with params, including tags, search box
+				// IMPORTANT: use pushState so Back/Forward works per navigation step
+				history.pushState(null, '', url);
+				syncUIToParams({search, tags, page});
 				fetchQuestions(search, page, tags);
 			}
 
@@ -353,6 +349,17 @@
 
 			// On first load, set UI from url and load correct content for URL params
 			const initialParams = getParamsFromUrl();
+			// Use replaceState so refresh/bookmark simply sets the URL quietly
+			const url = new URL(window.location.href);
+			url.searchParams.set('page', initialParams.page);
+			if (initialParams.search) {
+				url.searchParams.set('search', initialParams.search);
+			} else {
+				url.searchParams.delete('search');
+			}
+			url.searchParams.delete('tag');
+			(initialParams.tags || []).forEach(tagId => url.searchParams.append('tag', tagId));
+			history.replaceState(null, '', url);
 			syncUIToParams(initialParams);
 			fetchQuestions(initialParams.search, initialParams.page, initialParams.tags);
 
