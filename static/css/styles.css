@@ -465,7 +465,7 @@ li.card-item p {
 	display: block;
 	background: none;
 	border: none;
-	color: #3b4045;
+	color: #3b4045 !important;
 	padding: 0.32em 1.1em 0.32em 0.7em;
 	text-align: left;
 	font-size: 0.88em;
@@ -480,15 +480,15 @@ li.card-item p {
 	box-sizing: border-box;
 }
 .dropdown-menu .dropdown-item.btn-edit {
-	color: #39739d;
+	color: #39739d !important;
 }
 .dropdown-menu .dropdown-item.btn-delete {
-	color: #842029;
+	color: #842029 !important;
 }
 .dropdown-menu .dropdown-item:hover,
 .dropdown-menu .dropdown-item:focus {
-	background: #f5f6f7;
-	color: #145399;
+	background: #f5f6f7 !important;
+	color: #145399 !important;
 	outline: none;
 }
 @media (max-width: 480px) {
@@ -1040,3 +1040,130 @@ li.card-item p {
 	margin-top: 2em;
 }
 
+/* Common delete (confirmation) form CSS for question, comment, and answer deletes */
+.confirm-delete-container,
+.form-demo-container {  /* Already styled, but ensure both use same layout */
+	max-width: 650px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}
+
+.confirm-delete-article,
+.form-demo-article { /* White card w/ border */
+	background: white;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	padding: 2rem 2.5rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	max-width: 700px;
+	margin: 0 auto;
+}
+
+/* Delete heading styling (reuse) */
+.confirm-delete-article h2,
+.form-demo-article h2.delete-heading {
+	margin: 0 0 1.2em 0;
+	text-align: center;
+	color: #842029;
+	font-size: 1.5rem;
+	letter-spacing: 0.03em;
+}
+
+/* Delete message for comments and answers */
+.confirm-delete-article p {
+	font-size: 1.1rem;
+	text-align: center;
+	color: #3b4045;
+	margin-bottom: 2em;
+}
+
+/* Styled preview blockquote (for both comment and answer deletions) */
+.comment-preview blockquote {
+	background: #f8f9fa;
+	border-left: 5px solid #e1e2e3;
+	margin: 0 0 2em 0;
+	padding: 1em 1.2em;
+	border-radius: 4px;
+	font-size: 1.02rem;
+	color: #474f57;
+	word-break: break-word;
+}
+
+/* Delete form buttons */
+.confirm-delete-article form,
+.form-demo-article .delete-form {
+	display: flex;
+	justify-content: center;
+	gap: 1.5em;
+	margin-top: 1em;
+}
+
+.btn-danger, .btn-delete {
+	background-color: #dc3545;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 0.5rem 0.9rem;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.btn-danger:hover, .btn-danger:focus,
+.btn-delete:hover, .btn-delete:focus {
+	background-color: #a71d2a;
+}
+
+.btn-cancel, .btn-edit {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 0.5rem 0.9rem;
+	border-radius: 4px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.btn-cancel:hover, .btn-cancel:focus,
+.btn-edit:hover, .btn-edit:focus {
+	background-color: #0056b3;
+}
+
+/* Ensure responsive layout */
+@media (max-width: 600px) {
+	.confirm-delete-article,
+	.form-demo-article {
+		padding: 1.1rem 0.9rem;
+	}
+	.confirm-delete-article form,
+	.form-demo-article .delete-form {
+		flex-direction: column;
+		gap: 0.5em;
+		align-items: stretch;
+	}
+}
+
+/* Optional: visually match the .delete-question-title style */
+.confirm-delete-article .delete-question-title {
+	color: #0077cc;
+	font-weight: 700;
+	font-size: 1.13em;
+}
+
+.question-title a {
+	color: inherit;
+}
+
+.question-detail {
+	background: white;
+	border: 1px solid #d6d9dc;
+	border-radius: 4px;
+	padding: 2rem 2.5rem;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+	max-width: 700px;
+	margin: 2rem auto;
+}
+.question-detail:hover {
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
