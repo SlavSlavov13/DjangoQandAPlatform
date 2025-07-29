@@ -1,3 +1,8 @@
-from django.contrib import admin
+"""
+api/admin.py
 
-# Register your models here.
+Admin configuration for API models.
+Adjust model registration and admin options as required for your project.
+"""
+
+from django.contrib import admin
