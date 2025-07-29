@@ -49,40 +49,55 @@
 			const searchForm = document.getElementById('rest-search-form');
 			const searchInput = document.getElementById('rest-search-input');
 			const statusDiv = document.getElementById('questions-status-message');
-
-			let currentSearch = "";
-			let currentPage = 1;
-
 			const tagFilterContainer = document.getElementById('tag-filter-container');
-			let selectedTagIds = new Set();  // Use a Set to track selected tag IDs
+			let selectedTagIds = new Set();
 
+			// ========== READ ALL PARAMS FROM URL ==========
+			function getParamsFromUrl() {
+				const urlParams = new URLSearchParams(window.location.search);
+				const page = parseInt(urlParams.get('page')) || 1;
+				const search = urlParams.get('search') || "";
+				const tags = urlParams.getAll('tag');
+				return { page, search, tags };
+			}
+
+			function syncUIToParams(params) {
+				// Sync search input
+				searchInput.value = params.search;
+				// Sync tag selection
+				selectedTagIds.clear();
+				(params.tags || []).forEach(tagId => selectedTagIds.add(tagId));
+				updateTagFilterButtons();
+			}
+
+			// ========== TAG FILTERS HANDLER ==========
 			tagFilterContainer.addEventListener('click', (e) => {
 				const button = e.target.closest('button.btn-tag-filter');
 				if (!button) return;
 
+				const params = getParamsFromUrl();
+				let page = 1;
+				let search = searchInput.value.trim();
+
 				if (button.classList.contains('btn-clear')) {
-					// Clear all selected tags
 					selectedTagIds.clear();
-					updateTagFilterButtons();
-					fetchQuestions(searchInput.value.trim(), 1);
 				} else {
 					const tagId = button.dataset.tagId;
-					// Toggle selection of the clicked tag
 					if (selectedTagIds.has(tagId)) {
 						selectedTagIds.delete(tagId);
 					} else {
 						selectedTagIds.add(tagId);
 					}
-					updateTagFilterButtons();
-					fetchQuestions(searchInput.value.trim(), 1);
 				}
+				updateTagFilterButtons();
+				updateUrlAndFetch({search, page, tags: Array.from(selectedTagIds)});
 			});
 
 			function updateTagFilterButtons() {
 				tagFilterContainer.querySelectorAll('.btn-tag-filter').forEach(btn => {
 					const tagId = btn.dataset.tagId;
 					if (btn.classList.contains('btn-clear')) {
-						btn.disabled = selectedTagIds.size === 0;  // Enable only if some tags selected
+						btn.disabled = selectedTagIds.size === 0;
 					} else if (selectedTagIds.has(tagId)) {
 						btn.classList.add('selected');
 					} else {
@@ -90,7 +105,6 @@
 					}
 				});
 			}
-
 
 			function truncate(text, maxLength) {
 				return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
@@ -104,8 +118,8 @@
 			// ========== QUESTION ITEM
 			function renderQuestionItem(q) {
 				const container_a = document.createElement('a');
-				container_a.href = `/questions/${q.id}/details/`
-				container_a.className = 'list_question_link'
+				container_a.href = `/questions/${q.id}/details/`;
+				container_a.className = 'list_question_link';
 				const li = document.createElement('li');
 				container_a.append(li)
 				li.className = 'question-item';
@@ -215,8 +229,8 @@
 					link.addEventListener('click', e => {
 						e.preventDefault();
 						const selectedPage = parseInt(link.dataset.page, 10);
-						if (selectedPage && selectedPage !== currentPage && selectedPage >= 1 && selectedPage <= totalPages) {
-							fetchQuestions(currentSearch, selectedPage);
+						if (selectedPage && selectedPage !== parseInt(input.value, 10) && selectedPage >= 1 && selectedPage <= totalPages) {
+							updateUrlAndFetch({search:searchInput.value.trim(), page:selectedPage, tags:Array.from(selectedTagIds)});
 						}
 					});
 				});
@@ -226,12 +240,12 @@
 					let val = parseInt(input.value, 10);
 					if (isNaN(val) || val < 1) val = 1;
 					if (val > totalPages) val = totalPages;
-					fetchQuestions(currentSearch, val);
+					updateUrlAndFetch({search:searchInput.value.trim(), page:val, tags:Array.from(selectedTagIds)});
 				});
 			}
 
-			// ========== FETCH AND DISPLAY
-			async function fetchQuestions(search = "", page = 1) {
+			// ========== FETCH AND DISPLAY ==========
+			async function fetchQuestions(search = "", page = 1, tags = []) {
 				currentSearch = search;
 				currentPage = page;
 
@@ -247,11 +261,7 @@
 				const params = new URLSearchParams();
 				if (search) params.append('search', search);
 				if (page) params.append('page', page);
-
-				// Append all selected tags - multiple tag params with same key 'tag'
-				selectedTagIds.forEach(tagId => {
-					params.append('tag', tagId);
-				});
+				tags.forEach(tagId => params.append('tag', tagId));
 
 				try {
 					const response = await fetch(`${apiEndpoint}?${params.toString()}`, {
@@ -266,7 +276,8 @@
 
 					const results = data.results || [];
 					const count = data.count || 0;
-					const pageSize = data.page_size || 10;
+					const pageSize = data.page_size || (data.results ? data.results.length : 10);
+					const totalPages = pageSize ? Math.ceil(count / pageSize) : 1;
 
 					if (results.length === 0) {
 						if (!hasQuestions) {
@@ -282,7 +293,6 @@
 						results.forEach(q => {
 							questionList.appendChild(renderQuestionItem(q));
 						});
-						const totalPages = Math.ceil(count / pageSize);
 						renderPagination(page, totalPages);
 					}
 				} catch (error) {
@@ -307,18 +317,45 @@
 			}
 
 			searchInput.addEventListener('input', debounce(() => {
-				fetchQuestions(searchInput.value.trim(), 1);
+				updateUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
 			}, 300));
 
 			searchForm.addEventListener('submit', e => {
 				e.preventDefault();
-				fetchQuestions(searchInput.value.trim(), 1);
+				updateUrlAndFetch({search:searchInput.value.trim(), page:1, tags:Array.from(selectedTagIds)});
 			});
 
-			// Initialize UI and fetch initial questions
-			updateTagFilterButtons();
-			fetchQuestions("", 1);
-		})();
+			// Unified function to update URL and call fetchQuestions
+			function updateUrlAndFetch({search, page, tags}) {
+				// tags: array of tagIds
+				const url = new URL(window.location.href);
+				url.searchParams.set('page', page);
+				if (search) {
+					url.searchParams.set('search', search);
+				} else {
+					url.searchParams.delete('search');
+				}
+				url.searchParams.delete('tag');
+				(tags || []).forEach(tagId => url.searchParams.append('tag', tagId));
+				history.replaceState(null, '', url);
+				syncUIToParams({search, tags, page}); // keeps UI in sync with params, including tags, search box
+				fetchQuestions(search, page, tags);
+			}
 
+			// Respond to browser Back/Forward navigation
+			window.addEventListener('popstate', function() {
+				const params = getParamsFromUrl();
+				syncUIToParams(params);
+				fetchQuestions(params.search, params.page, params.tags);
+			});
+
+			// ========== INITIAL LOAD ==========
+
+			// On first load, set UI from url and load correct content for URL params
+			const initialParams = getParamsFromUrl();
+			syncUIToParams(initialParams);
+			fetchQuestions(initialParams.search, initialParams.page, initialParams.tags);
+
+		})();
 	</script>
 {% endblock %}
