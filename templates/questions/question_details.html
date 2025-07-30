@@ -1,7 +1,8 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-	<main class="questions-container">
+	<main>
+	<div class="questions-container">
 		<article class="question-detail">
 			<div class="question-title-row">
 				<h1 class="question-title">{{ question.title }}</h1>
@@ -31,13 +32,11 @@
 				</div>
 			{% endif %}
 
-			<!-- Toggle Buttons -->
 			<div class="toggle-buttons">
 				<button class="btn btn-comment" id="show-comments-btn" type="button" aria-controls="comments-section" aria-expanded="false" onclick="showSection('comments')">See Comments</button>
 				<button class="btn btn-answer" id="show-answers-btn" type="button" aria-controls="answers-section" aria-expanded="false" onclick="showSection('answers')">See Answers</button>
 			</div>
 
-			<!-- Section Header with heading + add button -->
 			<div class="section-header" hidden>
 				<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
 
@@ -163,7 +162,7 @@
 				{% endif %}
 			</div>
 		</article>
-	</main>
+	</div>
 
 	<script>
 		(function() {
@@ -302,5 +301,6 @@
 			});
 		})();
 	</script>
+	</main>
 
 {% endblock %}

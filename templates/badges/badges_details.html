@@ -1,19 +1,21 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-	<div class="single-badge-details" role="main" aria-label="Badge details">
+	<main>
+		<div class="single-badge-details" role="main" aria-label="Badge details">
 
-		<h2 class="badge-title" tabindex="0">Badge: <span class="badge-item">{{ badge.name }}</span></h2>
+			<h2 class="badge-title" tabindex="0">Badge: <span class="badge-item">{{ badge.name }}</span></h2>
 
-		{% if badge.icon %}
-			<div class="badge-icon-container">
-				<img src="{{ badge.icon.url }}" alt="Icon for badge {{ badge.name }}" class="badge-icon"/>
+			{% if badge.icon %}
+				<div class="badge-icon-container">
+					<img src="{{ badge.icon.url }}" alt="Icon for badge {{ badge.name }}" class="badge-icon"/>
+				</div>
+			{% endif %}
+
+			<div class="badge-description" tabindex="0" aria-label="Description of the badge">
+				Description: {{ badge.description|linebreaks }}
 			</div>
-		{% endif %}
 
-		<div class="badge-description" tabindex="0" aria-label="Description of the badge">
-			Description: {{ badge.description|linebreaks }}
 		</div>
-
-	</div>
+	</main>
 {% endblock %}

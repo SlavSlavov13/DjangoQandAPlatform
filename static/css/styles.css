@@ -768,7 +768,7 @@ li.card-item p {
     FORMS (PROFILE, AUTH, ASK, ETC.)
 ==========================================================================*/
 .profile-edit-container,
-.form-demo-container,
+.form-container,
 .auth-container {
 	max-width: 650px;
 	margin: 2rem auto;
@@ -780,7 +780,7 @@ li.card-item p {
 	margin-bottom: 2rem;
 }
 .profile-form h2, .password-form h2,
-.form-demo-article h2, .auth-article h2 {
+.form-article h2, .auth-article h2 {
 	margin-top: 0;
 	margin-bottom: 1em;
 	font-size: 1.1rem;
@@ -960,7 +960,7 @@ li.card-item p {
 /*=========================================================================
     USER/PROFILE/BADGES
 ==========================================================================*/
-.user-detail, .profile-edit-article, .form-demo-article, .auth-article {
+.user-detail, .profile-edit-article, .form-article, .auth-article {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-dark);
 	border-radius: 4px;
@@ -1095,14 +1095,14 @@ li.card-item p {
 }
 
 .confirm-delete-container,
-.form-demo-container {
+.form-container {
 	max-width: 650px;
 	margin: 2rem auto;
 	padding: 0 1rem;
 }
 
 .confirm-delete-article,
-.form-demo-article {
+.form-article {
 	background: var(--galaxy-white-icy);
 	border: 1px solid var(--galaxy-purple-dark);
 	border-radius: 4px;
@@ -1112,7 +1112,7 @@ li.card-item p {
 	margin: 0 auto;
 }
 .confirm-delete-article h2,
-.form-demo-article h2.delete-heading {
+.form-article h2.delete-heading {
 	margin: 0 0 1.2em 0;
 	text-align: center;
 	color: var(--galaxy-purple-dark);
@@ -1136,7 +1136,7 @@ li.card-item p {
 	word-break: break-word;
 }
 .confirm-delete-article form,
-.form-demo-article .delete-form {
+.form-article .delete-form {
 	display: flex;
 	justify-content: center;
 	gap: 1.5em;
