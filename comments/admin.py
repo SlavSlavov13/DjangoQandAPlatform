@@ -18,12 +18,20 @@ class CommentAdmin(admin.ModelAdmin):
 	list_display = (
 		'content',
 		'related_object_link',
-		'author',
+		'author_link',
 		'created_at',
 	)
 	search_fields = ('author__username', 'content')
 	list_filter = ('created_at',)
 	autocomplete_fields = ('author',)
+
+	def author_link(self, obj):
+		"""
+		Links to the related user profile in admin.
+		"""
+		url = f"/admin/auth/user/{obj.author.pk}/change/"
+		return format_html('<a href="{}">{}</a>', url, obj.author)
+	author_link.short_description = 'Author'
 
 	def get_readonly_fields(self, request, obj=None):
 		# Make important fields read-only for Staff Moderators to prevent edits.

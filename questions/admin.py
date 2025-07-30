@@ -14,7 +14,7 @@ class QuestionAdmin(admin.ModelAdmin):
 	"""
 	Custom admin for Question: adds clickable author link, disables add for staff moderators.
 	"""
-	list_display = ('title', 'author_link', 'created_at', 'updated_at')
+	list_display = ['title', 'author_link', 'created_at']
 	search_fields = ('title', 'body', 'author__user__username')
 	list_filter = ('created_at', 'tags')
 	autocomplete_fields = ('author', 'tags')
@@ -24,8 +24,9 @@ class QuestionAdmin(admin.ModelAdmin):
 		"""
 		Links to the related user profile in admin.
 		"""
-		url = f"/admin/users/userprofile/{obj.author.pk}/change/"
-		return format_html('{}', url, obj.author)
+		url = f"/admin/auth/user/{obj.author.pk}/change/"
+		return format_html('<a href="{}">{}</a>', url, obj.author)
+
 	author_link.short_description = 'Author'
 
 	def has_add_permission(self, request, obj=None):
