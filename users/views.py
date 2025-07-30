@@ -6,6 +6,7 @@ Views for user account lifecycle:
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model, authenticate, login, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
@@ -113,6 +114,11 @@ class ProfileLogoutView(LogoutView):
 
 	def get_success_url(self):
 		return reverse_lazy('questions-list')
+
+@login_required
+def logout_confirm(request):
+	return render(request, 'users/confirm_logout.html')
+
 
 class ProfileLoginView(LoginView):
 	"""

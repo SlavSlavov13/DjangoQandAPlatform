@@ -10,7 +10,7 @@ from users.views import (
 	ProfileLogoutView,
 	ProfileLoginView,
 	ProfileDetailView,
-	check_username,
+	check_username, logout_confirm,
 )
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
 	path('edit-profile/', EditProfileView.as_view(), name='edit-profile'),
 	path('login/', ProfileLoginView.as_view(), name='login'),
 	path('logout/', ProfileLogoutView.as_view(), name='logout'),
+	path('confirm-logout/', logout_confirm, name='logout-confirm'),
 	path('<int:pk>/details/', ProfileDetailView.as_view(), name='profile-details'),
 	path('ajax/check-username/', check_username, name='check-username'),
 ]

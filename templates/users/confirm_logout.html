@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+	<main class="confirm-delete-container">
+		<article class="confirm-delete-article">
+			<h2 id="confirm-logout-title">Confirm Logout</h2>
+
+			<p id="confirm-logout-desc">
+				Are you sure you want to log out of your account?
+			</p>
+
+			<form method="post" action="{% url 'logout' %}">
+				{% csrf_token %}
+				<button type="submit" class="btn btn-danger">Yes, Log out</button>
+				<button type="button" class="btn btn-cancel" onclick="window.history.back();">Cancel</button>
+			</form>
+		</article>
+	</main>
+{% endblock %}

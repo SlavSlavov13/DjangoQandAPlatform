@@ -217,6 +217,13 @@ a.btn.btn-answer {
 	margin-left: 1rem;
 }
 
+.btn-delete:hover ,
+.btn-danger:hover,
+.btn-delete:focus,
+.btn-danger:focus {
+	background: var(--galaxy-purple-med);
+}
+
 .btn-comment {
 	background-color: var(--galaxy-white-icy);
 	color: var(--galaxy-accent-dark);
@@ -1043,6 +1050,10 @@ li.card-item p {
 	gap: 0.35em;
 	margin: 0.5em 0 0 0;
 	font-size: 0.96em;
+}
+
+.logout-form {
+	display: inline;
 }
 
 /* Misc: Asks, Links, Headings, Delete Confirm */

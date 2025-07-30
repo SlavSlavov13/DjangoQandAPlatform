@@ -18,7 +18,7 @@
 				{% if request.user.is_authenticated %}
 					<li><a href="{% url 'question_create' %}">Ask Question</a></li>
 					<li><a href="{% url 'profile-details' user.pk %}">Profile</a></li>
-					{% include 'users/logout.html' %}
+					<li><a href="{% url 'logout-confirm' %}">Log Out</a></li>
 				{% else %}
 					<li><a href="{% url 'login' %}">Log In</a></li>
 					<li><a href="{% url 'register' %}">Sign Up</a></li>
