@@ -6,6 +6,8 @@ Customizes display, search, and permissions for comment moderation.
 """
 
 from django.contrib import admin
+from django.utils.text import Truncator
+
 from .models import Comment
 from django.urls import reverse
 from django.utils.html import format_html
@@ -16,7 +18,7 @@ class CommentAdmin(admin.ModelAdmin):
 	Admin list and form customizations for comments.
 	"""
 	list_display = (
-		'content',
+		'truncated_content',
 		'related_object_link',
 		'author_link',
 		'created_at',
@@ -24,6 +26,10 @@ class CommentAdmin(admin.ModelAdmin):
 	search_fields = ('author__username', 'content')
 	list_filter = ('created_at',)
 	autocomplete_fields = ('author',)
+
+	def truncated_content(self, obj):
+		return Truncator(obj.content).chars(50)
+	truncated_content.short_description = 'Content'
 
 	def author_link(self, obj):
 		"""

@@ -29,7 +29,6 @@ class Badge(models.Model):
 	)
 	slug = models.SlugField(
 		max_length=40,
-		unique=True,
 		blank=True,
 		help_text="Always auto-generated from name"
 	)

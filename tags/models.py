@@ -17,7 +17,7 @@ class Tag(models.Model):
 	"""
 	name = models.CharField(max_length=30, unique=True,
 	                        help_text="Unique human-readable tag name (e.g. 'python').")
-	slug = models.SlugField(max_length=40, unique=True, blank=True,
+	slug = models.SlugField(max_length=40, blank=True,
 	                        help_text="Always auto-generated from name")
 
 	def save(self, *args, **kwargs):

@@ -8,6 +8,7 @@ supporting user-contributed Q&A and related comments in a Django application.
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils.text import Truncator
 
 UserModel = get_user_model()
 
@@ -49,5 +50,6 @@ class Answer(models.Model):
 		String representation for admin, debug, and logging.
 		Example: 'Answer by johndoe on How to test models?'
 		"""
-		return f'Answer by {self.author.username} on {self.question}'
+		question_title = Truncator(str(self.question)).chars(50)
+		return f'Answer by {self.author.username} on {question_title}'
 

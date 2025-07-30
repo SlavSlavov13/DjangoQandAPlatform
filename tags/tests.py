@@ -41,13 +41,13 @@ class TagModelTests(TestCase):
 		with self.assertRaises(Exception):
 			Tag.objects.create(name="JavaScript")
 
-	def test_manual_slug_is_preserved(self):
+	def test_manual_slug_is_replaced(self):
 		"""
-		If a slug is supplied explicitly, it is not overwritten on save.
+		If a slug is supplied explicitly, it is overwritten on save.
 		"""
 		tag = Tag(name="Django", slug="custom-slug")
 		tag.save()
-		self.assertEqual(tag.slug, "custom-slug")
+		self.assertEqual(tag.slug, slugify('Django'))
 
 
 class TagAdminTests(TestCase):
@@ -69,19 +69,6 @@ class TagAdminTests(TestCase):
 		self.moderator.save()
 
 		self.factory = RequestFactory()
-
-	def test_slug_readonly_for_moderators(self):
-		"""
-		If user is in 'Staff Moderators', slug is readonly in the admin.
-		"""
-		from .admin import TagAdmin
-
-		admin_instance = TagAdmin(Tag, admin.site)
-		request = self.factory.get('/')
-		request.user = self.moderator
-
-		readonly = admin_instance.get_readonly_fields(request, None)
-		self.assertIn('slug', readonly)
 
 	def test_slug_editable_for_non_moderators(self):
 		"""

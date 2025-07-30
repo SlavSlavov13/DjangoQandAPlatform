@@ -7,6 +7,7 @@ Question model for user Q&A, with tags, author, and generic comments.
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils.text import Truncator
 
 UserModel = get_user_model()
 
@@ -38,7 +39,8 @@ class Question(models.Model):
 
 	def __str__(self):
 		"""Return the question's title."""
-		return self.title
+		return Truncator(str(self.title)).chars(50)
+
 
 	class Meta:
 		ordering = ['-created_at']

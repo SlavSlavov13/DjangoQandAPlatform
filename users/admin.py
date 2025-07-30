@@ -14,6 +14,8 @@ from django.contrib.auth.admin import GroupAdmin, UserAdmin
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils.html import format_html_join
+from django.utils.text import Truncator
+
 from .models import UserProfile
 
 @admin.register(UserProfile)
@@ -24,9 +26,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 	- Prevents Staff Moderators from adding profiles.
 	- Makes primary user field read-only for Staff Moderators.
 	"""
-	list_display = ('user', 'bio', 'avatar')
+	list_display = ('user', 'truncated_bio', 'avatar')
 	search_fields = ('user__username', 'bio')
 	list_filter = ('user__is_staff',)
+
+	def truncated_bio(self, obj):
+		return Truncator(obj.bio).chars(50)
+	truncated_bio.short_description = 'Bio'
 
 	def has_add_permission(self, request, obj=None):
 		"""
