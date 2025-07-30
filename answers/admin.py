@@ -21,7 +21,7 @@ class AnswerAdmin(admin.ModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
 		# Staff Moderators cannot change author or question.
 		if request.user.groups.filter(name='Staff Moderators').exists():
-			return ['author', 'question']
+			return ['author',]
 		return []
 
 	def author_link(self, obj):

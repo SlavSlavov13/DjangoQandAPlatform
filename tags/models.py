@@ -18,15 +18,14 @@ class Tag(models.Model):
 	name = models.CharField(max_length=30, unique=True,
 	                        help_text="Unique human-readable tag name (e.g. 'python').")
 	slug = models.SlugField(max_length=40, unique=True, blank=True,
-	                        help_text="Slugified tag for URL lookup (auto-filled from name).")
+	                        help_text="Always auto-generated from name")
 
 	def save(self, *args, **kwargs):
 		"""
-		Auto-fills the slug if not set on creation, using the name field.
-		Preserves custom slugs if provided.
+		Automatically set or update slug to a slugified version
+		of the current name, always.
 		"""
-		if not self.slug:
-			self.slug = slugify(self.name)
+		self.slug = slugify(self.name)
 		super().save(*args, **kwargs)
 
 	def __str__(self):

@@ -121,9 +121,6 @@ class ProfileLoginView(LoginView):
 	"""
 	template_name = 'users/login.html'
 
-	def get_success_url(self):
-		return reverse_lazy('questions-list')
-
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
 			return redirect('profile-details', request.user.pk)

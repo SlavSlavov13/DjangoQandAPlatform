@@ -48,7 +48,7 @@
 				{% else %}
 					<button type="submit" class="btn btn-edit">Edit Comment</button>
 				{% endif %}
-				<a href="{% url 'question_details' question_id %}" class="btn btn-answer">Cancel</a>
+				<a href="#" onclick="window.history.back(); return false;" class="btn btn-answer">Cancel</a>
 			</form>
 		</article>
 	</main>

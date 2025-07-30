@@ -76,12 +76,10 @@ class AddCommentView(LoginRequiredMixin, CreateView):
 		form.save()
 		question_id = self.kwargs.get('question_id')
 		answer_id = self.kwargs.get('answer_id')
-		if question_id:
-			return redirect('question_details', pk=question_id)
-		elif answer_id:
+		if not question_id:
 			answer = get_object_or_404(Answer, pk=answer_id)
-			return redirect('question_details', pk=answer.question.pk)
-		return redirect('questions-list')
+			question_id = answer.question.pk
+		return redirect('question_details', pk=question_id)
 
 class EditCommentView(LoginRequiredMixin, UpdateView):
 	"""

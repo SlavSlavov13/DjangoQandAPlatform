@@ -15,23 +15,8 @@ class TagAdmin(admin.ModelAdmin):
 	- Shows name in list view.
 	- Enables search by name.
 	- Auto-populates slug from name during creation.
-	- Makes slug readonly for staff moderators but editable for other users.
 	"""
-	list_display = ('name', )
+	list_display = ('name',)
 	search_fields = ('name',)
 	prepopulated_fields = {'slug': ('name',)}
 
-	def get_readonly_fields(self, request, obj=None):
-		"""
-		Makes 'slug' readonly for users in the 'Staff Moderators' group.
-
-		Args:
-			request: HttpRequest object.
-			obj: Tag instance (or None if adding).
-
-		Returns:
-			List of field names to be displayed as readonly.
-		"""
-		if request.user.groups.filter(name='Staff Moderators').exists():
-			return ['slug']
-		return []

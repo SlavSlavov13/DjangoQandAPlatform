@@ -17,7 +17,7 @@
 			<form method="post">
 				{% csrf_token %}
 				<button type="submit" class="btn btn-danger">Yes, Delete</button>
-				<a href="{% url 'question_details' answer.question.pk %}" class="btn btn-cancel">Cancel</a>
+				<a href="#" onclick="window.history.back(); return false;" class="btn btn-cancel">Cancel</a>
 			</form>
 		</article>
 	</main>

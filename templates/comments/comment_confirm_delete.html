@@ -25,11 +25,7 @@
 			<form method="post">
 				{% csrf_token %}
 				<button type="submit" class="btn btn-danger">Yes, Delete</button>
-				{% if answer_id %}
-					<a href="{% url 'question_details' comment.content_object.question.pk %}" class="btn btn-cancel">Cancel</a>
-				{% else %}
-					<a href="{% url 'question_details' comment.content_object.pk %}" class="btn btn-cancel">Cancel</a>
-				{% endif %}
+					<a href="#" onclick="window.history.back(); return false;" class="btn btn-cancel">Cancel</a>
 			</form>
 		</article>
 	</main>

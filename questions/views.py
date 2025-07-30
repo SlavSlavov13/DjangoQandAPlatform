@@ -39,11 +39,13 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
 	model = Question
 	form_class = QuestionCreateForm
 	template_name = "questions/question_create_edit.html"
-	success_url = reverse_lazy("questions-list")
 
 	def form_valid(self, form):
 		form.instance.author = self.request.user
 		return super().form_valid(form)
+
+	def get_success_url(self):
+		return reverse('question_details', args=[self.object.pk])
 
 class QuestionUpdateView(LoginRequiredMixin, UpdateView):
 	"""

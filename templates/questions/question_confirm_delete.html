@@ -11,7 +11,7 @@
 			<form method="post" class="delete-form">
 				{% csrf_token %}
 				<button type="submit" class="btn btn-delete">Confirm Delete</button>
-				<a href="{% url 'question_details' object.pk %}" class="btn btn-edit">Cancel</a>
+				<a href="#" onclick="window.history.back(); return false;" class="btn btn-edit">Cancel</a>
 			</form>
 		</article>
 	</main>

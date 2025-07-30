@@ -31,7 +31,7 @@ class Badge(models.Model):
 		max_length=40,
 		unique=True,
 		blank=True,
-		help_text="Auto-generated from name if left blank"
+		help_text="Always auto-generated from name"
 	)
 
 	def __str__(self):
@@ -40,8 +40,8 @@ class Badge(models.Model):
 
 	def save(self, *args, **kwargs):
 		"""
-		Ensures slug is set from the name on save if blank.
+		Automatically set or update slug to a slugified version
+		of the current name, always.
 		"""
-		if not self.slug:
-			self.slug = slugify(self.name)
+		self.slug = slugify(self.name)
 		super().save(*args, **kwargs)
