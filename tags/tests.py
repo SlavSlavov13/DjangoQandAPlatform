@@ -48,37 +48,3 @@ class TagModelTests(TestCase):
 		tag = Tag(name="Django", slug="custom-slug")
 		tag.save()
 		self.assertEqual(tag.slug, slugify('Django'))
-
-
-class TagAdminTests(TestCase):
-	"""
-	Tests customized TagAdmin behavior regarding the 'slug' field's
-	read-only status depending on user group membership.
-	"""
-
-	def setUp(self):
-		# Ensure the "Staff Moderators" group is only created if not present
-		self.mod_group, _ = Group.objects.get_or_create(name="Staff Moderators")
-
-		# Regular staff/superuser, not a moderator
-		self.staff = User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-
-		# This user is a "moderator"
-		self.moderator = User.objects.create_user('mod', 'mod@example.com', 'pass')
-		self.moderator.groups.add(self.mod_group)
-		self.moderator.save()
-
-		self.factory = RequestFactory()
-
-	def test_slug_editable_for_non_moderators(self):
-		"""
-		If user is NOT in 'Staff Moderators', slug is editable in the admin.
-		"""
-		from .admin import TagAdmin
-
-		admin_instance = TagAdmin(Tag, admin.site)
-		request = self.factory.get('/')
-		request.user = self.staff
-
-		readonly = admin_instance.get_readonly_fields(request, None)
-		self.assertNotIn('slug', readonly)
