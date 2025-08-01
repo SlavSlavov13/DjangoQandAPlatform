@@ -93,13 +93,17 @@ WSGI_APPLICATION = 'DjangoQandAPlatform.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "qaplatform",
-        "USER": "slav",
-        "PASSWORD": "slavlovesteddy",
-        "HOST": "127.0.0.1",
+        "NAME": "yourqaplatform-database",  # From your connection string
+        "USER": "dhfxnxijgg@yourqaplatform-server",  # In Azure, user must be in form 'user@server'
+        "PASSWORD": "HHsns44T$4oyPDoY",  # From your connection string
+        "HOST": "yourqaplatform-server.postgres.database.azure.com",
         "PORT": "5432",
+        "OPTIONS": {
+            "sslmode": "require",
+        },
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
