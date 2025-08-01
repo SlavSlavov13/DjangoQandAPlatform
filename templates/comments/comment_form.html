@@ -16,7 +16,12 @@
 				{% if not exists %}
 					<h2>Add Comment to Question: "{{ question_title }}"</h2>
 				{% else %}
-					<h2>Edit Comment to Question: "{{ question_title }}"</h2>
+					{% if parent_comment %}
+						<h2>Edit Comment to Comment: "{{ parent_comment.content }}"</h2>
+						<h2>Question: "{{ question_title }}"</h2>
+					{% else %}
+					{% endif %}
+
 				{% endif %}
 			{% endif %}
 

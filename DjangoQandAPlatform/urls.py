@@ -34,7 +34,7 @@ urlpatterns = [
     path('questions/', include('questions.urls')),
 
     # Comments app (generic comments for questions/answers)
-    path('comment/', include('comments.urls')),
+    path('comments/', include('comments.urls')),
 
     # Badges app (view earned badges and badge catalog)
     path('badges/', include('badges.urls')),

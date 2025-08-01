@@ -17,6 +17,9 @@
 					{% if answer_id %}
 						Answer: {{ answer_excerpt }}
 						<br>
+					{% elif parent_comment.id %}
+						Main Comment: {{ parent_comment.content }}
+						<br>
 					{% endif %}
 					Comment: {{ comment.content|linebreaksbr|default:"(No comment content)" }}
 				</blockquote>

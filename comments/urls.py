@@ -24,4 +24,11 @@ urlpatterns = [
 			path('delete/', CommentDeleteView.as_view(), name='delete-comment-to-answer'),
 		]))
 	])),
+	path('comment/<int:parent_comment_id>/', include([
+		path('add/', AddCommentView.as_view(), name='add-comment-to-comment'),
+		path('comment/<int:comment_id>/', include([
+			path('edit/', EditCommentView.as_view(), name='edit-comment-to-comment'),
+			path('delete/', CommentDeleteView.as_view(), name='delete-comment-to-comment'),
+		]))
+	])),
 	]

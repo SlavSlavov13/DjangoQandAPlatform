@@ -478,7 +478,10 @@ li.card-item p {
 	margin-top: 0.5rem;
 }
 .add-comment-btn {
-	text-decoration: none;
+	text-decoration: none !important;
+}
+.add-comment-btn:hover {
+	color: white !important;
 }
 
 /*=================== Responsive tweaks for section headers ==============*/
