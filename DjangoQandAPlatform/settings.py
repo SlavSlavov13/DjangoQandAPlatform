@@ -13,17 +13,20 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 import os
 from pathlib import Path
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-izit@_8%&z0cfl$s-_pkl^6*rls(ihuu+_nl_jwlqm^jajr5$l'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['localhost:8000', 'yourqaplatform.azurewebsites.net']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -60,7 +63,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must come right after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,21 +92,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'DjangoQandAPlatform.wsgi.application'
 
 # Database
-# Use PostgreSQL for persistence and performance.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "yourqaplatform-database",  # From your connection string
-        "USER": "dhfxnxijgg@yourqaplatform-server",  # In Azure, user must be in form 'user@server'
-        "PASSWORD": "HHsns44T$4oyPDoY",  # From your connection string
-        "HOST": "yourqaplatform-server.postgres.database.azure.com",
-        "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -129,7 +127,6 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
 
 # Media files (user-uploaded)
 MEDIA_URL = '/media/'
