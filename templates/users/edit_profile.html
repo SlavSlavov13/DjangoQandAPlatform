@@ -117,14 +117,12 @@
 				if (!usernameInput || !statusDiv) return;
 
 				// Current logged-in username from Django context, lowercased
-				const currentUsername = "{% if user.is_authenticated %}{{ user.username|escapejs }}{% else %}{% endif %}".toLowerCase();
-				// The initial value inside the input on page load (could be empty)
-				const initialUsername = usernameInput.value.trim().toLowerCase();
+				const currentUsername = "{% if user.is_authenticated %}{{ request.user.username|escapejs }}{% else %}{% endif %}";
 
 				let timeout = null;
 
 				usernameInput.addEventListener('input', function() {
-					const username = this.value.trim().toLowerCase();
+					const username = this.value.trim();
 					if (timeout) clearTimeout(timeout);
 
 					timeout = setTimeout(() => {
@@ -135,7 +133,7 @@
 						}
 
 						// Show message only if user changed input and now it matches current username
-						if (username === initialUsername) {
+						if (username === currentUsername) {
 							statusDiv.textContent = 'This is your current username.';
 							statusDiv.style.color = 'blue';
 							return;
