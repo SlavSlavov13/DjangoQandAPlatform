@@ -28,6 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['yourqanda.azurewebsites.net', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://yourqanda.azurewebsites.net",
+]
+
 # Application definition
 INSTALLED_APPS = [
     # Default Django apps:
