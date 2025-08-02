@@ -31,3 +31,7 @@ class Tag(models.Model):
 	def __str__(self):
 		"""String representation: just the tag name."""
 		return self.name
+
+# Create a flag model (run makemigrations/migrate after adding this)
+class InitialSetup(models.Model):
+	tags_created = models.BooleanField(default=False)

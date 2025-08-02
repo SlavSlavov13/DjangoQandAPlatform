@@ -42,3 +42,6 @@ class UserProfile(models.Model):
 		Display as username in Django admin/representation.
 		"""
 		return f'{self.user.username}'
+
+class InitialSetup(models.Model):
+	groups_created = models.BooleanField(default=False)
