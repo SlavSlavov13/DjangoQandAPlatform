@@ -5,6 +5,7 @@ Signal handlers for the users app.
 - Ensure staff group permissions and mutual exclusivity.
 - Maintain superuser group membership.
 """
+import os
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -48,6 +49,16 @@ def create_default_groups(sender, **kwargs):
 	staff_mods_permissions = Permission.objects.filter(codename__in=staff_mods_perms_codenames)
 	staff_mods.permissions.set(staff_mods_permissions)
 	staff_mods.save()
+
+	# Create a default superuser admin if not exists
+	# Safety: customize credentials or get from settings/env
+	username = os.environ.get("DEFAULT_ADMIN_USERNAME")
+	email = os.environ.get("DEFAULT_ADMIN_EMAIL")
+	password = os.environ.get("DEFAULT_ADMIN_PASSWORD")
+
+
+	if not UserModel.objects.filter(is_superuser=True).exists():
+		UserModel.objects.create_superuser(username=username, email=email, password=password)
 
 @receiver(m2m_changed, sender=UserModel.groups.through)
 def user_groups_changed(sender, instance, action, **kwargs):
