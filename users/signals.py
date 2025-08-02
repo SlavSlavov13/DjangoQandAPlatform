@@ -26,40 +26,40 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_migrate)
 def create_default_groups(sender, **kwargs):
-	with transaction.atomic():
-		flag, created = InitialSetup.objects.get_or_create(pk=1)
-		if flag.groups_created:
-			return  # groups already created, skip
+# with transaction.atomic():
+# 	flag, created = InitialSetup.objects.get_or_create(pk=1)
+# 	if flag.groups_created:
+# 		return  # groups already created, skip
 
-		super_admins, _ = Group.objects.get_or_create(name='Super Admins')
-		all_permissions = Permission.objects.all()
-		super_admins.permissions.set(all_permissions)
-		super_admins.save()
+	super_admins, _ = Group.objects.get_or_create(name='Super Admins')
+	all_permissions = Permission.objects.all()
+	super_admins.permissions.set(all_permissions)
+	super_admins.save()
 
-		staff_mods_perms_codenames = [
-			'view_logentry', 'view_group', 'view_user',
-			'change_userprofile', 'view_userprofile',
-			'view_question', 'change_question',
-			'change_answer', 'view_answer',
-			'change_comment', 'view_comment',
-			'add_tag', 'change_tag', 'delete_tag', 'view_tag',
-			'add_badge', 'change_badge', 'delete_badge', 'view_badge',
-		]
-		staff_mods, _ = Group.objects.get_or_create(name='Staff Moderators')
-		staff_mods_permissions = Permission.objects.filter(codename__in=staff_mods_perms_codenames)
-		staff_mods.permissions.set(staff_mods_permissions)
-		staff_mods.save()
+	staff_mods_perms_codenames = [
+		'view_logentry', 'view_group', 'view_user',
+		'change_userprofile', 'view_userprofile',
+		'view_question', 'change_question',
+		'change_answer', 'view_answer',
+		'change_comment', 'view_comment',
+		'add_tag', 'change_tag', 'delete_tag', 'view_tag',
+		'add_badge', 'change_badge', 'delete_badge', 'view_badge',
+	]
+	staff_mods, _ = Group.objects.get_or_create(name='Staff Moderators')
+	staff_mods_permissions = Permission.objects.filter(codename__in=staff_mods_perms_codenames)
+	staff_mods.permissions.set(staff_mods_permissions)
+	staff_mods.save()
 
-		# Create a default superuser admin if not exists (optional)
-		username = os.environ.get("DEFAULT_ADMIN_USERNAME")
-		email = os.environ.get("DEFAULT_ADMIN_EMAIL")
-		password = os.environ.get("DEFAULT_ADMIN_PASSWORD")
+	# Create a default superuser admin if not exists (optional)
+	username = 'admin1'
+	email = 'admin@admin.com'
+	password = 'admin'
 
-		if not UserModel.objects.filter(is_superuser=True).exists():
-			UserModel.objects.create_superuser(username=username, email=email, password=password)
+	# if not UserModel.objects.filter(is_superuser=True).exists():
+	UserModel.objects.create_superuser(username=username, email=email, password=password)
 
-		flag.groups_created = True
-		flag.save()
+	# flag.groups_created = True
+	# flag.save()
 
 @receiver(m2m_changed, sender=UserModel.groups.through)
 def user_groups_changed(sender, instance, action, **kwargs):
