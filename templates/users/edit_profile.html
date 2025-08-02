@@ -35,7 +35,7 @@
 							<img src="{{ profile_form.instance.avatar.url }}" alt="Current avatar" class="avatar-preview-img">
 						{% else %}
 							<span class="avatar-img avatar-placeholder">
-				          {{ profile_form.instance.user.username }}
+				          {{ profile_form.instance.user.username|first|upper }}
 			        </span>
 						{% endif %}
 					</div>
@@ -93,6 +93,19 @@
 				{% endfor %}
 				<button type="submit" name="change_password" class="btn btn-edit">Change Password</button>
 				<a href="#" onclick="window.history.back(); return false;" class="btn btn-answer">Cancel</a>
+				{% if not user.email %}
+					<a href="#" class="btn btn-link btn-reset-pass-auto"
+							{% if not user.email %} aria-disabled="true" onclick="return false;" style="opacity: 0.5; cursor: not-allowed; margin-left: 1rem;" {% endif %}
+					>
+						Reset your password
+						<br>
+						(you must have an email linked with your profile)
+					</a>
+				{% else %}
+					<a href="{% url 'password_reset_auto' %}" class="btn btn-link btn-reset-pass-auto">
+						Reset your password
+					</a>
+				{% endif %}
 			</form>
 		</article>
 

@@ -5,9 +5,10 @@ Views for user account lifecycle:
 """
 
 from asgiref.sync import sync_to_async
+from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView, LoginView
 from django.db import transaction
@@ -150,3 +151,21 @@ async def check_username(request):
 		return JsonResponse({'available': False, 'error': 'No username provided.'}, status=400)
 	exists = await sync_to_async(UserModel.objects.filter(username=username).exists)()
 	return JsonResponse({'available': not exists})
+
+@login_required
+def auto_password_reset_request(request):
+	user = request.user
+
+	if not user.email:
+		return redirect('profile-edit')  # or wherever you want to send them to update their email
+
+	form = PasswordResetForm(data={'email': user.email})
+	if form.is_valid():
+		form.save(
+			request=request,
+			use_https=request.is_secure(),
+		)
+		return redirect('password_reset_done')  # or any page to confirm
+
+	# This should normally never happen because Your email exists
+	return redirect('profile-edit')

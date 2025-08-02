@@ -273,6 +273,18 @@ a.btn.btn-answer {
 	color: var(--galaxy-white-icy);
 }
 
+.btn-reset-pass-auto {
+	background: var(--galaxy-accent-dark);
+	border: 1px solid var(--galaxy-violet-light);
+	margin-right: 0.5rem;
+	margin-top: 1rem;
+}
+
+.btn-reset-pass-auto:hover {
+	background: var(--galaxy-violet-light);
+	border: 1px solid var(--galaxy-accent-dark);
+}
+
 /*=========================================================================
     QUESTION/ANSWER CARD LISTS & ITEMS
 ==========================================================================*/
@@ -1151,7 +1163,7 @@ li.card-item p {
 .btn-cancel, .btn-edit {
 	background-color: var(--galaxy-purple-med);
 	color: var(--galaxy-white-icy);
-	border: none;
+	border: 1px solid var(--galaxy-purple-dark);
 	padding: 0.5rem 0.9rem;
 	border-radius: 4px;
 	font-size: 1rem;
