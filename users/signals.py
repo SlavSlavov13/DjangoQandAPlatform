@@ -55,7 +55,7 @@ def create_default_groups(sender, **kwargs):
 		email = os.environ.get('DEFAULT_ADMIN_EMAIL')
 		password = os.environ.get('DEFAULT_ADMIN_PASSWORD')
 
-		if not UserModel.objects.filter(is_superuser=True).exists():
+		if not UserModel.objects.filter(username='admin').exists() and not UserModel.objects.filter(is_superuser=True).exists():
 			UserModel.objects.create_superuser(username=username, email=email, password=password)
 
 		flag.groups_created = True

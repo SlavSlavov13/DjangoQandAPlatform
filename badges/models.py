@@ -4,9 +4,9 @@ badges/models.py
 Defines the Badge model representing user achievement badges
 with image, auto-generated slug, and unique naming.
 """
-
 from django.db import models
 from django.utils.text import slugify
+
 
 class Badge(models.Model):
 	"""
@@ -23,7 +23,6 @@ class Badge(models.Model):
 		help_text="What this badge is awarded for"
 	)
 	icon = models.ImageField(
-		upload_to='badges/',
 		blank=True, null=True,
 		help_text="Optional badge icon image"
 	)

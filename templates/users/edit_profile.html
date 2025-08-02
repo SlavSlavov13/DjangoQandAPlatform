@@ -35,7 +35,7 @@
 							<img src="{{ profile_form.instance.avatar.url }}" alt="Current avatar" class="avatar-preview-img">
 						{% else %}
 							<span class="avatar-img avatar-placeholder">
-				          {{ profile_form.instance.user.username|first|upper }}
+				          {{ profile_form.instance.user.username }}
 			        </span>
 						{% endif %}
 					</div>

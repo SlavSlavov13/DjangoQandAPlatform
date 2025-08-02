@@ -9,7 +9,7 @@
 					<img src="{{ user_obj.profile.avatar.url }}" alt="{{ user_obj.username }}'s avatar" class="avatar-img">
 				{% else %}
 					<span class="avatar-img avatar-placeholder">
-			          {{ user_obj.username|first|upper }}
+			          {{ user_obj.username }}
 			        </span>
 				{% endif %}
 				<div>

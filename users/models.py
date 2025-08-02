@@ -1,7 +1,6 @@
 """
 Models for the users app: UserProfile connects user to bio, avatar, badges.
 """
-
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -25,7 +24,6 @@ class UserProfile(models.Model):
 		help_text='Write a short bio'
 	)
 	avatar = models.ImageField(
-		upload_to='avatars/',
 		blank=True,
 		null=True,
 		help_text='Profile avatar image (optional)'
