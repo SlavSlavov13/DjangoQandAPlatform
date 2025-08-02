@@ -360,6 +360,7 @@ li.card-item p {
 	color: var(--galaxy-violet-light);
 	font-weight: 600;
 	font-size: 1.3rem;
+	flex-basis: 70%;
 }
 .question-title a {
 	color: inherit;
@@ -421,6 +422,8 @@ li.card-item p {
 	text-decoration: none;
 	border-radius: 3px;
 	font-size: 0.9rem;
+	flex-basis: 30%;
+	flex-shrink: 0;
 	transition: background-color 0.2s ease;
 }
 .question-edit-delete-buttons a.btn-edit {
@@ -1309,6 +1312,23 @@ li.card-item p {
 	color: var(--galaxy-accent);
 	text-decoration: underline;
 	outline: none;
+}
+
+/*=========================================================================
+    SINGLE LONG STRING FIX
+==========================================================================*/
+.card-body,
+.question-body,
+.answer-body,
+.comment-body,
+.card-item,
+.card-list,
+.question-title,
+.questions-list,
+.user-bio,
+.answers-list {
+	overflow-wrap: break-word;
+	word-break: break-word;
 }
 
 /*=========================================================================
