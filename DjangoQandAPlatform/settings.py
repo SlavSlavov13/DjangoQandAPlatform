@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-izit@_8%&z0cfl$s-_pkl^6*rls(ihuu+_nl_jwlqm^jajr5$l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['yourqaplatform.azurewebsites.net', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['yourqanda.azurewebsites.net', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
