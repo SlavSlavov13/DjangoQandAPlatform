@@ -21,16 +21,14 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-izit@_8%&z0cfl$s-_pkl^6*rls(ihuu+_nl_jwlqm^jajr5$l'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['yourqanda.azurewebsites.net', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://yourqanda.azurewebsites.net",
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -99,13 +97,13 @@ WSGI_APPLICATION = 'DjangoQandAPlatform.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'yourqanda-database',
-        "USER": 'jwrmmggwsg',
-        "PASSWORD": 'U11qvP$O2rbpv3NH',
-        "HOST": 'yourqanda-server.postgres.database.azure.com',
-        "PORT": 5432,
+        "NAME": os.environ.get('DB_NAME'),
+        "USER": os.environ.get('DB_USER'),
+        "PASSWORD": os.environ.get('DB_PASSWORD'),
+        "HOST": os.environ.get('DB_HOST'),
+        "PORT": os.environ.get('DB_PORT'),
         'OPTIONS': {
-            'sslmode': 'require',
+            'sslmode': os.environ.get('SSLMODE'),
         },
     }
 }
