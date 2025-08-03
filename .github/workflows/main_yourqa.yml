@@ -67,7 +67,7 @@ jobs:
           app-settings-json: |
             [
               {"name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "true"},
-              {"name": "POST_BUILD_COMMAND", "value": "python manage.py migrate && python manage.py collectstatic --noinput"}
+#              {"name": "POST_BUILD_COMMAND", "value": "python manage.py migrate && python manage.py collectstatic --noinput"}
             ]
 
       - name: Deploy to Azure Web App

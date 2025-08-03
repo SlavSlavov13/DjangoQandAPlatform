@@ -102,6 +102,8 @@ class EditProfileView(LoginRequiredMixin, View):
 
 			if password_form.is_valid():
 				user = password_form.save()
+				user = unwrap_user(user)
+				update_session_auth_hash(request, user)
 				return redirect('profile-details', user.id)
 
 		else:

@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
+from django.contrib.auth.models import Group as AuthGroup
 
 
 class CustomUser(AbstractUser):
@@ -15,6 +16,7 @@ class CustomUser(AbstractUser):
 	)
 
 	class Meta:
+		app_label = 'users'
 		constraints = [
 			UniqueConstraint(
 				Lower('username'),
@@ -56,3 +58,10 @@ class UserProfile(models.Model):
 		Display as username in Django admin/representation.
 		"""
 		return f'{self.user.username}'
+
+class UserAppGroup(AuthGroup):
+	class Meta:
+		proxy = True
+		app_label = 'users'
+		verbose_name = 'Group'
+		verbose_name_plural = 'Groups'

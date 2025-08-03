@@ -8,10 +8,10 @@ Signal handlers for the users app.
 import os
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.db.models.signals import post_save, post_migrate, m2m_changed
 from django.dispatch import receiver
-from .models import UserProfile
+from .models import UserProfile, UserAppGroup
 
 UserModel = get_user_model()
 
@@ -25,7 +25,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_migrate)
 def create_default_groups(sender, **kwargs):
-	super_admins, _ = Group.objects.get_or_create(name='Super Admins')
+	super_admins, _ = UserAppGroup.objects.get_or_create(name='Super Admins')
 	all_permissions = Permission.objects.all()
 	super_admins.permissions.set(all_permissions)
 	super_admins.save()
@@ -41,7 +41,7 @@ def create_default_groups(sender, **kwargs):
 		'add_tag', 'change_tag', 'delete_tag', 'view_tag',
 		'add_badge', 'change_badge', 'delete_badge', 'view_badge',
 	]
-	staff_mods, _ = Group.objects.get_or_create(name='Staff Moderators')
+	staff_mods, _ = UserAppGroup.objects.get_or_create(name='Staff Moderators')
 	staff_mods_permissions = Permission.objects.filter(codename__in=staff_mods_perms_codenames)
 	staff_mods.permissions.set(staff_mods_permissions)
 	staff_mods.save()
@@ -64,9 +64,9 @@ def user_groups_changed(sender, instance, action, **kwargs):
 	"""
 	if action in ['post_add', 'post_remove', 'post_clear']:
 		try:
-			super_admins = Group.objects.get(name='Super Admins')
-			staff_mods = Group.objects.get(name='Staff Moderators')
-		except Group.DoesNotExist:
+			super_admins = UserAppGroup.objects.get(name='Super Admins')
+			staff_mods = UserAppGroup.objects.get(name='Staff Moderators')
+		except UserAppGroup.DoesNotExist:
 			return  # Skip update if default groups missing
 
 		user_groups = set(instance.groups.all())
@@ -97,9 +97,9 @@ def assign_superuser_group(sender, instance, created, **kwargs):
 	"""
 	if instance.is_superuser:
 		try:
-			super_admin_group = Group.objects.get(name='Super Admins')
-			staff_group = Group.objects.get(name='Staff Moderators')
-		except Group.DoesNotExist:
+			super_admin_group = UserAppGroup.objects.get(name='Super Admins')
+			staff_group = UserAppGroup.objects.get(name='Staff Moderators')
+		except UserAppGroup.DoesNotExist:
 			return
 		instance.groups.add(super_admin_group)
 		if staff_group in instance.groups.all():

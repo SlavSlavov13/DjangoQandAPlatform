@@ -2,12 +2,19 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group as AuthGroup
 from django.urls import reverse
 from django.utils.html import format_html_join
 from django.utils.text import Truncator
 
-from .models import UserProfile
+from .models import UserProfile, UserAppGroup
+
+
+def is_staff_moderator(user):
+	"""Check if the user belongs to 'Staff Moderators' group."""
+	return user.groups.filter(name='Staff Moderators').exists()
+
+# --- UserProfile admin ---
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -25,23 +32,21 @@ class UserProfileAdmin(admin.ModelAdmin):
 	truncated_bio.short_description = 'Bio'
 
 	def has_add_permission(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return False
 		return True
 
 	def get_readonly_fields(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return ['user']
 		return []
 
-# --- Group Admin Restriction for Staff Moderators ---
+# --- Group admin with restrictions for Staff Moderators ---
 
 # Unregister default Group admin
-admin.site.unregister(Group)
+admin.site.unregister(AuthGroup)
 
-# Change app_label of Group before registering so it appears under 'users' app in admin sidebar
-Group._meta.app_label = 'users'
-
+@admin.register(UserAppGroup)
 class NoAddGroupAdmin(GroupAdmin):
 	"""
 	Custom GroupAdmin:
@@ -50,24 +55,21 @@ class NoAddGroupAdmin(GroupAdmin):
 	"""
 
 	def has_add_permission(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return False
 		return True
 
 	def has_delete_permission(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return False
 		return True
 
 	def has_change_permission(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return False
 		return True
 
-# Register Group with the new app_label and custom admin
-admin.site.register(Group, NoAddGroupAdmin)
-
-# -- User admin modifications --
+# --- Custom User admin ---
 
 UserModel = get_user_model()
 
@@ -84,15 +86,14 @@ class CustomUserAdmin(UserAdmin):
 			', ',
 			'{}',
 			(
-				(f'<a href="{reverse("admin:users_group_change", args=(group.pk,))}">{group.name}</a>',)
+				(f'<a href="{reverse("admin:users_userappgroup_change", args=(group.pk,))}">{group.name}</a>',)
 				for group in obj.groups.all()
 			)
 		) or "-"
 	group_links.short_description = "Groups"
-	group_links.allow_tags = True
 
 	def get_fieldsets(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			fieldsets = super().get_fieldsets(request, obj)
 			new_fieldsets = []
 			for name, opts in fieldsets:
@@ -107,7 +108,7 @@ class CustomUserAdmin(UserAdmin):
 		return super().get_fieldsets(request, obj)
 
 	def has_delete_permission(self, request, obj=None):
-		if request.user.groups.filter(name='Staff Moderators').exists():
+		if is_staff_moderator(request.user):
 			return False
 		return True
 
