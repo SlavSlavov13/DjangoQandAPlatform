@@ -1339,10 +1339,20 @@ li.card-item p {
 .question-title,
 .questions-list,
 .user-bio,
-.answers-list {
+.answers-list,
+.badge-item,
+.profile-header h2,
+.user-badges .badge,
+.question-tags .tag,
+.btn-tag-filter {
 	overflow-wrap: break-word;
 	word-break: break-word;
 }
+
+.profile-header div {
+	flex: 1 0 60%;
+}
+
 
 /*=========================================================================
     MORE BADGE MOBILE TWEAKS
