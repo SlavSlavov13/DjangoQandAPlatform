@@ -37,50 +37,45 @@
 			</form>
 		</article>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			const usernameInput = document.getElementById('id_username');
-			const statusDiv = document.getElementById('username-status');
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const usernameInput = document.getElementById('id_username');
+				const statusDiv = document.getElementById('username-status');
 
-			// Basic throttling/debounce to avoid too many requests (wait 300ms after last input)
-			let timeout = null;
+				let timeout = null;
 
-			usernameInput.addEventListener('input', function() {
-				const username = this.value.trim();
-				if (timeout) clearTimeout(timeout);
+				usernameInput.addEventListener('input', function() {
+					const username = this.value.trim();
+					if (timeout) clearTimeout(timeout);
 
-				timeout = setTimeout(() => {
-					// Removed the minimum length check, so request fires for any length including empty
+					timeout = setTimeout(() => {
+						if (username.length === 0) {
+							statusDiv.textContent = '';
+							statusDiv.style.color = '';
+							return;
+						}
 
-					// Optionally, you can skip empty usernames if desired (comment out if you want to check empty)
-					if (username.length === 0) {
-						statusDiv.textContent = '';
-						statusDiv.style.color = '';
-						return;
-					}
-
-					// Fetch availability from your async endpoint
-					fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}`)
-						.then(response => {
-							if (!response.ok) throw new Error('Network response not ok');
-							return response.json();
-						})
-						.then(data => {
-							if (data.available) {
-								statusDiv.textContent = 'Username is available!';
-								statusDiv.style.color = 'green';
-							} else {
-								statusDiv.textContent = data.error ? data.error : 'Username is taken.';
-								statusDiv.style.color = 'red';
-							}
-						})
-						.catch(() => {
-							statusDiv.textContent = 'Could not check username availability.';
-							statusDiv.style.color = 'gray';
-						});
-				}, 300);
+						fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}`)
+							.then(response => {
+								if (!response.ok) throw new Error('Network response not ok');
+								return response.json();
+							})
+							.then(data => {
+								if (data.available) {
+									statusDiv.textContent = 'Username is available!';
+									statusDiv.style.color = 'green';
+								} else {
+									statusDiv.textContent = data.error ? data.error : 'Username is taken.';
+									statusDiv.style.color = 'red';
+								}
+							})
+							.catch(() => {
+								statusDiv.textContent = 'Could not check username availability.';
+								statusDiv.style.color = 'gray';
+							});
+					}, 300);
+				});
 			});
-		});
-	</script>
+		</script>
 	</main>
 {% endblock %}

@@ -4,12 +4,23 @@ Models for the users app: UserProfile connects user to bio, avatar, badges.
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import UniqueConstraint
+from django.db.models.functions import Lower
+
 
 class CustomUser(AbstractUser):
 	email = models.EmailField(
 		unique=True,
 		blank=True,
 	)
+
+	class Meta:
+		constraints = [
+			UniqueConstraint(
+				Lower('username'),
+				name='unique_username_ci'
+			)
+		]
 
 class UserProfile(models.Model):
 	"""

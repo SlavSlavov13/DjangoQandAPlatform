@@ -158,27 +158,39 @@ async def check_username(request):
 	if not username:
 		return JsonResponse({'available': False, 'message': 'No username provided.', 'is_current': False}, status=400)
 
-	# Compare usernames exactly (case sensitive)
-	if username == current_username and current_username:
+	# If the username matches current username exactly (case-sensitive)
+	if current_username and username == current_username:
 		return JsonResponse({
 			'available': True,
 			'is_current': True,
 			'message': 'This is your current username.'
 		})
 
-	exists = await sync_to_async(UserModel.objects.filter(username=username).exists)()
+	# If username matches current username case-insensitively, but the casing differs
+	if current_username and username.lower() == current_username.lower() and username != current_username:
+		return JsonResponse({
+			'available': True,
+			'is_current': True,
+			'message': 'This username differs only in letter casing from your current one.'
+		})
+
+	# Check existence case-insensitively
+	exists = await sync_to_async(
+		UserModel.objects.filter(username__iexact=username).exists
+	)()
+
 	if exists:
 		return JsonResponse({
 			'available': False,
 			'is_current': False,
 			'message': 'This username is already taken.'
 		})
-	else:
-		return JsonResponse({
-			'available': True,
-			'is_current': False,
-			'message': 'Username is available.'
-		})
+
+	return JsonResponse({
+		'available': True,
+		'is_current': False,
+		'message': 'Username is available.'
+	})
 
 @login_required
 def auto_password_reset_request(request):

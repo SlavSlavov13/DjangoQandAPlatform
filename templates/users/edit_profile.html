@@ -144,7 +144,18 @@
 								statusDiv.textContent = data.message || '';
 
 								if (data.is_current) {
-									statusDiv.style.color = 'blue';
+									// If the username is the current username (case-sensitive)
+									if (data.message === 'This is your current username.') {
+										statusDiv.style.color = 'blue';
+									}
+									// If differs only in casing
+									else if (data.message === 'This username differs only in letter casing from your current one.') {
+										statusDiv.style.color = '#7A387F';  // Or any color you prefer
+									}
+									else {
+										// default styling for is_current true but unknown message
+										statusDiv.style.color = 'blue';
+									}
 								} else if (data.available) {
 									statusDiv.style.color = 'green';
 								} else {

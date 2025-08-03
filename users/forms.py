@@ -19,6 +19,15 @@ class BaseUserForm(forms.ModelForm):
 		model = UserModel
 		fields = ['username', 'email', 'first_name', 'last_name']
 
+	def clean_username(self):
+		username = self.cleaned_data['username']
+		qs = UserModel.objects.filter(username__iexact=username)
+		if self.instance.pk:
+			qs = qs.exclude(pk=self.instance.pk)
+		if qs.exists():
+			raise forms.ValidationError("A user with that username already exists.")
+		return username
+
 class UserRegistrationForm(UserCreationForm):
 	"""
 	Registration form: user creates username, email, password.
@@ -31,7 +40,6 @@ class UserEditForm(BaseUserForm):
 	"""
 	Form for editing basic user details (username/email/names).
 	"""
-	# Add additional customizations below if needed
 	pass
 
 class BaseUserProfileForm(forms.ModelForm):
