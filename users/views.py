@@ -58,54 +58,64 @@ class UserCreationView(CreateView):
 		return super().dispatch(request, *args, **kwargs)
 
 class EditProfileView(LoginRequiredMixin, View):
-	"""
-	Allows users to edit their own profile, user info, and change password.
-	"""
 	template_name = 'users/edit_profile.html'
 
 	def get(self, request):
 		user = request.user
+		original_username = user.username
 		user_profile = UserProfile.objects.get(user=user)
 		user_form = UserEditForm(instance=user)
 		profile_form = UserProfileEditForm(instance=user_profile)
 		password_form = PasswordChangeForm(user=user)
 		password_form.fields['old_password'].widget.attrs.pop('autofocus', None)
-		return render(request, self.template_name, {
+
+		context = {
 			'user_form': user_form,
 			'profile_form': profile_form,
 			'password_form': password_form,
-		})
+			'original_username': original_username,
+		}
+		return render(request, self.template_name, context)
 
 	def post(self, request):
 		user = request.user
+		original_username = user.username
 		user_profile = UserProfile.objects.get(user=user)
+
 		if 'update_profile' in request.POST:
 			user_form = UserEditForm(request.POST, instance=user)
 			profile_form = UserProfileEditForm(request.POST, request.FILES, instance=user_profile)
 			password_form = PasswordChangeForm(user=user)
 			password_form.fields['old_password'].widget.attrs.pop('autofocus', None)
+
 			if user_form.is_valid() and profile_form.is_valid():
 				with transaction.atomic():
 					user_form.save()
 					profile_form.save()
 				return redirect('profile-details', user.id)
+			# If invalid, form data stays and errors show, but user.username has not changed yet
+
 		elif 'change_password' in request.POST:
 			password_form = PasswordChangeForm(user, request.POST)
 			user_form = UserEditForm(instance=user)
 			profile_form = UserProfileEditForm(instance=user_profile)
+
 			if password_form.is_valid():
 				user = password_form.save()
 				return redirect('profile-details', user.id)
+
 		else:
 			user_form = UserEditForm(instance=user)
 			profile_form = UserProfileEditForm(instance=user_profile)
 			password_form = PasswordChangeForm(user=user)
 
-		return render(request, self.template_name, {
+		context = {
 			'user_form': user_form,
 			'profile_form': profile_form,
 			'password_form': password_form,
-		})
+			'original_username': original_username,
+		}
+		return render(request, self.template_name, context)
 
 class ProfileLogoutView(LogoutView):
 	"""
@@ -142,15 +152,33 @@ class ProfileDetailView(DetailView):
 	context_object_name = 'user_obj'
 
 async def check_username(request):
-	"""
-	AJAX view to check if a username is available.
-	Returns JSON.
-	"""
 	username = request.GET.get('username', '').strip()
+	current_username = request.GET.get('current_username', '').strip()
+
 	if not username:
-		return JsonResponse({'available': False, 'error': 'No username provided.'}, status=400)
+		return JsonResponse({'available': False, 'message': 'No username provided.', 'is_current': False}, status=400)
+
+	# Compare usernames exactly (case sensitive)
+	if username == current_username and current_username:
+		return JsonResponse({
+			'available': True,
+			'is_current': True,
+			'message': 'This is your current username.'
+		})
+
 	exists = await sync_to_async(UserModel.objects.filter(username=username).exists)()
-	return JsonResponse({'available': not exists})
+	if exists:
+		return JsonResponse({
+			'available': False,
+			'is_current': False,
+			'message': 'This username is already taken.'
+		})
+	else:
+		return JsonResponse({
+			'available': True,
+			'is_current': False,
+			'message': 'Username is available.'
+		})
 
 @login_required
 def auto_password_reset_request(request):

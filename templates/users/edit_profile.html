@@ -8,6 +8,7 @@
 			<form method="post" enctype="multipart/form-data" class="profile-form">
 				{% csrf_token %}
 				<h2>User Info</h2>
+				<input type="hidden" id="user-current-username" value="{{ original_username|escapejs }}">
 				{% for field in user_form %}
 					<div class="form-field{% if field.errors %} has-error{% endif %}">
 						<label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -113,16 +114,18 @@
 			document.addEventListener('DOMContentLoaded', function() {
 				const usernameInput = document.getElementById('id_username');
 				const statusDiv = document.getElementById('username-status');
+				const currentUsernameInput = document.getElementById('user-current-username');
 
-				if (!usernameInput || !statusDiv) return;
+				if (!usernameInput || !statusDiv || !currentUsernameInput) return;
 
-				// Current logged-in username from Django context, lowercased
-				const currentUsername = "{% if user.is_authenticated %}{{ request.user.username|escapejs }}{% else %}{% endif %}";
+				// Use the true original username, not the potentially invalid current input value
+				const currentUsername = currentUsernameInput.value;
 
 				let timeout = null;
 
 				usernameInput.addEventListener('input', function() {
 					const username = this.value.trim();
+
 					if (timeout) clearTimeout(timeout);
 
 					timeout = setTimeout(() => {
@@ -132,25 +135,19 @@
 							return;
 						}
 
-						// Show message only if user changed input and now it matches current username
-						if (username === currentUsername) {
-							statusDiv.textContent = 'This is your current username.';
-							statusDiv.style.color = 'blue';
-							return;
-						}
-
-						// AJAX request to check availability
-						fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}`)
+						fetch(`/auth/ajax/check-username/?username=${encodeURIComponent(username)}&current_username=${encodeURIComponent(currentUsername)}`)
 							.then(response => {
 								if (!response.ok) throw new Error('Network response was not ok');
 								return response.json();
 							})
 							.then(data => {
-								if (data.available) {
-									statusDiv.textContent = 'Username is available!';
+								statusDiv.textContent = data.message || '';
+
+								if (data.is_current) {
+									statusDiv.style.color = 'blue';
+								} else if (data.available) {
 									statusDiv.style.color = 'green';
 								} else {
-									statusDiv.textContent = data.error ? data.error : 'Username is taken.';
 									statusDiv.style.color = 'red';
 								}
 							})
@@ -158,7 +155,7 @@
 								statusDiv.textContent = 'Could not check username availability.';
 								statusDiv.style.color = 'gray';
 							});
-					}, 300);  // debounce delay 300ms
+					}, 300);
 				});
 			});
 		</script>
