@@ -16,7 +16,8 @@ class CustomUser(AbstractUser):
 	)
 
 	class Meta:
-		app_label = 'users'
+		verbose_name = 'user'
+		verbose_name_plural = 'users'
 		constraints = [
 			UniqueConstraint(
 				Lower('username'),
