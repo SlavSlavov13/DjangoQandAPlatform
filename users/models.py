@@ -6,7 +6,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
-	email = models.EmailField(unique=True, blank=False)
+	email = models.EmailField(
+		unique=True,
+		blank=True,
+	)
 
 class UserProfile(models.Model):
 	"""
@@ -42,6 +45,3 @@ class UserProfile(models.Model):
 		Display as username in Django admin/representation.
 		"""
 		return f'{self.user.username}'
-
-class InitialSetup(models.Model):
-	groups_created = models.BooleanField(default=False)
