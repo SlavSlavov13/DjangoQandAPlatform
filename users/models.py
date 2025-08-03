@@ -2,9 +2,11 @@
 Models for the users app: UserProfile connects user to bio, avatar, badges.
 """
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-UserModel = get_user_model()
+class CustomUser(AbstractUser):
+	email = models.EmailField(unique=True, blank=False)
 
 class UserProfile(models.Model):
 	"""
@@ -14,7 +16,7 @@ class UserProfile(models.Model):
 	- Stores bio, avatar image, and badge relationships.
 	"""
 	user = models.OneToOneField(
-		to=UserModel,
+		to=CustomUser,
 		on_delete=models.CASCADE,
 		related_name='profile',
 		help_text='Related user for this profile.'

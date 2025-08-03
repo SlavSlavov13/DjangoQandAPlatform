@@ -164,6 +164,9 @@ def auto_password_reset_request(request):
 		form.save(
 			request=request,
 			use_https=request.is_secure(),
+			subject_template_name='password/password_reset_subject.txt',   # plain text subject
+			email_template_name='password/password_reset_email.txt',       # plain text body
+			html_email_template_name='password/password_reset_email.html', # HTML body
 		)
 		return redirect('password_reset_done')  # or any page to confirm
 

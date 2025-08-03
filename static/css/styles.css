@@ -1024,7 +1024,8 @@ li.card-item p {
 	font-size: 1.1rem;
 	font-weight: 600;
 }
-.user-bio {
+.user-bio,
+.user-badges {
 	padding: 1em;
 	background: var(--galaxy-white-icy);
 	border-radius: 3px;

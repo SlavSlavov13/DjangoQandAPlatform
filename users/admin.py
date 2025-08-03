@@ -134,5 +134,4 @@ class CustomUserAdmin(UserAdmin):
 			return False
 		return True
 
-admin.site.unregister(UserModel)
 admin.site.register(UserModel, CustomUserAdmin)
