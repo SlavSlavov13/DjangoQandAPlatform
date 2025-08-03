@@ -1,6 +1,4 @@
 """
-settings.py
-
 Django settings for DjangoQandAPlatform project.
 
 Contains configuration for apps, middleware, database, REST framework,
@@ -10,25 +8,26 @@ For explanations, see:
 https://docs.djangoproject.com/en/5.2/topics/settings/
 """
 
-import os
 from pathlib import Path
-from django.urls import reverse_lazy
-from dotenv import load_dotenv
-load_dotenv()
+import environ
+import os
 
-
-# Build paths inside the project like this: BASE_DIR / "subdir".
+# Initialize environment reader
 BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env()
+
+# Load .env file from the project root; throws if file missing
+env.read_env(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(',')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 # Application definition
 INSTALLED_APPS = [
@@ -99,13 +98,13 @@ WSGI_APPLICATION = 'DjangoQandAPlatform.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get('DB_NAME'),
-        "USER": os.environ.get('DB_USER'),
-        "PASSWORD": os.environ.get('DB_PASSWORD'),
-        "HOST": os.environ.get('DB_HOST'),
-        "PORT": os.environ.get('DB_PORT'),
+        "NAME": env('DB_NAME'),
+        "USER": env('DB_USER'),
+        "PASSWORD": env('DB_PASSWORD'),
+        "HOST": env('DB_HOST'),
+        "PORT": env.int('DB_PORT'),
         'OPTIONS': {
-            'sslmode': os.environ.get('SSLMODE'),
+            'sslmode': env('SSLMODE'),
         },
     }
 }
@@ -126,13 +125,12 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (user-uploaded)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
     "staticfiles": {
@@ -144,17 +142,17 @@ STORAGES = {
 }
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': env('CLOUDINARY_API_KEY'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET'),
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'in-v3.mailjet.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_USER = env('EMAIL_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = 'yourqanda@hotmail.com'
 
 AUTH_USER_MODEL = 'users.CustomUser'
