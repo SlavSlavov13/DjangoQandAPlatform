@@ -4,7 +4,6 @@ comments/models.py
 Defines Comment model for associating user comments
 with questions, answers, or other comments using Django's generic relations.
 """
-
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.core.exceptions import ValidationError
@@ -47,6 +46,12 @@ class Comment(models.Model):
 
 	# Optional reverse relation to get child comments of this comment
 	comments = GenericRelation('self', content_type_field='content_type', object_id_field='object_id')
+
+	media = models.ImageField(
+		blank=True, null=True,
+		help_text="Optional image for context.",
+	)
+
 
 	def clean(self):
 		"""

@@ -23,6 +23,13 @@
 
 				<div class="question-body">{{ question.body|linebreaks }}</div>
 
+				{% if question.media %}
+					<div class="question-image-container">
+						<img src="{{ question.media.url }}" alt="Question Image" class="question-image" />
+					</div>
+				{% endif %}
+
+
 				{% if question.tags.all %}
 					<div class="question-tags">
 						<strong>Tags:</strong>
@@ -56,7 +63,14 @@
 						<ul class="card-list">
 							{% for answer in answers %}
 								<li class="card-item">
-									<div class="card-body">{{ answer.content }}</div>
+									<div class="card-body">{{ answer.content|linebreaks }}</div>
+
+									{% if answer.media %}
+										<div class="answer-image-container">
+											<img src="{{ answer.media.url }}" alt="Answer Image" class="answer-image" />
+										</div>
+									{% endif %}
+
 									<div class="card-meta">
 										by <a href="{% url 'profile-details' answer.author.pk %}">
 										<strong>{{ answer.author.username }}</strong></a>
@@ -97,6 +111,13 @@
 											{% for comment in answer.comments.all %}
 												<li class="card-item">
 													<div class="card-body">{{ comment.content|linebreaks }}</div>
+
+													{% if comment.media %}
+														<div class="comment-image-container">
+															<img src="{{ comment.media.url }}" alt="Comment Image" class="comment-image" />
+														</div>
+													{% endif %}
+
 													<div class="card-meta">
 														by <a href="{% url 'profile-details' comment.author.pk %}">
 														<strong>{{ comment.author.username }}</strong></a>
@@ -135,6 +156,13 @@
 							{% for comment in comments %}
 								<li class="card-item">
 									<div class="card-body">{{ comment.content|linebreaksbr }}</div>
+
+									{% if comment.media %}
+										<div class="comment-image-container">
+											<img src="{{ comment.media.url }}" alt="Comment Image" class="comment-image" />
+										</div>
+									{% endif %}
+
 									<div class="card-meta">
 										by <a href="{% url 'profile-details' comment.author.pk %}">
 										<strong>{{ comment.author.username }}</strong></a>
@@ -175,6 +203,13 @@
 											{% for reply in comment.comments.all %}
 												<li class="card-item">
 													<div class="card-body">{{ reply.content|linebreaks }}</div>
+
+													{% if reply.media %}
+														<div class="comment-image-container">
+															<img src="{{ reply.media.url }}" alt="Comment Image" class="comment-image" />
+														</div>
+													{% endif %}
+
 													<div class="card-meta">
 														by <a href="{% url 'profile-details' reply.author.pk %}">
 														<strong>{{ reply.author.username }}</strong></a>

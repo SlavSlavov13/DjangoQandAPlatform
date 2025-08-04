@@ -3,7 +3,6 @@ questions/models.py
 
 Question model for user Q&A, with tags, author, and generic comments.
 """
-
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -35,6 +34,10 @@ class Question(models.Model):
 		to='comments.Comment',
 		related_query_name='question',
 		help_text="Comments associated with this question."
+	)
+	media = models.ImageField(
+		blank=True, null=True,
+		help_text="Optional image for context.",
 	)
 
 	def __str__(self):

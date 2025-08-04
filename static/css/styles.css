@@ -1353,6 +1353,44 @@ li.card-item p {
 	flex: 1 0 60%;
 }
 
+/*=========================================================================
+    QUESTION/ANSWER/COMMENT MEDIA CSS
+==========================================================================*/
+
+
+/* Container wrappers for spacing and layout */
+.question-image-container,
+.answer-image-container,
+.comment-image-container {
+	margin: 12px 0;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+/* Images fill the container width responsively */
+.question-image,
+.answer-image,
+.comment-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 6px;
+	object-fit: contain;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Optional: Different margins to distinguish each section */
+.question-image-container {
+	margin-top: 10px;
+}
+
+.answer-image-container {
+	margin: 8px 0 12px;
+}
+
+.comment-image-container {
+	margin-top: 6px;
+}
 
 /*=========================================================================
     MORE BADGE MOBILE TWEAKS

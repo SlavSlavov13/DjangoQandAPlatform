@@ -34,7 +34,7 @@ class AnswerAdmin(admin.ModelAdmin):
 		"""
 		Links to the related user profile in admin.
 		"""
-		url = f"/admin/auth/user/{obj.author.pk}/change/"
+		url = f"/admin/users/customuser/{obj.author.pk}/change/"
 		return format_html('<a href="{}">{}</a>', url, obj.author)
 	author_link.short_description = 'Author'
 

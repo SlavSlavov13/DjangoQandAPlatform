@@ -12,7 +12,7 @@ class BaseQuestionForm(forms.ModelForm):
 	"""Abstract form for create/edit question."""
 	class Meta:
 		model = Question
-		fields = ['title', 'tags', 'body']
+		fields = ['title', 'tags', 'body', 'media']
 
 class QuestionCreateForm(BaseQuestionForm):
 	"""Form for creating a question."""

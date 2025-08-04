@@ -6,6 +6,7 @@ Defines list, filter, and search behaviors for Django admin.
 """
 
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import Truncator
 
@@ -30,9 +31,8 @@ class QuestionAdmin(admin.ModelAdmin):
 		"""
 		Links to the related user profile in admin.
 		"""
-		url = f"/admin/auth/user/{obj.author.pk}/change/"
+		url = f"/admin/users/customuser/{obj.author.pk}/change/"
 		return format_html('<a href="{}">{}</a>', url, obj.author)
-
 	author_link.short_description = 'Author'
 
 	def has_add_permission(self, request, obj=None):

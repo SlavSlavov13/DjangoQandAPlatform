@@ -4,7 +4,6 @@ answers/models.py
 Defines the Answer model for associating user answers with questions,
 supporting user-contributed Q&A and related comments in a Django application.
 """
-
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -43,6 +42,10 @@ class Answer(models.Model):
 		to='comments.Comment',
 		related_query_name='answer',
 		help_text="All comments associated with this answer."
+	)
+	media = models.ImageField(
+		blank=True, null=True,
+		help_text="Optional image for context.",
 	)
 
 	def __str__(self):

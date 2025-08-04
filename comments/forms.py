@@ -10,11 +10,11 @@ from .models import Comment
 
 class BaseCommentForm(forms.ModelForm):
 	"""
-	Abstract form for comment create/edit with content field.
+	Abstract form for comment create/edit with content field and media.
 	"""
 	class Meta:
 		model = Comment
-		fields = ['content']
+		fields = ['content', 'media']
 
 class CommentCreateForm(BaseCommentForm):
 	"""

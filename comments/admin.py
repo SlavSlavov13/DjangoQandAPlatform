@@ -36,7 +36,7 @@ class CommentAdmin(admin.ModelAdmin):
 		"""
 		Links to the related user profile in admin.
 		"""
-		url = reverse('admin:auth_user_change', args=[obj.author.pk])
+		url = f"/admin/users/customuser/{obj.author.pk}/change/"
 		return format_html('<a href="{}">{}</a>', url, obj.author)
 	author_link.short_description = 'Author'
 

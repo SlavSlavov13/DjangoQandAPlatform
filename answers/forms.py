@@ -9,11 +9,11 @@ from .models import Answer
 
 class BaseAnswerForm(forms.ModelForm):
 	"""
-	Abstract base form for answer create/edit. Only exposes 'content' field.
+	Abstract base form for answer create/edit. Only exposes 'content' field and media.
 	"""
 	class Meta:
 		model = Answer
-		fields = ['content']
+		fields = ['content', 'media']
 
 class AnswerCreateForm(BaseAnswerForm):
 	"""Form for creating an answer."""
