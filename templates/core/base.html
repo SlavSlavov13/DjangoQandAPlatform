@@ -72,9 +72,9 @@
 					// Scroll into view after focus and caret set
 					firstError.scrollIntoView({ behavior: "smooth", block: "center" });
 
-				}, 50); // 50ms delay for browser internal focus handling
+				}, 50); // 50 ms delay for browser internal focus handling
 			} else {
-				// For unsupported inputs or selects, just focus and scroll
+				// For unsupported inputs or selects, focus and scroll
 				firstError.focus();
 				firstError.scrollIntoView({ behavior: "smooth", block: "center" });
 			}
