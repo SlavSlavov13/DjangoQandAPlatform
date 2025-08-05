@@ -25,7 +25,7 @@
 				{% endif %}
 			{% endif %}
 
-			<form method="post" class="site-form">
+			<form method="post" enctype="multipart/form-data" class="site-form">
 				{% csrf_token %}
 
 				{# Render the comment field (usually a textarea) #}

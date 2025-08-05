@@ -6,7 +6,7 @@
 			<h2>
 				{% if form.instance.pk %}Edit{% else %}Create{% endif %} Question
 			</h2>
-			<form method="post" class="site-form">
+			<form method="post" enctype="multipart/form-data" class="site-form">
 				{% csrf_token %}
 				{% for field in form %}
 					<div class="form-field{% if field.errors %} has-error{% endif %}">

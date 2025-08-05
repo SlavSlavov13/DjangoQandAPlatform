@@ -11,12 +11,13 @@ _A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates adva
 
 ## 📚 Table of Contents
 
-- [Features](#features)
-- [Quickstart](#quickstart)
-- [Admin Permissions & Groups](#admin-permissions--groups)
-- [Testing](#testing)
-- [API Endpoints](#api-endpoints)
-- [Customization](#customization)
+- [Features](#-features)
+- [Quickstart](#-quickstart)
+- [Live Demo](#-live-demo)
+- [Admin Permissions & Groups](#-admin-permissions--groups)
+- [Testing](#-testing)
+- [API Endpoints](#-api-endpoints)
+- [Customization](#-customization)
 
 ---
 
@@ -57,6 +58,13 @@ _A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates adva
 
 
 Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+
+---
+
+## 🌍 Live Demo
+
+[Visit yourqa.azurewebsites.net](https://yourqa.azurewebsites.net)
 
 ---
 

@@ -10,6 +10,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
+from DjangoQandAPlatform.validators import SizeValidator
+
 UserModel = get_user_model()
 
 class Comment(models.Model):
@@ -49,6 +51,7 @@ class Comment(models.Model):
 
 	media = models.ImageField(
 		blank=True, null=True,
+		validators=[SizeValidator(10)],
 		help_text="Optional image for context.",
 	)
 

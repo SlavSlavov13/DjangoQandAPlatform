@@ -8,6 +8,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.text import Truncator
 
+from DjangoQandAPlatform.validators import SizeValidator
+
 UserModel = get_user_model()
 
 class Question(models.Model):
@@ -37,6 +39,7 @@ class Question(models.Model):
 	)
 	media = models.ImageField(
 		blank=True, null=True,
+		validators=[SizeValidator(10)],
 		help_text="Optional image for context.",
 	)
 
