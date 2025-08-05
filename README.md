@@ -1,11 +1,11 @@
 # Q&A Platform Django Project
 
-_A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advanced Django engineering: custom user models, group-based admin permissions, robust signals, extensible and modular architecture.
+A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advanced Django engineering: custom user models, group-based admin permissions, robust signals, extensible and modular architecture.
 
 ---
 
 **Badges:**  
-[![Django](https://img.shields.io/badge/Django-4.x-green)]() [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
+[![Django](https://img.shields.io/badge/Django-5.2.4-green)]() [![Python](https://img.shields.io/badge/Python-3.12-blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
 
 ---
 
@@ -28,8 +28,9 @@ _A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates adva
 - **Tagging:** Add tags to questions.
 - **Dynamic Permissions:**
     - **Super Admin:** Full permissions.
-    - **Staff Moderator:** Edit-only on users/tags/groups. Tag slug and group assignments are read-only.
-- **AJAX Username Check:** Real-time username availability check at registration.
+    - **Staff Moderator:** Add tags and badges. Limited edit permissions on all other models except users and groups. Users and groups are view only.
+- **AJAX Username Check:** Real-time username availability check at registration and profile edit.
+- **REST API Search Bar:** Search functionality based on question title/body and question tags.
 - **Comprehensive Testing:** Models, forms, signals, permissions, admin workflows.
 
 ---
@@ -55,8 +56,8 @@ _A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates adva
 
 6. Run the server
    python manage.py runserver
-
-
+    
+   
 Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 
@@ -70,13 +71,14 @@ Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ## 🔑 Admin Permissions & Groups
 
-| Role            | Create | Edit      | Delete | Restrictions                                                                   |
-|-----------------|:------:|:---------:|:------:|---------------------------------------------------------------------------------|
-| **Super Admin** |   ✅   |    ✅     |   ✅   | Full access                                                                     |
-| **Staff Mod**   |   ❌   | Some, ✅  |   ❌   | Cannot add/delete users, groups, tags, questions.<br>Tag slug & groups: read-only |
+| Role            | Create  |  Edit   | Delete  | Restrictions                                                                                                                     |
+|-----------------|:-------:|:-------:|:-------:|----------------------------------------------------------------------------------------------------------------------------------|
+| **Super Admin** |    ✅    |    ✅    |    ✅    | Full access                                                                                                                      |
+| **Staff Mod**   | Limited | Limited | Limited | Can add tags and badges.<br>Limited edit permissions on all other models except users and groups.<br>Users and groups are view only. |
 
 - Admin logic is in `admin.py` for each app.
 - Signals auto-create groups/permissions during setup.
+- Admin default credentials: username - `admin`, password - `admin`.
 
 ---
 
@@ -94,9 +96,10 @@ Covers: model integrity, form validation, admin permissions, AJAX, and signals.
 
 ### Username Check
 
-- **GET** `/users/ajax/check-username/?username=chosenname`
+- **GET** `/check-username/?username=chosenname` when registering
+- **GET** `/check-username/?username=chosenname&current_username=request.user.username` when updating profile
 - Response:
-  { "available": true/false }
+  {"available": true/false, "is_current": true/false, "message": "message for additional context"}
 
 ### General CRUD
 
