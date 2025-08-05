@@ -5,7 +5,7 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 ---
 
 **Badges:**  
-[![Django](https://img.shields.io/badge/Django-5.2.4-green)]() [![Python](https://img.shields.io/badge/Python-3.12  -blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
+[![Django](https://img.shields.io/badge/Django-5.2.4-green)]() [![Python](https://img.shields.io/badge/Python-3.12-blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
 
 ---
 
