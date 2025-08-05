@@ -41,28 +41,46 @@
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-		// Select the first field with an error (input, textarea, select)
-		var firstError = document.querySelector('.has-error input, .has-error textarea, .has-error select');
+		const firstError = document.querySelector('.has-error input, .has-error textarea, .has-error select, input.has-error, textarea.has-error, select.has-error');
 		if (firstError) {
-			// Focus it
-			firstError.focus();
-			// If it's a type we can move the caret to the end (input or textarea)
-			if (
-				firstError.tagName === "INPUT" &&
-				(firstError.type === "text" || firstError.type === "email" || firstError.type === "search" || firstError.type === "password" || firstError.type === "url" || firstError.type === "tel" || firstError.type === "number")
-			) {
-				// Move cursor to the end for input fields
-				var val = firstError.value;
-				firstError.setSelectionRange(val.length, val.length);
-			} else if (firstError.tagName === "TEXTAREA") {
-				// Move cursor to the end for textarea
-				var val = firstError.value;
-				firstError.setSelectionRange(val.length, val.length);
+			const tag = firstError.tagName;
+			const type = firstError.type;
+
+			const canSetCaret =
+				(tag === 'TEXTAREA') ||
+				(tag === 'INPUT' && ['text', 'email', 'search', 'password', 'url', 'tel'].includes(type));
+
+			if (canSetCaret) {
+				const val = firstError.value;
+
+				// Blur first to reset the caret position
+				firstError.blur();
+
+				setTimeout(() => {
+					firstError.focus();
+
+					// Reset value before setting caret (forces browser to recognize caret)
+					firstError.value = '';
+					firstError.value = val;
+
+					try {
+						firstError.setSelectionRange(val.length, val.length);
+					} catch (e) {
+						// Some types may still throw errors; safe to ignore
+					}
+
+					// Scroll into view after focus and caret set
+					firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+
+				}, 50); // 50ms delay for browser internal focus handling
+			} else {
+				// For unsupported inputs or selects, just focus and scroll
+				firstError.focus();
+				firstError.scrollIntoView({ behavior: "smooth", block: "center" });
 			}
-			// Scroll into view for extra UX polish
-			firstError.scrollIntoView({behavior: "smooth", block: "center"});
 		}
 	});
+
 </script>
 
 

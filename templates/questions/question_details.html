@@ -118,54 +118,6 @@
 															</div>
 														</div>
 													{% endif %}
-													<div class="answer-buttons-wrapper">
-														<button class="btn btn-comment btn-small toggle-comment-comments-btn"
-														        aria-expanded="false"
-														        aria-controls="comments-for-comment-{{ comment.pk }}"
-														        onclick="toggleComments('comment', {{ comment.pk }})">
-															Show Comments
-														</button>
-														{% if request.user.is_authenticated %}
-															<a href="{% url 'add-comment-to-comment' parent_comment_id=comment.pk %}"
-															   class="btn btn-comment btn-small add-comment-btn"
-															   id="add-comment-btn-comment-{{ comment.pk }}"
-															   style="display: none;">
-																Add Comment
-															</a>
-														{% endif %}
-													</div>
-													<ul class="card-list" id="comments-for-comment-{{ comment.pk }}" hidden>
-														{% if comment.fetched_child_comments %}
-															{% for reply in comment.fetched_child_comments %}
-																<li class="card-item">
-																	<div class="card-body">{{ reply.content|linebreaks }}</div>
-																	{% if reply.media %}
-																		<div class="comment-image-container">
-																			<img src="{{ reply.media.url }}" alt="Comment Image" class="comment-image" />
-																		</div>
-																	{% endif %}
-																	<div class="card-meta">
-																		by <a href="{% url 'profile-details' reply.author.pk %}">
-																		<strong>{{ reply.author.username }}</strong></a>
-																		on {{ reply.created_at|date:"F j, Y, g:i a" }}
-																	</div>
-																	{% if user.is_authenticated and user == reply.author %}
-																		<div class="dropdown" aria-haspopup="true" aria-expanded="false">
-																			<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
-																				&#8942;
-																			</button>
-																			<div class="dropdown-menu" hidden>
-																				<a href="{% url 'edit-comment-to-comment' parent_comment_id=comment.pk comment_id=reply.pk %}" class="btn dropdown-item btn-edit">Edit</a>
-																				<a href="{% url 'delete-comment-to-comment' parent_comment_id=comment.pk comment_id=reply.pk %}" class="btn dropdown-item btn-delete">Delete</a>
-																			</div>
-																		</div>
-																	{% endif %}
-																</li>
-															{% endfor %}
-														{% else %}
-															<p class="no-comments">No comments yet.</p>
-														{% endif %}
-													</ul>
 												</li>
 											{% endfor %}
 										{% else %}

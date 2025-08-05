@@ -84,7 +84,7 @@ class AnswerDeleteView(LoginRequiredMixin, UserIsAuthorMixin, DeleteView):
 	pk_url_kwarg = 'answer_id'
 
 	def get_context_data(self, **kwargs):
-		# Pass additional info for display in confirmation dialog.
+		# Pass additional info for display in the confirmation dialog.
 		context = super().get_context_data(**kwargs)
 		answer = self.object
 		question_id = answer.question.id
