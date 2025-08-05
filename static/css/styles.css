@@ -1140,9 +1140,7 @@ li.card-item p {
 }
 .confirm-delete-article p {
 	font-size: 1.1rem;
-	text-align: center;
 	color: var(--galaxy-purple-med);
-	margin-bottom: 2em;
 }
 .comment-preview blockquote {
 	background: var(--galaxy-white-icy);
@@ -1344,7 +1342,8 @@ li.card-item p {
 .profile-header h2,
 .user-badges .badge,
 .question-tags .tag,
-.btn-tag-filter {
+.btn-tag-filter,
+.confirm-delete-article h3 {
 	overflow-wrap: break-word;
 	word-break: break-word;
 }
@@ -1365,6 +1364,10 @@ li.card-item p {
 	margin: 12px 0;
 	border-radius: 6px;
 	overflow: hidden;
+}
+
+.are-you-sure-p {
+	text-align: center;
 }
 
 /* Images fill the container width responsively */

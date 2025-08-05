@@ -2,12 +2,19 @@
 
 {% block content %}
 	<main class="form-container">
-		<article class="form-article">
+		<article class="confirm-delete-article">
 			<h2 class="delete-heading"> Confirm Delete Question</h2>
-			<p class="delete-question-msg">
-				Are you sure you want to delete the question<br>
-				<span class="delete-question-title">"{{ object.title }}"</span>?
-			</p>
+			<p class="are-you-sure-p">Are you sure you want to delete this question?</p>
+
+			<div class="confirm-delete-article">
+				<h3>{{ question.title }}</h3>
+				<div class="card-body">{{ question.body|linebreaks }}</div>
+				{% if question.media %}
+					<div class="question-image-container">
+						<img src="{{ question.media.url }}" alt="Question Image" class="question-image" />
+					</div>
+				{% endif %}
+			</div>
 			<form method="post" class="delete-form">
 				{% csrf_token %}
 				<button type="submit" class="btn btn-delete">Confirm Delete</button>

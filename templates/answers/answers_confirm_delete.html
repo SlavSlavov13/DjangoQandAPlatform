@@ -4,14 +4,15 @@
 	<main class="confirm-delete-container">
 		<article class="confirm-delete-article">
 			<h2>Confirm Delete Answer</h2>
-			<p>Are you sure you want to delete this answer?</p>
+			<p class="are-you-sure-p">Are you sure you want to delete this answer?</p>
 
-			<div class="comment-preview">
-				<blockquote>
-					Question: {{ question_title }}
-					<br>
-					Answer: {{ answer.content|linebreaksbr|default:"(No answer content)" }}
-				</blockquote>
+			<div class="confirm-delete-article">
+				<div class="card-body">{{ answer.content|linebreaks }}</div>
+				{% if answer.media %}
+					<div class="answer-image-container">
+						<img src="{{ answer.media.url }}" alt="Answer Image" class="answer-image" />
+					</div>
+				{% endif %}
 			</div>
 
 			<form method="post">
