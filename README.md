@@ -5,7 +5,7 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 ---
 
 **Badges:**  
-[![Django](https://img.shields.io/badge/Django-5.2.4-green)]() [![Python](https://img.shields.io/badge/Python-3.12-blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
+[![Django](https://img.shields.io/badge/Django-5.2.4-green)]() [![Python](https://img.shields.io/badge/Python-3.12  -blue)]() [![license](https://img.shields.io/badge/license-MIT-informational)]()
 
 ---
 
@@ -56,9 +56,37 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 
 6. Run the server
    python manage.py runserver
-    
-   
-Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+## 🌟 Environment Variables
+
+Create a `.env` file in your project root directory and add the following environment variables with **mock** placeholder values:
+
+**Django Settings:**<br>
+SECRET_KEY=`django-insecure-izit@_8%&z0cfl$s-_pkl^6*rls(ihuu+_nl_jwlqm^jajr5$l`<br>
+DEBUG=True<br>
+ALLOWED_HOSTS=yourqa.azurewebsites.net,localhost,127.0.0.1<br>
+CSRF_TRUSTED_ORIGINS=https://yourqa.azurewebsites.net
+
+**Database Configuration:**<br>
+DB_NAME=qaplatform_db<br>
+DB_USER=dbuser<br>
+DB_PASSWORD=dbpassword123<br>
+DB_HOST=127.0.0.1<br>
+DB_PORT=5432<br>
+SSLMODE=disable
+
+**Default Admin Credentials (no need to change these):**<br>
+DEFAULT_ADMIN_USERNAME=admin<br>
+DEFAULT_ADMIN_EMAIL=admin@admin.com<br>
+DEFAULT_ADMIN_PASSWORD=admin
+
+**Cloudinary (for media uploads; current values are for my personal account so you can test the app without your own account):**<br>
+CLOUDINARY_CLOUD_NAME=dxmvfqbgg<br>
+CLOUDINARY_API_KEY=951472453152731<br>
+CLOUDINARY_API_SECRET=kj6uo8lj1PbDTxV3csUXPMDFgpg
+
+
+**Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)**
 
 
 ---
