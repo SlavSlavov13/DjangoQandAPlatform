@@ -6,7 +6,6 @@
 			<article class="question-detail">
 				<div class="question-title-row">
 					<h1 class="question-title">{{ question.title }}</h1>
-
 					{% if user.is_authenticated and user == question.author %}
 						<div class="question-edit-delete-buttons">
 							<a href="{% url 'question_update' question.pk %}" class="btn btn-edit">Edit</a>
@@ -14,22 +13,17 @@
 						</div>
 					{% endif %}
 				</div>
-
 				<p class="question-meta">
 					Asked by <a href="{% url 'profile-details' question.author.pk %}">
 					<strong>{{ question.author.username }}</strong></a>
 					on {{ question.created_at|date:"F j, Y, g:i a" }}
 				</p>
-
 				<div class="question-body">{{ question.body|linebreaks }}</div>
-
 				{% if question.media %}
 					<div class="question-image-container">
 						<img src="{{ question.media.url }}" alt="Question Image" class="question-image" />
 					</div>
 				{% endif %}
-
-
 				{% if question.tags.all %}
 					<div class="question-tags">
 						<strong>Tags:</strong>
@@ -38,15 +32,12 @@
 						{% endfor %}
 					</div>
 				{% endif %}
-
 				<div class="toggle-buttons">
 					<button class="btn btn-comment" id="show-comments-btn" type="button" aria-controls="comments-section" aria-expanded="false" onclick="showSection('comments')">See Comments</button>
 					<button class="btn btn-answer" id="show-answers-btn" type="button" aria-controls="answers-section" aria-expanded="false" onclick="showSection('answers')">See Answers</button>
 				</div>
-
 				<div class="section-header" hidden>
 					<h2 id="section-heading" class="section-heading" aria-live="polite"></h2>
-
 					{% if user.is_authenticated %}
 						<a href="{% url 'add-comment-to-question' question.pk %}" class="btn btn-comment add-section-btn" id="add-comment-btn" style="display:none;">
 							Add Comment
@@ -64,19 +55,16 @@
 							{% for answer in answers %}
 								<li class="card-item">
 									<div class="card-body">{{ answer.content|linebreaks }}</div>
-
 									{% if answer.media %}
 										<div class="answer-image-container">
 											<img src="{{ answer.media.url }}" alt="Answer Image" class="answer-image" />
 										</div>
 									{% endif %}
-
 									<div class="card-meta">
 										by <a href="{% url 'profile-details' answer.author.pk %}">
 										<strong>{{ answer.author.username }}</strong></a>
 										on {{ answer.created_at|date:"F j, Y, g:i a" }}
 									</div>
-
 									{% if user.is_authenticated and user == answer.author %}
 										<div class="dropdown" aria-haspopup="true" aria-expanded="false">
 											<button class="dropdown-toggle" aria-label="Edit or delete answer" onclick="toggleDropdown(event)">
@@ -88,42 +76,37 @@
 											</div>
 										</div>
 									{% endif %}
-
 									<div class="answer-buttons-wrapper">
 										<button class="btn btn-comment btn-small toggle-answer-comments-btn"
 										        aria-expanded="false"
 										        aria-controls="comments-for-answer-{{ answer.pk }}"
-										        onclick="toggleComments({{ answer.pk }})">
+										        onclick="toggleComments('answer', {{ answer.pk }})">
 											Show Comments
 										</button>
 										{% if request.user.is_authenticated %}
 											<a href="{% url 'add-comment-to-answer' answer.pk %}"
 											   class="btn btn-comment btn-small add-comment-btn"
-											   id="add-comment-btn-{{ answer.pk }}"
+											   id="add-comment-btn-answer-{{ answer.pk }}"
 											   style="display: none;">
 												Add Comment
 											</a>
 										{% endif %}
 									</div>
-
 									<ul class="card-list" id="comments-for-answer-{{ answer.pk }}" hidden>
 										{% if answer.comments.all %}
 											{% for comment in answer.comments.all %}
 												<li class="card-item">
 													<div class="card-body">{{ comment.content|linebreaks }}</div>
-
 													{% if comment.media %}
 														<div class="comment-image-container">
 															<img src="{{ comment.media.url }}" alt="Comment Image" class="comment-image" />
 														</div>
 													{% endif %}
-
 													<div class="card-meta">
 														by <a href="{% url 'profile-details' comment.author.pk %}">
 														<strong>{{ comment.author.username }}</strong></a>
 														on {{ comment.created_at|date:"F j, Y, g:i a" }}
 													</div>
-
 													{% if user.is_authenticated and user == comment.author %}
 														<div class="dropdown" aria-haspopup="true" aria-expanded="false">
 															<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
@@ -135,6 +118,54 @@
 															</div>
 														</div>
 													{% endif %}
+													<div class="answer-buttons-wrapper">
+														<button class="btn btn-comment btn-small toggle-comment-comments-btn"
+														        aria-expanded="false"
+														        aria-controls="comments-for-comment-{{ comment.pk }}"
+														        onclick="toggleComments('comment', {{ comment.pk }})">
+															Show Comments
+														</button>
+														{% if request.user.is_authenticated %}
+															<a href="{% url 'add-comment-to-comment' parent_comment_id=comment.pk %}"
+															   class="btn btn-comment btn-small add-comment-btn"
+															   id="add-comment-btn-comment-{{ comment.pk }}"
+															   style="display: none;">
+																Add Comment
+															</a>
+														{% endif %}
+													</div>
+													<ul class="card-list" id="comments-for-comment-{{ comment.pk }}" hidden>
+														{% if comment.comments.all %}
+															{% for reply in comment.comments.all %}
+																<li class="card-item">
+																	<div class="card-body">{{ reply.content|linebreaks }}</div>
+																	{% if reply.media %}
+																		<div class="comment-image-container">
+																			<img src="{{ reply.media.url }}" alt="Comment Image" class="comment-image" />
+																		</div>
+																	{% endif %}
+																	<div class="card-meta">
+																		by <a href="{% url 'profile-details' reply.author.pk %}">
+																		<strong>{{ reply.author.username }}</strong></a>
+																		on {{ reply.created_at|date:"F j, Y, g:i a" }}
+																	</div>
+																	{% if user.is_authenticated and user == reply.author %}
+																		<div class="dropdown" aria-haspopup="true" aria-expanded="false">
+																			<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
+																				&#8942;
+																			</button>
+																			<div class="dropdown-menu" hidden>
+																				<a href="{% url 'edit-comment-to-comment' parent_comment_id=comment.pk comment_id=reply.pk %}" class="btn dropdown-item btn-edit">Edit</a>
+																				<a href="{% url 'delete-comment-to-comment' parent_comment_id=comment.pk comment_id=reply.pk %}" class="btn dropdown-item btn-delete">Delete</a>
+																			</div>
+																		</div>
+																	{% endif %}
+																</li>
+															{% endfor %}
+														{% else %}
+															<p class="no-comments">No comments yet.</p>
+														{% endif %}
+													</ul>
 												</li>
 											{% endfor %}
 										{% else %}
@@ -156,19 +187,16 @@
 							{% for comment in comments %}
 								<li class="card-item">
 									<div class="card-body">{{ comment.content|linebreaksbr }}</div>
-
 									{% if comment.media %}
 										<div class="comment-image-container">
 											<img src="{{ comment.media.url }}" alt="Comment Image" class="comment-image" />
 										</div>
 									{% endif %}
-
 									<div class="card-meta">
 										by <a href="{% url 'profile-details' comment.author.pk %}">
 										<strong>{{ comment.author.username }}</strong></a>
 										on {{ comment.created_at|date:"F j, Y, g:i a" }}
 									</div>
-
 									{% if user.is_authenticated and user == comment.author %}
 										<div class="dropdown" aria-haspopup="true" aria-expanded="false">
 											<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
@@ -180,42 +208,37 @@
 											</div>
 										</div>
 									{% endif %}
-
 									<div class="answer-buttons-wrapper">
-										<button class="btn btn-comment btn-small toggle-answer-comments-btn"
+										<button class="btn btn-comment btn-small toggle-comment-comments-btn"
 										        aria-expanded="false"
 										        aria-controls="comments-for-comment-{{ comment.pk }}"
-										        onclick="toggleComments({{ comment.pk }})">
+										        onclick="toggleComments('comment', {{ comment.pk }})">
 											Show Comments
 										</button>
 										{% if user.is_authenticated %}
 											<a href="{% url 'add-comment-to-comment' parent_comment_id=comment.pk %}"
 											   class="btn btn-comment btn-small add-comment-btn"
-											   id="add-comment-btn-{{ comment.pk }}"
+											   id="add-comment-btn-comment-{{ comment.pk }}"
 											   style="display: none;">
 												Add Comment
 											</a>
 										{% endif %}
 									</div>
-
 									<ul class="card-list" id="comments-for-comment-{{ comment.pk }}" hidden>
 										{% if comment.comments.all %}
 											{% for reply in comment.comments.all %}
 												<li class="card-item">
 													<div class="card-body">{{ reply.content|linebreaks }}</div>
-
 													{% if reply.media %}
 														<div class="comment-image-container">
 															<img src="{{ reply.media.url }}" alt="Comment Image" class="comment-image" />
 														</div>
 													{% endif %}
-
 													<div class="card-meta">
 														by <a href="{% url 'profile-details' reply.author.pk %}">
 														<strong>{{ reply.author.username }}</strong></a>
 														on {{ reply.created_at|date:"F j, Y, g:i a" }}
 													</div>
-
 													{% if user.is_authenticated and user == reply.author %}
 														<div class="dropdown" aria-haspopup="true" aria-expanded="false">
 															<button class="dropdown-toggle" aria-label="Edit or delete comment" onclick="toggleDropdown(event)">
@@ -297,52 +320,50 @@
 				}
 				window.showSection = (section) => showSection(section, false);
 
-				function toggleComments(entityId, restore = false) {
-					// Handles toggle for answer.comments and also comment.comments (nested)
-					const commentsList = document.getElementById(`comments-for-${entityIdType(entityId)}-${entityId}`);
-					const addCommentBtn = document.getElementById(`add-comment-btn-${entityId}`);
-					const btn = document.querySelector(`.toggle-answer-comments-btn[aria-controls="comments-for-${entityIdType(entityId)}-${entityId}"]`);
-					if(!commentsList || !btn) return;
+				function toggleComments(entityType, entityId, restore = false) {
+					const commentsListId = `comments-for-${entityType}-${entityId}`;
+					const commentsList = document.getElementById(commentsListId);
+					const addCommentBtn = document.getElementById(`add-comment-btn-${entityType}-${entityId}`);
+					const btnSelector = entityType === 'answer'
+						? `.toggle-answer-comments-btn[aria-controls="${commentsListId}"]`
+						: `.toggle-comment-comments-btn[aria-controls="${commentsListId}"]`;
+					const btn = document.querySelector(btnSelector);
 
-					if(commentsList.hidden) {
+					if (!commentsList || !btn) return;
+
+					if (commentsList.hidden) {
 						commentsList.hidden = false;
-						if(addCommentBtn) addCommentBtn.style.display = 'inline-block';
+						if (addCommentBtn) addCommentBtn.style.display = 'inline-block';
 						btn.textContent = 'Hide Comments';
 						btn.setAttribute('aria-expanded', 'true');
-						if(!restore) addEntityIdToState(entityId);
+
+						if (!restore) addEntityIdToState(entityType, entityId);
 					} else {
 						commentsList.hidden = true;
-						if(addCommentBtn) addCommentBtn.style.display = 'none';
+						if (addCommentBtn) addCommentBtn.style.display = 'none';
 						btn.textContent = 'Show Comments';
 						btn.setAttribute('aria-expanded', 'false');
-						if(!restore) removeEntityIdFromState(entityId);
+
+						if (!restore) removeEntityIdFromState(entityType, entityId);
 					}
 				}
-				window.toggleComments = (entityId) => toggleComments(entityId, false);
+				window.toggleComments = (entityType, entityId) => toggleComments(entityType, entityId, false);
 
-				// Utility to determine id type for element ids/classes
-				function entityIdType(id) {
-					// If this ID exists in answer ids, it’s answer; otherwise comment
-					// Since we cannot access data here, assume comment if id not matched via CSS
-					// For simplicity, differentiate using presence of answers section IDs
-					return (document.getElementById(`comments-for-answer-${id}`)) ? 'answer' : 'comment';
-				}
-
-				function addEntityIdToState(id) {
+				function addEntityIdToState(type, id) {
 					let state = getState();
-					// Add to answers or comments depending on type
-					if(entityIdType(id) === 'answer') {
+					if (type === 'answer') {
 						state.expandedAnswers = Array.from(new Set([...(state.expandedAnswers || []), id]));
-					} else {
+					} else if (type === 'comment') {
 						state.expandedComments = Array.from(new Set([...(state.expandedComments || []), id]));
 					}
 					saveState(state);
 				}
-				function removeEntityIdFromState(id) {
+
+				function removeEntityIdFromState(type, id) {
 					let state = getState();
-					if(entityIdType(id) === 'answer') {
+					if (type === 'answer') {
 						state.expandedAnswers = (state.expandedAnswers || []).filter(x => x !== id);
-					} else {
+					} else if (type === 'comment') {
 						state.expandedComments = (state.expandedComments || []).filter(x => x !== id);
 					}
 					saveState(state);
@@ -396,7 +417,7 @@
 					if(Array.isArray(state.expandedAnswers)){
 						state.expandedAnswers.forEach(answerId => {
 							if(document.getElementById(`comments-for-answer-${answerId}`)) {
-								toggleComments(answerId, true);
+								toggleComments('answer', answerId, true);
 							}
 						});
 					}
@@ -404,13 +425,12 @@
 					if(Array.isArray(state.expandedComments)){
 						state.expandedComments.forEach(commentId => {
 							if(document.getElementById(`comments-for-comment-${commentId}`)) {
-								toggleComments(commentId, true);
+								toggleComments('comment', commentId, true);
 							}
 						});
 					}
 				});
 			})();
 		</script>
-
 	</main>
 {% endblock %}
