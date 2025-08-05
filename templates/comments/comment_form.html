@@ -26,20 +26,19 @@
 			<form method="post" enctype="multipart/form-data" class="site-form">
 				{% csrf_token %}
 
-				{# Render the comment field (usually a textarea) #}
-				{{ form.content }}
-				{% if form.content.help_text %}
-					<small class="help-text">{{ form.content.help_text }}</small>
-				{% endif %}
-
-				{# Show form-level errors #}
-				{% if form.errors %}
-					<div class="error-message">
-						{% for field in form %}
-							{% for error in field.errors %}
-								{{ error }}<br>
-							{% endfor %}
+				{% for field in form %}
+					<div class="form-field{% if field.errors %} has-error{% endif %}">
+						{{ field }}
+						{% if field.help_text %}
+							<small class="help-text">{{ field.help_text }}</small>
+						{% endif %}
+						{% for error in field.errors %}
+							<div class="error-message">{{ error }}</div>
 						{% endfor %}
+					</div>
+				{% endfor %}
+				{% if form.non_field_errors %}
+					<div class="error-message">
 						{% for error in form.non_field_errors %}
 							{{ error }}<br>
 						{% endfor %}

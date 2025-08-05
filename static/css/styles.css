@@ -430,10 +430,10 @@ li.card-item p {
 ==========================================================================*/
 .question-edit-delete-buttons a {
 	margin-left: 0.5rem;
-	padding: 0.3rem 0.7rem;
+	padding: 0.5rem 0.9rem;
 	text-decoration: none;
 	border-radius: 3px;
-	font-size: 0.9rem;
+	font-size: 1rem;
 	flex-basis: 30%;
 	flex-shrink: 0;
 	transition: background-color 0.2s ease;
@@ -1154,9 +1154,6 @@ li.card-item p {
 }
 .confirm-delete-article form,
 .form-article .delete-form {
-	display: flex;
-	justify-content: center;
-	gap: 1.5em;
 	margin-top: 1em;
 }
 .btn-cancel, .btn-edit {
