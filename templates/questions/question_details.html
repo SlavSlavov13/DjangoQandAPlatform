@@ -93,8 +93,8 @@
 										{% endif %}
 									</div>
 									<ul class="card-list" id="comments-for-answer-{{ answer.pk }}" hidden>
-										{% if answer.comments.all %}
-											{% for comment in answer.comments.all %}
+										{% if answer.fetched_comments %}
+											{% for comment in answer.fetched_comments %}
 												<li class="card-item">
 													<div class="card-body">{{ comment.content|linebreaks }}</div>
 													{% if comment.media %}
@@ -135,8 +135,8 @@
 														{% endif %}
 													</div>
 													<ul class="card-list" id="comments-for-comment-{{ comment.pk }}" hidden>
-														{% if comment.comments.all %}
-															{% for reply in comment.comments.all %}
+														{% if comment.fetched_child_comments %}
+															{% for reply in comment.fetched_child_comments %}
 																<li class="card-item">
 																	<div class="card-body">{{ reply.content|linebreaks }}</div>
 																	{% if reply.media %}
@@ -225,8 +225,8 @@
 										{% endif %}
 									</div>
 									<ul class="card-list" id="comments-for-comment-{{ comment.pk }}" hidden>
-										{% if comment.comments.all %}
-											{% for reply in comment.comments.all %}
+										{% if comment.fetched_child_comments %}
+											{% for reply in comment.fetched_child_comments %}
 												<li class="card-item">
 													<div class="card-body">{{ reply.content|linebreaks }}</div>
 													{% if reply.media %}

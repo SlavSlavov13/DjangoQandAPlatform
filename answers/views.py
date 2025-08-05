@@ -5,10 +5,11 @@ Defines views for Answer CRUD operations: create, edit, delete answers related t
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.views.generic import UpdateView, CreateView, DeleteView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+
+from DjangoQandAPlatform.mixins import UserIsAuthorMixin
 from .models import Answer
 from .forms import AnswerCreateForm, AnswerEditForm
 from questions.models import Question
@@ -46,7 +47,7 @@ class AnswerCreateView(LoginRequiredMixin, CreateView):
 		context['question'] = self.question
 		return context
 
-class AnswerEditView(LoginRequiredMixin, UpdateView):
+class AnswerEditView(LoginRequiredMixin, UserIsAuthorMixin, UpdateView):
 	"""
 	View for editing an existing answer.
 
@@ -56,13 +57,6 @@ class AnswerEditView(LoginRequiredMixin, UpdateView):
 	form_class = AnswerEditForm
 	template_name = 'answers/answer.html'
 	pk_url_kwarg = 'answer_id'
-
-	def get_object(self, queryset=None):
-		# Check permissions
-		obj = super().get_object(queryset)
-		if obj.author != self.request.user:
-			raise PermissionDenied("You do not have permission to edit this answer.")
-		return obj
 
 	def dispatch(self, request, *args, **kwargs):
 		# Fetch and attach associated Question
@@ -79,7 +73,7 @@ class AnswerEditView(LoginRequiredMixin, UpdateView):
 		context['question'] = self.question
 		return context
 
-class AnswerDeleteView(LoginRequiredMixin, DeleteView):
+class AnswerDeleteView(LoginRequiredMixin, UserIsAuthorMixin, DeleteView):
 	"""
 	View for deleting an answer.
 
@@ -88,13 +82,6 @@ class AnswerDeleteView(LoginRequiredMixin, DeleteView):
 	model = Answer
 	template_name = "answers/answers_confirm_delete.html"
 	pk_url_kwarg = 'answer_id'
-
-	def get_object(self, queryset=None):
-		# Allow only author to delete answer.
-		obj = super().get_object(queryset)
-		if obj.author != self.request.user:
-			raise PermissionDenied("You do not have permission to delete this answer.")
-		return obj
 
 	def get_context_data(self, **kwargs):
 		# Pass additional info for display in confirmation dialog.

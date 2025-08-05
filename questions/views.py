@@ -7,10 +7,11 @@ Handles permission checks, context enrichment, and related fetching.
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Prefetch
-from django.shortcuts import redirect
+from django.db.models import Prefetch
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+from DjangoQandAPlatform.mixins import UserIsAuthorMixin
 from answers.models import Answer
 from comments.models import Comment
 from questions.forms import QuestionCreateForm, QuestionEditForm
@@ -47,7 +48,7 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
 	def get_success_url(self):
 		return reverse('question_details', args=[self.object.pk])
 
-class QuestionUpdateView(LoginRequiredMixin, UpdateView):
+class QuestionUpdateView(LoginRequiredMixin, UserIsAuthorMixin, UpdateView):
 	"""
 	Edit an existing question (owner only).
 	"""
@@ -55,16 +56,10 @@ class QuestionUpdateView(LoginRequiredMixin, UpdateView):
 	form_class = QuestionEditForm
 	template_name = "questions/question_create_edit.html"
 
-	def get_object(self, queryset=None):
-		obj = super().get_object(queryset)
-		if obj.author != self.request.user:
-			raise PermissionDenied("You do not have permission to edit this question.")
-		return obj
-
 	def get_success_url(self):
 		return reverse('question_details', args=[self.object.pk])
 
-class QuestionDeleteView(LoginRequiredMixin, DeleteView):
+class QuestionDeleteView(LoginRequiredMixin, UserIsAuthorMixin, DeleteView):
 	"""
 	Delete a user's own question.
 	"""
@@ -72,16 +67,7 @@ class QuestionDeleteView(LoginRequiredMixin, DeleteView):
 	template_name = "questions/question_confirm_delete.html"
 	success_url = reverse_lazy("questions-list")
 
-	def get_object(self, queryset=None):
-		obj = super().get_object(queryset)
-		if obj.author != self.request.user:
-			raise PermissionDenied("You do not have permission to delete this question.")
-		return obj
-
 class QuestionDetailView(DetailView):
-	"""
-	Show a single question, its comments, and its answers (with nested comments prefetched).
-	"""
 	model = Question
 	template_name = "questions/question_details.html"
 
@@ -92,11 +78,32 @@ class QuestionDetailView(DetailView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		question = self.object
-		# Prefetch comments on question and all answers (with their comments)
-		comments_on_question = question.comments.select_related('author').order_by('-created_at')
-		answers = Answer.objects.filter(question=question).select_related('author').prefetch_related(
-			Prefetch('comments', queryset=Comment.objects.select_related('author').order_by('-created_at'))
-		).order_by('-created_at')
-		context['comments'] = comments_on_question
-		context['answers'] = answers
+
+		# Prefetch nested comments on each top-level comment for question
+		child_comments_prefetch = Prefetch(
+			'comments',  # generic relation on Comment (i.e., child comments)
+			queryset=Comment.objects.select_related('author').order_by('-created_at'),
+			to_attr='fetched_child_comments'
+		)
+
+		# Prefetch top-level comments on question + their child comments
+		comments_on_question = question.comments.select_related('author').prefetch_related(child_comments_prefetch).order_by('-created_at')
+
+		# Prefetch answers, their authors, their comments, and those comments' child comments
+		answers = (
+			Answer.objects
+			.filter(question=question)
+			.select_related('author')
+			.prefetch_related(
+				Prefetch(
+					'comments',
+					queryset=Comment.objects.select_related('author').prefetch_related(child_comments_prefetch).order_by('-created_at'),
+					to_attr='fetched_comments'
+				)
+			)
+			.order_by('-created_at')
+		)
+
+		context['comments'] = comments_on_question  # now each comment has .fetched_child_comments
+		context['answers'] = answers  # and each answer has .fetched_comments, each with .fetched_child_comments
 		return context

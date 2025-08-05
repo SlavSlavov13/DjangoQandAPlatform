@@ -5,7 +5,6 @@ Views for user account lifecycle:
 """
 
 from asgiref.sync import sync_to_async
-from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
@@ -18,6 +17,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.functional import SimpleLazyObject
 from django.views import View
 from django.views.generic import CreateView, DetailView
+
+from DjangoQandAPlatform.mixins import UserIsAuthorMixin
 from users.forms import UserRegistrationForm, UserEditForm, UserProfileEditForm
 from users.models import UserProfile
 
@@ -57,7 +58,7 @@ class UserCreationView(CreateView):
 			return redirect('profile-details', request.user.pk)
 		return super().dispatch(request, *args, **kwargs)
 
-class EditProfileView(LoginRequiredMixin, View):
+class EditProfileView(LoginRequiredMixin, UserIsAuthorMixin, View):
 	template_name = 'users/edit_profile.html'
 
 	def get(self, request):
