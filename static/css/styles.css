@@ -1343,7 +1343,8 @@ li.card-item p {
 .user-badges .badge,
 .question-tags .tag,
 .btn-tag-filter,
-.confirm-delete-article h3 {
+.confirm-delete-article h3,
+.user-names {
 	overflow-wrap: break-word;
 	word-break: break-word;
 }

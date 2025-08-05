@@ -4,7 +4,7 @@
 	<main class="form-container">
 		<article class="form-article">
 			<h2>
-				{% if form.instance.pk %}Edit{% else %}Create{% endif %} Question
+				{% if form.instance.pk %}Edit{% else %}Ask{% endif %} Question
 			</h2>
 			<form method="post" enctype="multipart/form-data" class="site-form">
 				{% csrf_token %}

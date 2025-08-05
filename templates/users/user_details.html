@@ -16,7 +16,7 @@
 					<h2>{{ user_obj.username }}</h2>
 					<div class="user-joined">Joined on {{ user_obj.date_joined|date:"F j, Y" }}</div>
 					{% if user_obj.first_name or user_obj.last_name %}
-						<h3>{{ user_obj.first_name }} {{ user_obj.last_name }}</h3>
+						<h3 class="user-names">{{ user_obj.first_name }} {{ user_obj.last_name }}</h3>
 					{% endif %}
 				</div>
 				{% if user.is_authenticated and user == user_obj %}

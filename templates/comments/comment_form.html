@@ -3,25 +3,23 @@
 {% block content %}
 	<main class="form-container">
 		<article class="form-article">
-
 			{% if answer_id %}
 				{% if not exists %}
-					<h2>Add Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> to <br> Question: {{ question_title }}
-					</h2>
+					<h2>Add Comment to Answer</h2>
 				{% else %}
-					<h2>Edit Comment to Answer: {{ answer_excerpt|default:"(No preview available)"|truncatechars:120 }} <br> to <br> Question: {{ question_title }}
-					</h2>
+					<h2>Edit Comment to Answer</h2>
+				{% endif %}
+			{% elif parent_comment %}
+				{% if not exists %}
+					<h2>Add Comment to Comment</h2>
+				{% else %}
+					<h2>Edit Comment to Comment</h2>
 				{% endif %}
 			{% else %}
 				{% if not exists %}
-					<h2>Add Comment to Question: "{{ question_title }}"</h2>
+					<h2>Add Comment to Question</h2>
 				{% else %}
-					{% if parent_comment %}
-						<h2>Edit Comment to Comment: "{{ parent_comment.content }}"</h2>
-						<h2>Question: "{{ question_title }}"</h2>
-					{% else %}
-					{% endif %}
-
+					<h2>Edit Comment to Question</h2>
 				{% endif %}
 			{% endif %}
 
