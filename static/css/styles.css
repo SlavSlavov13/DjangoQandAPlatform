@@ -471,14 +471,6 @@ li.card-item p {
 	flex-grow: 1;
 	color: var(--galaxy-purple-dark);
 }
-.add-section-btn {
-	white-space: nowrap;
-	padding: 0.4rem 0.9rem;
-	font-size: 1rem;
-	background: var(--galaxy-purple-dark);
-	color: var(--galaxy-white-icy);
-	border: none;
-}
 
 /*=========================================================================
     ACTION BUTTON GROUPS (e.g., TOGGLE/ADD COMMENTS)
