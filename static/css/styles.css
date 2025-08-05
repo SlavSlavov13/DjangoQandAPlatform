@@ -112,7 +112,9 @@ nav.top-bar .top-bar-link-btn {
 nav.top-bar ul.top-bar-links a:hover,
 nav.top-bar ul.top-bar-links a:focus,
 nav.top-bar .top-bar-link-btn:hover,
-nav.top-bar .top-bar-link-btn:focus {
+nav.top-bar .top-bar-link-btn:focus,
+.top-bar-logo strong:hover,
+.top-bar-logo strong:focus {
 	text-decoration: underline;
 	color: var(--galaxy-accent);
 }
