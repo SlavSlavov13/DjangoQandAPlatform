@@ -26,8 +26,8 @@ class QuestionSearchApiTest(TestCase):
 		"""
 		self.client = APIClient()
 		self.user = User.objects.create_user(username='testuser', password='pass')
-		self.tag1 = Tag.objects.create(name='Django')
-		self.tag2 = Tag.objects.create(name='Python')
+		self.tag1 = Tag.objects.create(name='DjangoT')
+		self.tag2 = Tag.objects.create(name='PythonT')
 		# Create 8 questions: 5 with tag1, 3 with tag2
 		for i in range(5):
 			q = Question.objects.create(
@@ -68,7 +68,7 @@ class QuestionSearchApiTest(TestCase):
 		self.assertGreaterEqual(data['count'], 5)
 		for q in data['results']:
 			tag_names = [t['name'] for t in q['tags']]
-			self.assertIn('Django', tag_names)
+			self.assertIn('DjangoT', tag_names)
 
 	def test_pagination(self):
 		"""
@@ -98,6 +98,6 @@ class QuestionSearchApiTest(TestCase):
 		data = resp.json()
 		for q in data['results']:
 			tag_names = [t['name'] for t in q['tags']]
-			self.assertIn('Django', tag_names)
+			self.assertIn('DjangoT', tag_names)
 			self.assertIn('Django', q['title'])
 

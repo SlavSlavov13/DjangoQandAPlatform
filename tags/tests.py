@@ -29,8 +29,8 @@ class TagModelTests(TestCase):
 		"""
 		The __str__ method of Tag returns its name.
 		"""
-		tag = Tag.objects.create(name='Python')
-		self.assertEqual(str(tag), 'Python')
+		tag = Tag.objects.create(name='PythonT')
+		self.assertEqual(str(tag), 'PythonT')
 
 	def test_tag_slug_uniqueness(self):
 		"""
@@ -45,6 +45,6 @@ class TagModelTests(TestCase):
 		"""
 		If a slug is supplied explicitly, it is overwritten on save.
 		"""
-		tag = Tag(name="Django", slug="custom-slug")
+		tag = Tag(name="DjangoT", slug="custom-slug")
 		tag.save()
-		self.assertEqual(tag.slug, slugify('Django'))
+		self.assertEqual(tag.slug, slugify('DjangoT'))

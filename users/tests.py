@@ -195,17 +195,17 @@ class AjaxUsernameCheckTests(TestCase):
 		url = reverse('check-username')
 		resp = self.client.get(url, {'username': 'unassignedname'})
 		self.assertEqual(resp.status_code, 200)
-		self.assertJSONEqual(resp.content, {'available': True})
+		self.assertJSONEqual(resp.content, {'available': True, 'is_current': False, 'message': 'Username is available.'})
 
 	def test_username_check_taken(self):
 		UserModel.objects.create_user('takenx', password='pw')
 		url = reverse('check-username')
 		resp = self.client.get(url, {'username': 'takenx'})
 		self.assertEqual(resp.status_code, 200)
-		self.assertJSONEqual(resp.content, {'available': False})
+		self.assertJSONEqual(resp.content, {'available': False, 'is_current': False, 'message': 'This username is already taken.'})
 
 	def test_username_check_missing(self):
 		url = reverse('check-username')
 		resp = self.client.get(url)
 		self.assertEqual(resp.status_code, 400)
-		self.assertJSONEqual(resp.content, {'available': False, 'error': 'No username provided.'})
+		self.assertJSONEqual(resp.content, {'available': False, 'is_current': False, 'message': 'No username provided.'})

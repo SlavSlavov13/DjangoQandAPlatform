@@ -61,8 +61,8 @@ class AnswerIntegrationTest(TestCase):
 	"""
 
 	def setUp(self):
-		self.user = User.objects.create_user(username='testuser', password='secret')
-		self.other = User.objects.create_user(username='otheruser', password='pass')
+		self.user = User.objects.create_user(username='testuser', password='secret', email='email1')
+		self.other = User.objects.create_user(username='otheruser', password='pass', email='email2')
 		self.question = Question.objects.create(
 			title="Integration Test Q",
 			body="Integration body content.",

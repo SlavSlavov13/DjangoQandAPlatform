@@ -18,8 +18,8 @@ class QuestionModelTest(TestCase):
 
 	def setUp(self):
 		self.user = User.objects.create_user(username='examiner', password='1234')
-		self.tag1 = Tag.objects.create(name="Django")
-		self.tag2 = Tag.objects.create(name="Python")
+		self.tag1 = Tag.objects.create(name="DjangoT")
+		self.tag2 = Tag.objects.create(name="PythonT")
 
 	def test_create_question(self):
 		question = Question.objects.create(
