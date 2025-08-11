@@ -81,9 +81,9 @@ DEFAULT_ADMIN_EMAIL=admin@admin.com<br>
 DEFAULT_ADMIN_PASSWORD=admin
 
 **Cloudinary (for media uploads; current values are for my personal account, so you can test the app without your own and I do know that this is not a good practice in actual projects. As soon as the exam is over I will secure my account.):**<br>
-CLOUDINARY_CLOUD_NAME=dxmvfqbgg<br>
-CLOUDINARY_API_KEY=951472453152731<br>
-CLOUDINARY_API_SECRET=kj6uo8lj1PbDTxV3csUXPMDFgpg
+CLOUDINARY_CLOUD_NAME=cloud_name<br>
+CLOUDINARY_API_KEY=api_key<br>
+CLOUDINARY_API_SECRET=api_secret
 
 
 **Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)**
