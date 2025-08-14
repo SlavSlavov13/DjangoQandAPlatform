@@ -62,7 +62,7 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 Create a `.env` file in your project root directory and add the following environment variables with **mock** placeholder values:
 
 **Django Settings:**<br>
-SECRET_KEY=`django-insecure-izit@_8%&z0cfl$s-_pkl^6*rls(ihuu+_nl_jwlqm^jajr5$l`<br>
+SECRET_KEY=this-is-a-secret-key<br>
 DEBUG=True<br>
 ALLOWED_HOSTS=yourqa.azurewebsites.net,localhost,127.0.0.1<br>
 CSRF_TRUSTED_ORIGINS=https://yourqa.azurewebsites.net
@@ -80,7 +80,7 @@ DEFAULT_ADMIN_USERNAME=admin<br>
 DEFAULT_ADMIN_EMAIL=admin@admin.com<br>
 DEFAULT_ADMIN_PASSWORD=admin
 
-**Cloudinary (for media uploads; current values are for my personal account, so you can test the app without your own and I do know that this is not a good practice in actual projects. As soon as the exam is over I will secure my account.):**<br>
+**Cloudinary:**<br>
 CLOUDINARY_CLOUD_NAME=cloud_name<br>
 CLOUDINARY_API_KEY=api_key<br>
 CLOUDINARY_API_SECRET=api_secret
