@@ -32,7 +32,7 @@ def create_default_groups(sender, **kwargs):
 
 	staff_mods_perms_codenames = [
 		'view_logentry',
-		'view_group',
+		'view_userappgroup',
 		'view_customuser',
 		'change_userprofile', 'view_userprofile',
 		'view_question', 'change_question',
