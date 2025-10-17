@@ -9,6 +9,12 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 
 ---
 
+## 🌍 Live Demo
+
+[Visit yourqa.azurewebsites.net](https://yourqa.azurewebsites.net)
+
+---
+
 ## 📚 Table of Contents
 
 - [Features](#-features)
@@ -91,11 +97,6 @@ CLOUDINARY_API_SECRET=api_secret
 
 ---
 
-## 🌍 Live Demo
-
-[Visit yourqa.azurewebsites.net](https://yourqa.azurewebsites.net)
-
----
 
 ## 🔑 Admin Permissions & Groups
 
