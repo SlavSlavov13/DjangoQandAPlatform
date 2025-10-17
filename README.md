@@ -19,7 +19,6 @@ A fully-featured Q&A web platform inspired by Stack Overflow. Demonstrates advan
 
 - [Features](#-features)
 - [Quickstart](#-quickstart)
-- [Live Demo](#-live-demo)
 - [Admin Permissions & Groups](#-admin-permissions--groups)
 - [Testing](#-testing)
 - [API Endpoints](#-api-endpoints)
